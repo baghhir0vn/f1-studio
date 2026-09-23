@@ -1,9 +1,9 @@
-import { persist, escapeHTML, money, isValidPhone, showToast } from './ui.js?v=59.2';
-import { sanitizeStoredCart } from './security.js?v=59.2';
-import { CONFIG } from './config.js?v=59.2';
-import { storageService } from './services/storage-service.js?v=59.2';
-import { state as s, ctx } from './state.js?v=59.2';
-import { safeUserError } from './security.js?v=59.2';
+import { persist, escapeHTML, money, isValidPhone, showToast } from './ui.js?v=59.3';
+import { sanitizeStoredCart } from './security.js?v=59.3';
+import { CONFIG } from './config.js?v=59.3';
+import { storageService } from './services/storage-service.js?v=59.3';
+import { state as s, ctx } from './state.js?v=59.3';
+import { safeUserError } from './security.js?v=59.3';
 export function initCart() {
     function normalizeCartLines(){
         const before = JSON.stringify(s.cart);

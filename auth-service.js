@@ -1,5 +1,5 @@
-import { sb } from '../config.js?v=59.2';
-import { getProfileForUser } from './profile-service.js?v=59.2';
+import { sb } from '../config.js?v=59.3';
+import { getProfileForUser } from './profile-service.js?v=59.3';
 function getPasswordResetRedirect() {
     const origin = window.location.origin;
     return /^https?:\/\//i.test(origin) ? `${origin}/` : null;

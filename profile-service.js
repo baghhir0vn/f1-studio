@@ -1,4 +1,4 @@
-import { sb } from '../config.js?v=59.2';
+import { sb } from '../config.js?v=59.3';
 export async function getProfileForUser(user) {
     if (!user) return null;
     const { data, error } = await sb.from('profiles')

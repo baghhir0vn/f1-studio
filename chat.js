@@ -1,6 +1,6 @@
-import { escapeHTML, money, normalizeText, showToast } from './ui.js?v=59.2';
-import { CONFIG } from './config.js?v=59.2';
-import { state as s, ctx } from './state.js?v=59.2';
+import { escapeHTML, money, normalizeText, showToast } from './ui.js?v=59.3';
+import { CONFIG } from './config.js?v=59.3';
+import { state as s, ctx } from './state.js?v=59.3';
 const synonymMap = {
 "lipa":[1,2], "nömrə":[1,2], "nomre":[1,2], "alışqan":[3], "alışqan yazı":[3], "domino":[4], "taxta":[4,5,6,12],
 "lazer":[4,5,6,12], "masaüstü":[6], "masaustu":[6], "saat":[7,8], "qol saatı":[8], "qol saati":[8], "şəkil":[9], "sekil":[9], "3x4":[9],

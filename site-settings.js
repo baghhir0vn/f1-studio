@@ -1,8 +1,8 @@
-import { safeHttpUrl, safeResourceUrl, safeUserError } from './security.js?v=59.2';
-import { escapeHTML, money, showToast } from './ui.js?v=59.2';
-import { CONFIG } from './config.js?v=59.2';
-import { siteSettingsService } from './services/site-settings-service.js?v=59.2';
-import { state as s, ctx } from './state.js?v=59.2';
+import { safeHttpUrl, safeResourceUrl, safeUserError } from './security.js?v=59.3';
+import { escapeHTML, money, showToast } from './ui.js?v=59.3';
+import { CONFIG } from './config.js?v=59.3';
+import { siteSettingsService } from './services/site-settings-service.js?v=59.3';
+import { state as s, ctx } from './state.js?v=59.3';
 export function initSiteSettings() {
     function ensureCatalogReady(){
         if(s.serverCatalogReady || (Array.isArray(s.products) && s.products.length)) return true;

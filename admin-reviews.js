@@ -1,6 +1,6 @@
-import { escapeHTML, showToast } from './ui.js?v=59.2';
-import { state as s, ctx } from './state.js?v=59.2';
-import { ADMIN_API } from './admin-shared.js?v=59.2';
+import { escapeHTML, showToast } from './ui.js?v=59.3';
+import { state as s, ctx } from './state.js?v=59.3';
+import { ADMIN_API } from './admin-shared.js?v=59.3';
 async function loadAdminReviews(){
     try{
         const data=await ctx.adminApi(ADMIN_API.reviews);

@@ -1,10 +1,10 @@
-import { escapeHTML, money, isValidPhone, showToast } from './ui.js?v=59.2';
-import { authService } from './services/auth-service.js?v=59.2';
-import { state as s, ctx } from './state.js?v=59.2';
-import { getProfileForUser } from './services/profile-service.js?v=59.2';
-import { CONFIG } from './config.js?v=59.2';
-import { storageService } from './services/storage-service.js?v=59.2';
-import { isCustomerDesignPathOwnedBy } from './security.js?v=59.2';
+import { escapeHTML, money, isValidPhone, showToast } from './ui.js?v=59.3';
+import { authService } from './services/auth-service.js?v=59.3';
+import { state as s, ctx } from './state.js?v=59.3';
+import { getProfileForUser } from './services/profile-service.js?v=59.3';
+import { CONFIG } from './config.js?v=59.3';
+import { storageService } from './services/storage-service.js?v=59.3';
+import { isCustomerDesignPathOwnedBy } from './security.js?v=59.3';
 export function initAuth() {
     authService.onAuthStateChange((event) => {
         if(event === "PASSWORD_RECOVERY"){

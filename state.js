@@ -1,4 +1,4 @@
-import { loadJSON } from './ui.js?v=59.2';
+import { loadJSON } from './ui.js?v=59.3';
 export const state = {
   authUser: null,
   passwordRecoveryMode: false,

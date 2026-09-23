@@ -1,6 +1,6 @@
-import { safeHttpUrl, safeResourceUrl } from './security.js?v=59.2';
-import { persist, escapeHTML, money, normalizeText, showToast } from './ui.js?v=59.2';
-import { state as s, ctx } from './state.js?v=59.2';
+import { safeHttpUrl, safeResourceUrl } from './security.js?v=59.3';
+import { persist, escapeHTML, money, normalizeText, showToast } from './ui.js?v=59.3';
+import { state as s, ctx } from './state.js?v=59.3';
 export function initCatalog() {
     const synonymMap = {
         "lipa":[1,2], "nömrə":[1,2], "nomre":[1,2], "alışqan":[3], "domino":[4], "taxta":[4,5,6,12],

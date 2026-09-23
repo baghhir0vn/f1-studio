@@ -1,12 +1,12 @@
-import { showToast } from './ui.js?v=59.2';
-import { realtimeService } from './services/realtime-service.js?v=59.2';
-import { state as s, ctx } from './state.js?v=59.2';
-import { ADMIN_API } from './admin-shared.js?v=59.2';
-import { initDashboard as initAdminDashboard } from './admin-dashboard.js?v=59.2';
-import { initProducts as initAdminProducts } from './admin-products.js?v=59.2';
-import { initOrders as initAdminOrders } from './admin-orders.js?v=59.2';
-import { initCustomers as initAdminCustomers } from './admin-customers.js?v=59.2';
-import { initReviews as initAdminReviews } from './admin-reviews.js?v=59.2';
+import { showToast } from './ui.js?v=59.3';
+import { realtimeService } from './services/realtime-service.js?v=59.3';
+import { state as s, ctx } from './state.js?v=59.3';
+import { ADMIN_API } from './admin-shared.js?v=59.3';
+import { initDashboard as initAdminDashboard } from './admin-dashboard.js?v=59.3';
+import { initProducts as initAdminProducts } from './admin-products.js?v=59.3';
+import { initOrders as initAdminOrders } from './admin-orders.js?v=59.3';
+import { initCustomers as initAdminCustomers } from './admin-customers.js?v=59.3';
+import { initReviews as initAdminReviews } from './admin-reviews.js?v=59.3';
 export function initAdmin() {
     initAdminDashboard();
     initAdminProducts();

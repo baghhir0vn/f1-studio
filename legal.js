@@ -1,5 +1,5 @@
-import { state as s, ctx } from './state.js?v=59.2';
-import { openDialog, closeDialog } from './modal.js?v=59.2';
+import { state as s, ctx } from './state.js?v=59.3';
+import { openDialog, closeDialog } from './modal.js?v=59.3';
 export function initLegal() {
     function openLegal(type){
         const map={privacy:"privacyModal",terms:"termsModal",returns:"returnsModal"};

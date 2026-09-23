@@ -1,5 +1,5 @@
-import { sb } from '../config.js?v=59.2';
-import { safeHttpUrl } from '../security.js?v=59.2';
+import { sb } from '../config.js?v=59.3';
+import { safeHttpUrl } from '../security.js?v=59.3';
 const SITE_SETTINGS_COLUMNS = 'id,whatsapp_number,instagram_url,tiktok_url,address,weekday_hours,weekend_hours,delivery_pickup,delivery_ganja,delivery_region,gift_wrap,updated_at';
 export const siteSettingsService = {
     async get() {
