@@ -1,5 +1,4 @@
 import { loadJSON } from './ui.js';
-
 export const state = {
   authUser: null,
   passwordRecoveryMode: false,
@@ -35,6 +34,7 @@ export const state = {
   customExistingImageName: '',
   customExistingImageUrl: '',
   customExistingImagePath: '',
+  customDesignLayout: null,
   adminProducts: [],
   adminOrders: [],
   adminReviews: [],
@@ -47,5 +47,4 @@ export const state = {
   adminExistingGallery: [],
   adminCustomerDesignSignedUrlCache: new Map()
 };
-
 export const ctx = {};

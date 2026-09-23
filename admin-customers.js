@@ -1,7 +1,6 @@
 import { escapeHTML, money, normalizeText, showToast } from './ui.js';
 import { state as s, ctx } from './state.js';
 import { formatAdminCustomerDate } from './admin-shared.js';
-
 async function loadAdminCustomers(){
         try{
             const data=await ctx.adminApi("/api/admin/customers");
@@ -13,7 +12,6 @@ async function loadAdminCustomers(){
             showToast("Müştəri məlumatları Supabase-dən oxunmadı.");
         }
     }
-    
     function renderAdminCustomers(){
         const box=document.getElementById("adminCustomersBody"); if(!box)return;
         const q=normalizeText(document.getElementById("adminCustomerSearch")?.value||"");
@@ -42,11 +40,28 @@ async function loadAdminCustomers(){
                 <td><b>${money(Number(c.total_cents||0)/100)}</b></td>
                 <td>${escapeHTML(formatAdminCustomerDate(c.last_order_at))}</td>
                 <td>${status}</td>
-                <td><div class="admin-actions">${action}</div></td>
+                <td><div class="admin-actions"><button data-action="openAdminCustomerOrders" data-action-args='[${JSON.stringify(c.id)}]'>🧾 Sifarişlər</button>${action}</div></td>
             </tr>`;
         }).join("");
     }
-    
+    async function openAdminCustomerOrders(id){
+        const customer=s.adminCustomers.find(c=>c.id===id);
+        if(!customer) return showToast('Müştəri tapılmadı.');
+        try{
+            if(!Array.isArray(s.adminOrders) || !s.adminOrders.length) await ctx.loadAdminOrders();
+            ctx.switchAdminView('orders');
+            const search=document.getElementById('adminOrderSearch');
+            if(search){
+                search.value=customer.phone || customer.email || customer.name || '';
+                ctx.renderAdminOrders();
+                search.focus();
+            }
+            showToast(`🔎 ${customer.name||'Müştəri'} üzrə sifarişlər göstərilir.`);
+        }catch(e){
+            console.error('Admin customer orders error:',e);
+            showToast('Müştərinin sifarişlərini göstərmək alınmadı.');
+        }
+    }
     async function setAdminCustomerBlocked(id,blocked){
         const customer=s.adminCustomers.find(c=>c.id===id); if(!customer)return;
         const label=blocked?"bloklansın":"blokdan çıxarılsın";
@@ -61,9 +76,8 @@ async function loadAdminCustomers(){
             showToast(msg.includes("CANNOT_BLOCK_ADMIN")?"Admin hesabı bloklana bilməz.":"Müştəri hesabının statusu dəyişdirilmədi.");
         }
     }
-
 export function initCustomers(){
   Object.assign(ctx, {
-    loadAdminCustomers, renderAdminCustomers, setAdminCustomerBlocked
+    loadAdminCustomers, renderAdminCustomers, openAdminCustomerOrders, setAdminCustomerBlocked
   });
 }

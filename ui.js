@@ -23,16 +23,19 @@ export function money(value) { return Number(value || 0).toFixed(2) + " ₼"; }
 export function normalizeText(text) { return String(text || "").toLocaleLowerCase("az-AZ").trim(); }
 export function phoneDigits(v) { return String(v || "").replace(/\D/g, ""); }
 export function isValidPhone(v) { const d = phoneDigits(v); return d.length >= 9 && d.length <= 15; }
-
 export function showToast(msg) {
     const toast = document.getElementById("toast");
     if (!toast) return;
-    toast.textContent = msg;
-    toast.classList.add("show");
+    const text = String(msg ?? "");
+    const isError = /❌|⚠️|alınmadı|alınmadı|səhv|xəta|tapılmadı|mümkün deyil|düzgün deyil|bloklandı|stokda yoxdur|icatə/i.test(text);
+    const isSuccess = /✅|uğurla|əlavə olundu|yadda saxlanıldı|yeniləndi|göndərildi|açıldı|çıxıldı|təsdiqləndi/i.test(text);
+    toast.classList.remove("toast-success", "toast-error", "toast-info", "show");
+    toast.textContent = text;
+    toast.classList.add(isError ? "toast-error" : isSuccess ? "toast-success" : "toast-info");
+    requestAnimationFrame(() => toast.classList.add("show"));
     clearTimeout(window.__toastTimer);
     window.__toastTimer = setTimeout(() => toast.classList.remove("show"), 3200);
 }
-
 export function initTheme() {
     const saved = localStorage.getItem("f1Theme") || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
     document.documentElement.setAttribute("data-theme", saved);
@@ -48,7 +51,6 @@ export function updateThemeIcon(theme) {
     const btn = document.getElementById("themeToggleBtn");
     if (btn) btn.textContent = theme === "dark" ? "☀️" : "🌙";
 }
-
 export function toggleMobileMenu() { document.getElementById("mobileNav")?.classList.toggle("open"); }
 export function closeMobileMenu() { document.getElementById("mobileNav")?.classList.remove("open"); }
 export function reveal() {

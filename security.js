@@ -9,12 +9,10 @@ const SAFE_ERROR_CODES = new Set([
     'DESIGN_UPLOAD_FAILED','INVALID_DESIGN_PATH','INVALID_PRODUCT_IMAGE_PATH','IMAGE_ONLY','INVALID_PRODUCT','INVALID_STOCK_QUANTITY','INVALID_IMAGE_URL','IMAGE_LIMIT',
     'IMAGE_TOO_LARGE','STORAGE_UPLOAD_FAILED','IMAGE_URL_FAILED','DESIGN_SIGNED_URL_FAILED','INVALID_STORAGE_BUCKET','WHATSAPP_NOT_CONFIGURED'
 ]);
-
 function parseUrl(value) {
     try { return new URL(String(value || '').trim(), window.location.href); }
     catch (_) { return null; }
 }
-
 export function safeHttpUrl(value, { allowRelative = false, maxLength = 2048 } = {}) {
     const raw = String(value || '').trim();
     if (!raw || raw.length > maxLength) return '';
@@ -27,7 +25,6 @@ export function safeHttpUrl(value, { allowRelative = false, maxLength = 2048 } =
     if (parsed.username || parsed.password) return '';
     return parsed.href;
 }
-
 export function safeResourceUrl(value, { allowData = false, allowBlob = false, allowRelative = true, maxLength = 2048 } = {}) {
     const raw = String(value || '').trim();
     if (!raw || raw.length > maxLength) return '';
@@ -42,26 +39,20 @@ export function safeResourceUrl(value, { allowData = false, allowBlob = false, a
     if (parsed.protocol === 'blob:' && !allowBlob) return '';
     return parsed.href;
 }
-
 export function isUuid(value) {
     return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(String(value || ''));
 }
-
 export function isSafeCustomerDesignPath(path) {
     return /^orders\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\.(jpg|jpeg|png|webp|pdf)$/i.test(String(path || ''));
 }
-
 export function isCustomerDesignPathOwnedBy(path, userId) {
     const cleanUserId = String(userId || '').trim();
     if (!isUuid(cleanUserId) || !isSafeCustomerDesignPath(path)) return false;
     return String(path).toLowerCase().startsWith(`orders/${cleanUserId.toLowerCase()}/`);
 }
-
 export function isSafeProductImagePath(path) {
     return /^products\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\.(jpg|jpeg|png|webp|gif|avif)$/i.test(String(path || ''));
 }
-
-
 export function makeClientId(prefix = 'id') {
     try {
         if (globalThis.crypto?.randomUUID) return `${prefix}-${globalThis.crypto.randomUUID()}`;
@@ -76,7 +67,45 @@ export function makeClientId(prefix = 'id') {
     } catch (_) {}
     return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
-
+export function sanitizeDesignLayout(value) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return null;
+    const image = value.image && typeof value.image === 'object' ? value.image : {};
+    const text = value.text && typeof value.text === 'object' ? value.text : {};
+    const cleanNumber = (v, fallback, min, max) => {
+        const n = Number(v);
+        return Number.isFinite(n) ? Math.max(min, Math.min(max, n)) : fallback;
+    };
+    const order = Array.isArray(value.order) ? value.order.filter(x => x === 'image' || x === 'text') : ['image','text'];
+    const cleanOrder = [...new Set(order)];
+    if (!cleanOrder.includes('image')) cleanOrder.unshift('image');
+    if (!cleanOrder.includes('text')) cleanOrder.push('text');
+    const align = ['left','center','right'].includes(text.align) ? text.align : 'center';
+    return {
+        version: 3,
+        canvas: { width: 300, height: 240 },
+        selected: value.selected === 'text' ? 'text' : 'image',
+        order: cleanOrder,
+        image: {
+            x: Math.round(cleanNumber(image.x, 150, 10, 290)),
+            y: Math.round(cleanNumber(image.y, 105, 10, 230)),
+            scale: Number(cleanNumber(image.scale, 1, 0.25, 3).toFixed(2)),
+            rotation: Math.round(cleanNumber(image.rotation, 0, -360, 360)),
+            visible: image.visible !== false
+        },
+        text: {
+            text: String(text.text || '').trim().slice(0, 80),
+            x: Math.round(cleanNumber(text.x, 150, 10, 290)),
+            y: Math.round(cleanNumber(text.y, 185, 10, 230)),
+            scale: Number(cleanNumber(text.scale, 1, 0.5, 3).toFixed(2)),
+            rotation: Math.round(cleanNumber(text.rotation, 0, -360, 360)),
+            font: String(text.font || 'Klassik').slice(0, 40),
+            color: String(text.color || '#111').slice(0, 20),
+            fontSize: Math.round(cleanNumber(text.fontSize, 28, 12, 72)),
+            align,
+            visible: text.visible !== false
+        }
+    };
+}
 export function sanitizeStoredCart(value) {
     if (!Array.isArray(value)) return [];
     const seenLines = new Set();
@@ -103,34 +132,30 @@ export function sanitizeStoredCart(value) {
                 imagePath: isSafeCustomerDesignPath(c.imagePath || '') ? String(c.imagePath).trim() : '',
                 imageType: String(c.imageType || '').trim().slice(0, 80),
                 imageSize: Number.isFinite(Number(c.imageSize)) ? Math.max(0, Math.min(10 * 1024 * 1024, Number(c.imageSize))) : 0,
-                note: String(c.note || '').trim().slice(0, 1000)
+                note: String(c.note || '').trim().slice(0, 1000),
+                layout: sanitizeDesignLayout(c.layout)
             };
         }
         out.push({ id, qty, lineId, customization });
     }
     return out;
 }
-
 export function isSafePositiveInteger(value, max = 1000000000) {
     const n = Number(value);
     return Number.isInteger(n) && n > 0 && n <= max;
 }
-
 export function isAllowedOrderStatus(value) {
     return ORDER_STATUSES.has(String(value || ''));
 }
-
 export function isAllowedReviewStatus(value) {
     return REVIEW_STATUSES.has(String(value || ''));
 }
-
 export function safeErrorCode(error) {
     const code = String(error?.code || '').trim();
     if (SAFE_ERROR_CODES.has(code)) return code;
     const message = String(error?.message || error || '').trim();
     return SAFE_ERROR_CODES.has(message) ? message : 'REQUEST_FAILED';
 }
-
 export function safeUserError(error, fallback = 'Əməliyyat yerinə yetirilmədi.') {
     const code = safeErrorCode(error);
     const labels = {

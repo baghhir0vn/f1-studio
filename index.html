@@ -48,6 +48,8 @@
   "@type":"ItemList",
   "itemListElement":[]
 }</script>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
@@ -83,32 +85,57 @@
 <main id="home">
 <section class="hero reveal">
     <div>
-        <h1>Fərdi hədiyyələr və lazer kəsim.</h1>
-        <p>Fərdi hədiyyələr, lazer kəsim, çap və avto aksessuarlar. Məhsulu seçin, sifarişi WhatsApp-a göndərin və detalları birbaşa dəqiqləşdirin.</p>
-        <div class="notice">Ödəniş və sifariş detalları WhatsApp üzərindən operatorla dəqiqləşdirilir. Kartla onlayn ödəniş bu saytda istifadə olunmur; stok və sifariş məlumatları serverdə saxlanılır.</div>
-        <a class="btn" href="#products">Sifarişə başla →</a>
+        <div class="hero-eyebrow"><span></span> F1 Studio · fərdi hazırlanır</div>
+        <h1>Fərdi hədiyyə. <em>Sənin dizaynın.</em></h1>
+        <p>Fərdi hədiyyələr, lazer kəsim, çap və avto aksessuarlar. Məhsulu seç, Design Studio-da görünüşünü hazırla və sifarişi WhatsApp üzərindən rahat tamamla.</p>
+        <div class="hero-actions">
+            <a class="btn" href="#products">Sifarişə başla <span>→</span></a>
+            <a class="hero-secondary" href="#categories">Kataloqa bax</a>
+        </div>
+        <div class="hero-benefits" aria-label="F1 Studio üstünlükləri">
+            <span>✓ Fərdi dizayn</span>
+            <span>✓ Təhlükəsiz sifariş</span>
+            <span>✓ WhatsApp dəstəyi</span>
+        </div>
+        <div class="notice hero-notice">Ödəniş və sifariş detalları WhatsApp üzərindən operatorla dəqiqləşdirilir. Kartla onlayn ödəniş bu saytda istifadə olunmur.</div>
     </div>
     <div class="hero-art">🎁</div>
+</section>
+
+<section class="studio-proof reveal" aria-label="F1 Studio üstünlükləri">
+  <div class="proof-card"><span class="proof-icon">✦</span><div><b>Fərdi hazırlanır</b><small>Dizaynı özün seç, məhsulu sən formalaşdır.</small></div></div>
+  <div class="proof-card"><span class="proof-icon">⌁</span><div><b>WhatsApp dəstəyi</b><small>Sifariş detalları operatorla rahat dəqiqləşdirilir.</small></div></div>
+  <div class="proof-card"><span class="proof-icon">✓</span><div><b>Yerli və çevik</b><small>Gəncə üzrə sürətli hazırlıq və çatdırılma.</small></div></div>
+</section>
+
+<section class="section reveal process-section">
+  <div class="section-kicker">3 sadə addım</div>
+  <h2>Sənin ideyan, hazır məhsul. <span class="heading-muted">Bu qədər sadə.</span></h2>
+  <div class="process-grid">
+    <article class="process-card"><span class="process-number">01</span><div class="process-icon">🛍️</div><h3>Məhsulu seç</h3><p>Kataloqdan sənə uyğun məhsulu tap, ölçü və variantı müəyyən et.</p></article>
+    <article class="process-card"><span class="process-number">02</span><div class="process-icon">🎨</div><h3>Dizaynını hazırla</h3><p>Design Studio ilə mətn və şəkilləri yerləşdir, görünüşü əvvəlcədən yoxla.</p></article>
+    <article class="process-card"><span class="process-number">03</span><div class="process-icon">💬</div><h3>WhatsApp-da tamamla</h3><p>Sifarişi göndər, son detalları operatorla dəqiqləşdir və hazırlanmasını gözlə.</p></article>
+  </div>
 </section>
 
 <section class="section reveal" style="background:var(--card); padding:40px; border-radius:24px; border:1px dashed var(--accent);">
     <h2>🔎 Ağıllı Hədiyyə Filtri</h2>
     <p style="color:var(--muted); margin-bottom: 20px; font-size:15px;">Qərar verə bilmirsiniz? Uyğun meyarları seçin və ən ideal hədiyyəni tapın.</p>
     <div class="toolbar" style="margin-bottom:0; display:flex; flex-wrap:wrap; gap:10px;">
-        <select id="smartPrice">
+        <select id="smartPrice" aria-label="Qiymət aralığı">
             <option value="">1️⃣ Qiymət aralığı</option>
             <option value="0-20">0.00 ₼ - 20.00 ₼</option>
             <option value="20-50">20.00 ₼ - 50.00 ₼</option>
             <option value="50+">50.00 ₼ və yuxarı</option>
         </select>
-        <select id="smartPerson">
+        <select id="smartPerson" aria-label="Kimin üçün hədiyyə seçimi">
             <option value="">2️⃣ Kimin üçün?</option>
             <option value="sevgili">❤️ Sevgili</option>
             <option value="dost">🤝 Dost / Həmkar</option>
             <option value="aile">👨‍👩‍👧 Ailə üzvü</option>
             <option value="usaq">👶 Uşaq</option>
         </select>
-        <select id="smartType">
+        <select id="smartType" aria-label="Hədiyyə növü">
             <option value="">3️⃣ Hədiyyə növü</option>
             <option value="Saatlar & Hədiyyə">🎁 Hədiyyə qutusu / Saat</option>
             <option value="Lazer & Taxta">🪵 Taxta & Lazer kəsim</option>
@@ -164,13 +191,13 @@
         <div style="margin-top: 25px; border-top: 1px dashed var(--line); padding-top: 20px;">
             <h4 style="margin: 0 0 15px 0;">Siz də rəy bildirin:</h4>
             <div class="form">
-                <input id="revAuthor" maxlength="80" placeholder="Adınız">
-                <select id="revStars">
+                <input id="revAuthor" maxlength="80" placeholder="Adınız" aria-label="Rəy üçün adınız">
+                <select id="revStars" aria-label="Rəy ulduz sayı">
                     <option value="5">★★★★★ (5 Ulduz)</option>
                     <option value="4">★★★★☆ (4 Ulduz)</option>
                     <option value="3">★★★☆☆ (3 Ulduz)</option>
                 </select>
-                <textarea id="revText" maxlength="1000" placeholder="Rəyiniz və təəssüratlarınız..."></textarea>
+                <textarea id="revText" maxlength="1000" placeholder="Rəyiniz və təəssüratlarınız..." aria-label="Rəy mətni"></textarea>
                 <button class="add" data-action="submitReview">Rəyi Göndər</button>
                 <div class="form-help">Rəylər Supabase-də moderasiya gözləyən statusda saxlanılır; rəy göndərmək üçün hesaba giriş tələb olunur.</div>
             </div>
@@ -225,15 +252,34 @@
 </section>
 </main>
 
-<footer>
-    <div style="margin-bottom: 20px;">
-        <span id="footerWhatsAppText">WhatsApp sifarişi checkout-dan açılır</span><br><span id="footerSocials" style="display:inline-flex;gap:10px;margin-top:10px;flex-wrap:wrap;justify-content:center"></span>
+<footer class="site-footer">
+    <div class="footer-shell">
+        <div class="footer-brand">
+            <a href="#home" class="footer-logo">F1 <span>STUDIO</span></a>
+            <p>Fərdi hədiyyələr, çap, lazer kəsim və avto aksessuarlar. Dizaynını hazırla, sifarişini WhatsApp-da tamamla.</p>
+            <div class="footer-status"><span class="footer-status-dot"></span> Fərdi sifarişlər qəbul edilir</div>
+        </div>
+        <div class="footer-column">
+            <span class="footer-label">Keçidlər</span>
+            <a href="#home">Ana səhifə</a>
+            <a href="#products">Məhsul və xidmətlər</a>
+            <a href="#faq">Suallar</a>
+            <a href="#about">Əlaqə & Ünvan</a>
+        </div>
+        <div class="footer-column">
+            <span class="footer-label">Sifariş</span>
+            <span id="footerWhatsAppText">WhatsApp sifarişi checkout-dan açılır</span>
+            <span class="footer-detail">📍 Gəncə · 4 nömrəli poçtun yanı</span>
+            <span class="footer-social-wrap" id="footerSocials"></span>
+        </div>
     </div>
-    © 2026 F1 Studio · Gəncə, 4 nömrəli poçtun yanı
-    <div class="legal-links" aria-label="Hüquqi məlumatlar">
-        <button type="button" data-action="openLegal" data-action-args='[&quot;privacy&quot;]'>Məxfilik siyasəti</button>
-        <button type="button" data-action="openLegal" data-action-args='[&quot;terms&quot;]'>İstifadə şərtləri</button>
-        <button type="button" data-action="openLegal" data-action-args='[&quot;returns&quot;]'>Sifariş / Geri qaytarma qaydaları</button>
+    <div class="footer-bottom">
+        <span>© 2026 F1 Studio</span>
+        <div class="legal-links" aria-label="Hüquqi məlumatlar">
+            <button type="button" data-action="openLegal" data-action-args='[&quot;privacy&quot;]'>Məxfilik siyasəti</button>
+            <button type="button" data-action="openLegal" data-action-args='[&quot;terms&quot;]'>İstifadə şərtləri</button>
+            <button type="button" data-action="openLegal" data-action-args='[&quot;returns&quot;]'>Sifariş / Geri qaytarma qaydaları</button>
+        </div>
     </div>
 </footer>
 
@@ -241,101 +287,210 @@
     <span class="online-badge"></span> 💬 F1 Asistent
 </button>
 
-<div class="chat-box" id="chatBox">
+<div class="chat-box" id="chatBox" role="dialog" aria-modal="false" aria-labelledby="chatTitle" aria-describedby="chatStatus" aria-hidden="true">
     <div class="chat-header">
-        <h4>💬 F1 Sayt Asistenti</h4>
-        <button type="button" data-action="toggleChat" aria-label="Asistenti bağla">×</button>
+        <div class="chat-brand">
+            <span class="chat-avatar" aria-hidden="true">F1</span>
+            <div>
+                <h4 id="chatTitle">F1 Studio Asistenti</h4>
+                <small id="chatStatus"><span class="online-badge"></span> Kataloq üzrə onlayn</small>
+            </div>
+        </div>
+        <div class="chat-head-actions">
+            <button type="button" class="chat-clear" data-action="clearChat" aria-label="Söhbəti təmizlə" title="Söhbəti təmizlə">↺</button>
+            <button type="button" data-action="toggleChat" aria-label="Asistenti bağla">×</button>
+        </div>
     </div>
-    <div class="chat-body" id="chatBody">
+    <div class="chat-body" id="chatBody" aria-live="polite" aria-atomic="false">
         <div class="chat-msg bot">
-            Salam! 👋 Mən F1 Studio-nun sayt asistentiəm.<br>Məhsul, büdcə, çatdırılma və ünvan barədə kömək edə bilərəm.
+            <strong>Salam! 👋</strong><br>Mən F1 Studio-nun sayt asistentiəm. Hədiyyə seçimi, büdcə, məhsul detalları, dizayn və sifariş prosesi ilə kömək edə bilərəm.
             <div class="chat-quick-chips">
-                <span class="chip" data-action="sendQuickMsg" data-action-args='[&quot;30 AZN-ə sevgilim üçün hədiyyə nə var?&quot;]'>🎁 30 AZN Hədiyyə</span>
-                <span class="chip" data-action="sendQuickMsg" data-action-args='[&quot;Çatdırılma neçəyədir?&quot;]'>🚚 Çatdırılma</span>
-                <span class="chip" data-action="sendQuickMsg" data-action-args='[&quot;Ünvan və iş saatlarınız?&quot;]'>📍 Ünvan & Saatlar</span>
+                <button type="button" class="chip" data-action="sendQuickMsg" data-action-args='[&quot;30 AZN-ə sevgilim üçün hədiyyə nə var?&quot;]'>🎁 Hədiyyə seç</button>
+                <button type="button" class="chip" data-action="sendQuickMsg" data-action-args='[&quot;Fərdi dizayn necə edilir?&quot;]'>🎨 Fərdi dizayn</button>
+                <button type="button" class="chip" data-action="sendQuickMsg" data-action-args='[&quot;Çatdırılma neçəyədir?&quot;]'>🚚 Çatdırılma</button>
+                <button type="button" class="chip" data-action="sendQuickMsg" data-action-args='[&quot;Ödənişi necə edirəm?&quot;]'>💳 Ödəniş</button>
             </div>
         </div>
     </div>
     <div class="chat-footer">
-        <input id="chatInput" placeholder="Məs: 30 AZN-ə sevgilim üçün nə var?" data-enter-action="sendChatMsg" aria-label="Mesaj">
-        <button data-action="sendChatMsg" aria-label="Göndər">➤</button>
+        <input id="chatInput" maxlength="500" autocomplete="off" enterkeyhint="send" placeholder="Məs: 30 AZN-ə sevgilim üçün nə var?" data-enter-action="sendChatMsg" aria-label="Mesaj" aria-describedby="chatHint">
+        <button type="button" data-action="sendChatMsg" aria-label="Göndər">➤</button>
+        <small id="chatHint">Enter ilə göndər</small>
     </div>
 </div>
 
 <!-- SƏBƏT MODALI -->
-<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
-    <div class="drawer">
-        <div class="head">
-            <h2 id="cartTitle">Səbətiniz</h2>
-            <button class="btn-login" type="button" data-action="clearCart" style="font-size:12px;padding:8px 12px;">Səbəti təmizlə</button>
-            <button class="close" type="button" data-action="closeCart" aria-label="Səbəti bağla">×</button>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="cartTitle" aria-describedby="cartSubtitle">
+    <div class="drawer cart-drawer">
+        <div class="cart-head">
+            <div>
+                <div class="cart-kicker">SİFARİŞİN</div>
+                <h2 id="cartTitle">Səbətin</h2>
+                <p id="cartSubtitle" class="cart-subtitle">Məhsullarını yoxla, çatdırılmanı seç və sifarişi WhatsApp-da tamamla.</p>
+            </div>
+            <div class="cart-head-actions">
+                <button class="btn-login cart-clear" type="button" data-action="clearCart">Səbəti təmizlə</button>
+                <button class="close" type="button" data-action="closeCart" aria-label="Səbəti bağla">×</button>
+            </div>
         </div>
-        
-        <div id="cartItems"></div>
-        
-        <label id="wrapContainer" style="display:none; gap:10px; align-items:center; margin-top: 15px; cursor:pointer; padding:12px; background:var(--card); border:1px solid var(--line); border-radius:12px;">
-            <input type="checkbox" id="giftWrap" data-change-action="updateTotal" style="width:18px; height:18px; accent-color:var(--accent);">
-            <span style="font-weight:600;">🎁 Xüsusi hədiyyə qablaşdırması istəyirəm (+5.00 ₼)</span>
+
+        <div class="cart-steps" aria-label="Sifariş mərhələləri">
+            <span class="cart-step active"><b>01</b> Məhsullar</span>
+            <span class="cart-step-line"></span>
+            <span class="cart-step"><b>02</b> Məlumatlar</span>
+            <span class="cart-step-line"></span>
+            <span class="cart-step"><b>03</b> WhatsApp</span>
+        </div>
+
+        <div id="cartItems" class="cart-list"></div>
+
+        <label id="wrapContainer" class="gift-wrap-card">
+            <input type="checkbox" id="giftWrap" data-change-action="updateTotal">
+            <span class="gift-wrap-icon">🎁</span>
+            <span class="gift-wrap-copy"><b>Xüsusi hədiyyə qablaşdırması</b><small>Məhsulu hədiyyə kimi hazır göndərək · +5.00 ₼</small></span>
+            <span class="gift-wrap-check">✓</span>
         </label>
 
-        <h3 id="total" style="font-size:22px; margin-top:20px;"></h3>
-        
-        <div id="orderForm" class="form" style="display:none">
-            <input id="name" placeholder="Adınız və Soyadınız">
-            <input id="phone" placeholder="Telefon nömrəniz">
-            
-            <div style="margin-top: 5px;">
-                <label style="font-weight:600; font-size:14px; margin-bottom:6px; display:block; color:var(--ink);">🚚 Çatdırılma seçimi:</label>
-                <select id="deliveryOption" data-change-action="handleDeliveryChange">
-                    <option value="pickup" data-price="0">🏬 Mağazadan götürmə (Ödənişsiz / 0.00 ₼)</option>
-                    <option value="ganja" data-price="3">🚚 Ünvanla çatdırılma (Gəncə daxili +3.00 ₼)</option>
-                    <option value="region" data-price="5">📦 Ünvanla çatdırılma (Rayonlar / Poçtlə +5.00 ₼)</option>
-                </select>
+        <div class="cart-summary">
+            <div class="cart-summary-label">Sifariş xülasəsi</div>
+            <h3 id="total"></h3>
+        </div>
+
+        <div id="orderForm" class="form checkout-form" style="display:none">
+            <div class="checkout-form-head">
+                <div><span>02</span><b>Çatdırılma və əlaqə məlumatları</b></div>
+                <small>WhatsApp-a göndərilməzdən əvvəl məlumatları yoxla.</small>
+            </div>
+            <div class="checkout-fields-grid">
+                <label class="checkout-field"><span>Ad və soyad</span><input id="name" autocomplete="name" placeholder="Adınız və Soyadınız" aria-label="Sifariş üçün ad və soyad"></label>
+                <label class="checkout-field"><span>Telefon</span><input id="phone" autocomplete="tel" placeholder="Telefon nömrəniz" aria-label="Sifariş üçün telefon"></label>
             </div>
 
-            <label id="unknownAddressLabel" style="display:flex; gap:10px; align-items:center; cursor:pointer; margin: 5px 0;">
-                <input type="checkbox" id="unknownAddress" data-change-action="toggleAddress" style="width:18px; height:18px; accent-color:var(--accent);">
-                <span style="font-size: 14px; color: var(--muted); font-weight:500;">Ünvanı bilmirəm, nömrə ilə əlaqə saxlayıb özünüz dəqiqləşdirin</span>
-            </label>
-            
-            <textarea id="address" placeholder="Çatdırılma ünvanı və ya xüsusi qeyd (Məsələn: Nömrənin üstünə '001' yazılsın)"></textarea>
+            <div class="checkout-delivery">
+                <label class="checkout-field"><span>🚚 Çatdırılma seçimi</span>
+                    <select id="deliveryOption" data-change-action="handleDeliveryChange" aria-label="Çatdırılma seçimi">
+                        <option value="pickup" data-price="0">🏬 Mağazadan götürmə (Ödənişsiz / 0.00 ₼)</option>
+                        <option value="ganja" data-price="3">🚚 Ünvanla çatdırılma (Gəncə daxili +3.00 ₼)</option>
+                        <option value="region" data-price="5">📦 Ünvanla çatdırılma (Rayonlar / Poçtlə +5.00 ₼)</option>
+                    </select>
+                </label>
+
+                <label id="unknownAddressLabel" class="unknown-address-card">
+                    <input type="checkbox" id="unknownAddress" data-change-action="toggleAddress">
+                    <span><b>Ünvanı bilmirəm</b><small>Nömrə ilə əlaqə saxlayıb ünvanı dəqiqləşdirək.</small></span>
+                    <i>✓</i>
+                </label>
+            </div>
+
+            <label class="checkout-field"><span>Ünvan / xüsusi qeyd</span><textarea id="address" placeholder="Çatdırılma ünvanı və ya xüsusi qeyd" aria-label="Çatdırılma ünvanı və ya xüsusi qeyd"></textarea></label>
         </div>
-        
-        <div class="notice" style="margin-top:15px">💬 Sifariş bu mərhələdə WhatsApp-a hazırlanmış mesaj kimi göndərilir. Məbləğ, çatdırılma və ödəniş qaydası operatorla WhatsApp-da dəqiqləşdirilir.</div><button class="checkout" data-action="checkout">WhatsApp ilə Sifariş Et</button>
+
+        <div class="checkout-trust">
+            <span>🔒 Təhlükəsiz sifariş axını</span>
+            <span>💬 WhatsApp dəstəyi</span>
+            <span>💳 Onlayn ödəniş yoxdur</span>
+        </div>
+        <div class="checkout-cta">
+            <div><small>Son addım</small><b>Sifariş detallarını WhatsApp-da dəqiqləşdir</b></div>
+            <button class="checkout" data-action="checkout">WhatsApp ilə Sifariş Et <span>→</span></button>
+        </div>
     </div>
 </div>
 
 <!-- MƏHSULUN ƏTRAFLI MƏLUMAT MODALI -->
-<div class="modal-center" id="productModal" role="dialog" aria-modal="true" aria-labelledby="modalProdTitle">
-    <div class="dialog">
-        <div class="head">
-            <h2 id="modalProdTitle">Məhsul Detalı</h2>
+<div class="modal-center" id="productModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modalProdTitle" aria-describedby="modalProdDesc">
+    <div class="dialog product-detail-dialog">
+        <div class="head product-modal-head">
+            <div>
+                <span class="product-modal-kicker">F1 STUDIO • MƏHSUL DETALI</span>
+                <h2 id="modalProdTitle">Məhsul Detalı</h2>
+            </div>
             <button class="close" type="button" data-action="closeProductModal" aria-label="Məhsul detalını bağla">×</button>
         </div>
-        <div id="modalProdMedia" class="product-gallery" style="margin-bottom:15px;"></div>
-        <p id="modalProdDesc" style="color:var(--muted); line-height:1.6; font-size:15px; margin-bottom:15px;"></p>
-        <div id="modalProdPrice" style="font-size:24px; font-weight:800; color:var(--accent); margin-bottom:20px;"></div>
-        <button class="add" id="modalAddToCartBtn">🛒 Səbətə əlavə et</button>
+        <div class="product-detail-layout">
+            <div class="product-modal-media">
+                <div id="modalProdMedia" class="product-gallery"></div>
+                <div class="product-modal-gallery-note">Şəkillər arasında keçid etmək üçün aşağıdakı önbaxışlardan istifadə et.</div>
+            </div>
+            <div class="product-modal-copy">
+                <div class="product-modal-intro">
+                    <span>✨ Fərdi seçimlərə açıq</span>
+                    <span>💬 WhatsApp dəstəyi</span>
+                </div>
+                <p id="modalProdDesc" class="product-modal-desc"></p>
+                <div id="modalProdPrice" class="product-modal-price"></div>
+                <div class="product-modal-trust" aria-label="Sifariş üstünlükləri">
+                    <div><b>01</b><span>Fərdi hazırlanma</span></div>
+                    <div><b>02</b><span>Sifarişdən əvvəl dəqiqləşdirmə</span></div>
+                    <div><b>03</b><span>WhatsApp ilə rahat əlaqə</span></div>
+                </div>
+                <button class="add product-modal-cta" id="modalAddToCartBtn">🛒 Səbətə əlavə et</button>
+                <p class="product-modal-note">Qiymət və hazırlama müddəti məhsul seçimlərinə görə dəyişə bilər. Son detallar sifariş zamanı təsdiqlənir.</p>
+            </div>
+        </div>
     </div>
 </div>
 
 <!-- FƏRDİ SİFARİŞ KONFİQURATORU -->
-<div class="modal-center" id="customModal" role="dialog" aria-modal="true" aria-labelledby="customModalTitle">
+<div class="modal-center" id="customModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="customModalTitle">
     <div class="dialog custom-dialog">
         <div class="head">
             <h2 id="customModalTitle">✨ Fərdi sifariş</h2>
             <button class="close" type="button" data-action="closeCustomModal" aria-label="Fərdi sifarişi bağla">×</button>
         </div>
         <div id="customProductName" class="custom-product-name"></div>
-        <div class="custom-preview" id="customPreview">
-            <span>Fərdi dizaynınızı burada seçin</span>
-        </div>
-        <div class="custom-grid">
-            <label class="custom-field custom-full">
+        <div class="custom-layout">
+          <div class="design-studio-box">
+            <div class="design-studio-head">
+              <div><b>🎨 F1 Design Studio</b><small>Canlı önbaxış</small></div>
+              <span>Elementi tutub hərəkət etdirə bilərsən · mobil-də iki barmaqla ölçünü dəyiş</span>
+            </div>
+            <div class="design-canvas-stage">
+              <span class="canvas-chip canvas-chip-top">ÇAP ÖNBAXIŞI</span>
+              <canvas id="designCanvas" width="300" height="240" aria-label="F1 Design Studio önbaxış sahəsi"></canvas>
+              <span class="canvas-chip canvas-chip-bottom">300 × 240 · kətan</span>
+            </div>
+            <div class="design-studio-status" id="designSelectionStatus">Şəkil seçilib · əlavə edilməyib</div>
+            <div class="design-tool-section">
+              <div class="design-tool-label">Element idarəsi</div>
+              <div class="design-tools design-tools-main">
+                <button type="button" data-action="selectPrevDesignElement">← Element</button>
+                <button type="button" data-action="selectNextDesignElement">Element →</button>
+                <button type="button" data-action="deleteDesignElement">🗑 Sil</button>
+                <button type="button" data-action="zoomDesign" data-action-args="[-0.1]">− Ölçü</button>
+                <button type="button" data-action="zoomDesign" data-action-args="[0.1]">＋ Ölçü</button>
+                <button type="button" data-action="centerDesignElement">⊙ Mərkəz</button>
+                <button type="button" data-action="fitDesignElementToPrint">📐 Çapa sığdır</button>
+                <button type="button" data-action="rotateDesign" data-action-args="[-15]">↶ 15°</button>
+                <button type="button" data-action="rotateDesign" data-action-args="[15]">↷ 15°</button>
+              </div>
+            </div>
+            <div class="design-tool-section">
+              <div class="design-tool-label">Tarixçə və qatlar</div>
+              <div class="design-tools design-tools-main">
+                <button type="button" data-action="undoDesign">↩️ Geri</button>
+                <button type="button" data-action="redoDesign">↪️ İrəli</button>
+                <button type="button" data-action="sendDesignElementBackward">⬇️ Qatı geri</button>
+                <button type="button" data-action="bringDesignElementForward">⬆️ Qatı irəli</button>
+                <button type="button" data-action="resetDesignStudio">Sıfırla</button>
+                <button type="button" data-action="discardDesignDraft">🗑 Qaralamanı sil</button>
+                <button type="button" data-action="saveDesignLayout">💾 Yadda saxla</button>
+                <button type="button" data-action="exportDesignPreview">PNG önizləmə</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="custom-details">
+            <div class="custom-preview" id="customPreview">
+              <span>Fərdi dizaynınızı burada seçin</span>
+            </div>
+            <div class="custom-grid">
+              <label class="custom-field custom-full">
                 <span>Üstündə yazılacaq mətn</span>
                 <input id="customText" type="text" maxlength="80" placeholder="Məs: 10-AA-123 və ya Elvin &amp; Aysel">
-            </label>
-            <label class="custom-field">
+                <small class="design-selection-hint">💡 Mətn və şəkli kətanda ayrıca seçib hərəkət etdirə bilərsən.</small>
+              </label>
+              <label class="custom-field">
                 <span>Rəng</span>
                 <select id="customColor">
                     <option value="Qara">⚫ Qara</option>
@@ -344,8 +499,8 @@
                     <option value="Gümüşü">⚙️ Gümüşü</option>
                     <option value="Digər">🎨 Digər / operatorla dəqiqləşdiriləcək</option>
                 </select>
-            </label>
-            <label class="custom-field">
+              </label>
+              <label class="custom-field">
                 <span>Ölçü</span>
                 <select id="customSize" data-change-action="toggleCustomSizeValue">
                     <option value="Standart">Standart</option>
@@ -354,9 +509,9 @@
                     <option value="Böyük">Böyük</option>
                     <option value="Xüsusi ölçü">Xüsusi ölçü</option>
                 </select>
-                <input id="customSizeValue" type="text" maxlength="40" placeholder="Məs: 25 × 8 sm" style="display:none;">
-            </label>
-            <label class="custom-field">
+                <input id="customSizeValue" type="text" maxlength="40" placeholder="Məs: 25 × 8 sm" style="display:none;" aria-label="Xüsusi ölçü">
+              </label>
+              <label class="custom-field">
                 <span>Şrift</span>
                 <select id="customFont">
                     <option value="Klassik">Klassik</option>
@@ -365,24 +520,38 @@
                     <option value="Əlyazma">Əlyazma</option>
                     <option value="Operatorla seçim">Operatorla seçim</option>
                 </select>
-            </label>
-            <label class="custom-field custom-full file-field">
+              </label>
+              <label class="custom-field">
+                <span>Mətn ölçüsü <b id="customFontSizeValue">28px</b></span>
+                <input id="customFontSize" type="range" min="12" max="72" step="1" value="28" aria-label="Mətn ölçüsü">
+              </label>
+              <label class="custom-field">
+                <span>Mətn hizalanması</span>
+                <select id="customTextAlign">
+                    <option value="left">Sola</option>
+                    <option value="center" selected>Mərkəzə</option>
+                    <option value="right">Sağa</option>
+                </select>
+              </label>
+              <label class="custom-field custom-full file-field">
                 <span>Şəkil / logo yüklə <small>(PNG, JPG, WEBP, PDF)</small></span>
                 <input id="customImage" type="file" accept="image/png,image/jpeg,image/webp,application/pdf" data-change-action="handleCustomImage" data-change-args='[{&quot;$&quot;: &quot;this&quot;}]'>
                 <small id="customImageName" class="file-name">Fayl seçilməyib</small>
-            </label>
-            <label class="custom-field custom-full">
+              </label>
+              <label class="custom-field custom-full">
                 <span>Əlavə qeyd</span>
                 <textarea id="customNote" maxlength="300" placeholder="Məs: Yazı mərkəzdə olsun, ürək işarəsi əlavə edilsin və s."></textarea>
-            </label>
+              </label>
+            </div>
+            <div class="notice custom-note">🔒 Dizayn faylı təhlükəsiz, private Storage-da saxlanılır. Fayl yükləmək üçün hesabınıza daxil olun; operator faylı admin paneldən müvəqqəti təhlükəsiz linklə aça bilər.</div>
+            <button class="add custom-submit" id="customSubmitBtn" type="button" data-action="confirmCustomization">🛒 Fərdiləşdir və səbətə əlavə et</button>
+          </div>
         </div>
-        <div class="notice custom-note">🔒 Dizayn faylı təhlükəsiz, private Storage-da saxlanılır. Fayl yükləmək üçün hesabınıza daxil olun; operator faylı admin paneldən müvəqqəti təhlükəsiz linklə aça bilər.</div>
-        <button class="add custom-submit" id="customSubmitBtn" type="button" data-action="confirmCustomization">🛒 Fərdiləşdir və səbətə əlavə et</button>
     </div>
 </div>
 
 <!-- HÜQUQİ SƏHİFƏLƏR -->
-<div class="modal-center" id="privacyModal" role="dialog" aria-modal="true" aria-labelledby="privacyTitle">
+<div class="modal-center" id="privacyModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="privacyTitle">
     <div class="dialog legal-dialog">
         <div class="legal-head">
             <div>
@@ -417,7 +586,7 @@
     </div>
 </div>
 
-<div class="modal-center" id="termsModal" role="dialog" aria-modal="true" aria-labelledby="termsTitle">
+<div class="modal-center" id="termsModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="termsTitle">
     <div class="dialog legal-dialog">
         <div class="legal-head">
             <div>
@@ -448,7 +617,7 @@
     </div>
 </div>
 
-<div class="modal-center" id="returnsModal" role="dialog" aria-modal="true" aria-labelledby="returnsTitle">
+<div class="modal-center" id="returnsModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="returnsTitle">
     <div class="dialog legal-dialog">
         <div class="legal-head">
             <div>
@@ -478,7 +647,7 @@
 </div>
 
 <!-- PROFİL MODALI -->
-<div class="modal-center" id="loginModal" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
+<div class="modal-center" id="loginModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="profileModalTitle">
     <div class="dialog">
         <div class="head">
             <h2 id="profileModalTitle">👤 Müştəri hesabı</h2>
@@ -486,10 +655,10 @@
         </div>
         <p style="color:var(--muted); font-size:14px; margin-top:0;">Hesab serverdə saxlanılır. Şifrəni paylaşmayın. Giriş etdikdən sonra sifariş tarixçənizi digər cihazlarda da görə bilərsiniz.</p>
         <div class="form">
-            <input id="profileName" autocomplete="name" placeholder="Adınız və Soyadınız">
-            <input id="profilePhone" autocomplete="tel" placeholder="Telefon nömrəniz">
-            <input id="profileEmail" type="email" autocomplete="email" placeholder="E-poçt (hesab üçün vacibdir)">
-            <input id="profilePassword" type="password" autocomplete="current-password" placeholder="Şifrə (ən azı 8 simvol)">
+            <input id="profileName" autocomplete="name" placeholder="Adınız və Soyadınız" aria-label="Ad və soyad">
+            <input id="profilePhone" autocomplete="tel" placeholder="Telefon nömrəniz" aria-label="Telefon nömrəsi">
+            <input id="profileEmail" type="email" autocomplete="email" placeholder="E-poçt (hesab üçün vacibdir)" aria-label="E-poçt">
+            <input id="profilePassword" type="password" autocomplete="current-password" placeholder="Şifrə (ən azı 8 simvol)" aria-label="Şifrə">
 <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
                 <button class="add" style="margin-top:10px;" data-action="registerAccount">Qeydiyyatdan keç</button>
                 <button class="btn-login" style="margin-top:10px;" data-action="loginAccount">Giriş et</button>
@@ -498,15 +667,15 @@
             <div id="passwordResetPanel" class="password-reset-panel">
                 <div class="password-reset-title">🔐 Şifrəni sıfırla</div>
                 <div class="password-reset-help">E-poçt ünvanınızı daxil edin. Hesabınızla əlaqəlidirsə, şifrəni yeniləmək üçün təhlükəsiz keçid göndərəcəyik.</div>
-                <input id="resetEmail" type="email" autocomplete="email" placeholder="E-poçt ünvanınız">
+                <input id="resetEmail" type="email" autocomplete="email" placeholder="E-poçt ünvanınız" aria-label="Şifrə sıfırlamaq üçün e-poçt">
                 <button class="add" type="button" data-action="sendPasswordResetEmail">📧 Reset linki göndər</button>
                 <button class="btn-login" type="button" data-action="hideForgotPassword">Geri</button>
             </div>
             <div id="passwordRecoveryPanel" class="password-recovery-panel">
                 <div class="password-reset-title">🔑 Yeni şifrə</div>
                 <div class="password-reset-help">E-poçtunuza gələn keçiddən sonra burada yeni şifrənizi təyin edin.</div>
-                <input id="newPassword" type="password" autocomplete="new-password" placeholder="Yeni şifrə (ən azı 8 simvol)">
-                <input id="newPasswordConfirm" type="password" autocomplete="new-password" placeholder="Yeni şifrəni təkrar yazın">
+                <input id="newPassword" type="password" autocomplete="new-password" placeholder="Yeni şifrə (ən azı 8 simvol)" aria-label="Yeni şifrə">
+                <input id="newPasswordConfirm" type="password" autocomplete="new-password" placeholder="Yeni şifrəni təkrar yazın" aria-label="Yeni şifrənin təkrarı">
                 <button class="add" type="button" data-action="updatePasswordFromRecovery">✅ Şifrəni yenilə</button>
             </div>
             <button id="logoutBtn" class="btn-login" style="display:none;" data-action="logoutProfile">Hesabdan çıx</button>
@@ -517,12 +686,12 @@
 </div>
 
 <!-- ADMIN PANEL -->
-<div class="modal-center admin-modal" id="adminModal" role="dialog" aria-modal="true" aria-labelledby="adminModalTitle">
+<div class="modal-center admin-modal" id="adminModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="adminModalTitle">
   <div class="dialog">
     <div class="admin-shell">
       <aside class="admin-side">
         <div class="admin-brand">F1 <span style="color:var(--accent)">STUDIO</span></div>
-        <div class="admin-sub">İdarəetmə paneli</div>
+        <div class="admin-sub">İdarəetmə paneli · V24</div>
         <div class="admin-nav">
           <button class="active" data-admin-view="dashboard" data-action="switchAdminView" data-action-args='[&quot;dashboard&quot;]'>📊 Panel</button>
           <button data-admin-view="products" data-action="switchAdminView" data-action-args='[&quot;products&quot;]'>📦 Məhsullar</button>
@@ -574,36 +743,36 @@
         <div class="admin-view" id="adminView-products">
           <div class="admin-toolbar">
             <button class="admin-primary" data-action="newAdminProduct">＋ Yeni məhsul</button>
-            <input id="adminProductSearch" placeholder="Məhsul axtar..." data-input-action="renderAdminProducts">
+            <input id="adminProductSearch" placeholder="Məhsul axtar..." data-input-action="renderAdminProducts" aria-label="Məhsul axtarışı">
             <button data-action="loadAdminProducts">↻ Yenilə</button>
           </div>
           <form class="admin-form" id="adminProductForm" data-submit-action="saveAdminProduct" style="display:none">
             <h3 id="adminProductFormTitle">Yeni məhsul</h3>
             <input type="hidden" id="adminProductId">
-            <input id="adminProductName" placeholder="Məhsul adı" required>
-            <input id="adminProductPrice" type="number" min="0" step="0.01" placeholder="Qiymət (₼)" required>
-            <select id="adminProductCat"><option>Lazer & Taxta</option><option>Avto & Aksessuar</option><option>Çap & Poliqrafiya</option><option>Saatlar & Hədiyyə</option></select>
+            <input id="adminProductName" placeholder="Məhsul adı" required aria-label="Məhsul adı">
+            <input id="adminProductPrice" type="number" min="0" step="0.01" placeholder="Qiymət (₼)" required aria-label="Məhsul qiyməti">
+            <select id="adminProductCat" aria-label="Məhsul kateqoriyası"><option>Lazer & Taxta</option><option>Avto & Aksessuar</option><option>Çap & Poliqrafiya</option><option>Saatlar & Hədiyyə</option></select>
             <div class="admin-image-upload full">
               <b>📷 Məhsul şəkilləri — qalereya (maksimum 6)</b>
               <div class="admin-image-row">
-                <input id="adminProductImage" placeholder="Əsas şəkil URL-i (istəsəniz)" style="flex:1;min-width:220px;">
+                <input id="adminProductImage" placeholder="Əsas şəkil URL-i (istəsəniz)" style="flex:1;min-width:220px;" aria-label="Əsas məhsul şəkli URL-i">
               </div>
               <div class="admin-image-row">
-                <input id="adminProductImageFile" class="admin-image-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" multiple data-change-action="handleAdminProductImage" data-change-args='[{&quot;$&quot;: &quot;this&quot;}]'>
+                <input id="adminProductImageFile" class="admin-image-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif,image/avif" multiple data-change-action="handleAdminProductImage" data-change-args='[{&quot;$&quot;: &quot;this&quot;}]' aria-label="Məhsul şəkilləri">
                 <button type="button" data-action="clearAdminProductImage">🗑 Qalereyanı təmizlə</button>
               </div>
               <label class="admin-switch"><input id="adminProductGalleryReplace" type="checkbox"> Mövcud qalereyanı yeni şəkillərlə əvəz et</label>
               <div id="adminProductGalleryPreview" class="admin-gallery-grid"></div>
               <div id="adminProductImageStatus" class="admin-image-help">Bir neçə şəkli birlikdə yükləyə bilərsən. Maksimum 6 şəkil, hər biri 5 MB.</div>
             </div>
-            <input id="adminProductEmoji" placeholder="Emoji" maxlength="4">
-            <input id="adminProductBadge" placeholder="Badge (məs: Aksiya)">
-            <input id="adminProductMaterial" placeholder="Material">
-            <input id="adminProductTime" placeholder="Hazırlanma müddəti (məs: 1-2 iş günü)">
-            <input id="adminProductStock" placeholder="Stok / status"><input id="adminProductStockQty" type="number" min="0" step="1" inputmode="numeric" placeholder="Stok miqdarı (boş = limitsiz)">
+            <input id="adminProductEmoji" placeholder="Emoji" maxlength="4" aria-label="Məhsul emojisi">
+            <input id="adminProductBadge" placeholder="Badge (məs: Aksiya)" aria-label="Məhsul badge-i">
+            <input id="adminProductMaterial" placeholder="Material" aria-label="Məhsul materialı">
+            <input id="adminProductTime" placeholder="Hazırlanma müddəti (məs: 1-2 iş günü)" aria-label="Hazırlanma müddəti">
+            <input id="adminProductStock" placeholder="Stok / status" aria-label="Stok statusu"><input id="adminProductStockQty" type="number" min="0" step="1" inputmode="numeric" placeholder="Stok miqdarı (boş = limitsiz)" aria-label="Stok miqdarı">
             <label class="admin-switch"><input id="adminProductCustom" type="checkbox" checked> Fərdi dizayna icazə ver</label>
-            <textarea id="adminProductDesc" class="full" placeholder="Məhsul təsviri"></textarea>
-            <input id="adminProductTags" class="full" placeholder="Tag-lar, vergüllə: sevgili,ata,dost">
+            <textarea id="adminProductDesc" class="full" placeholder="Məhsul təsviri" aria-label="Məhsul təsviri"></textarea>
+            <input id="adminProductTags" class="full" placeholder="Tag-lar, vergüllə: sevgili,ata,dost" aria-label="Məhsul tag-ları">
             <div class="full admin-actions"><button type="submit" class="admin-primary">Yadda saxla</button><button type="button" data-action="cancelAdminProduct">Ləğv et</button></div>
             <div class="admin-muted full">Şəkli kompüterdən seçə bilərsən və ya URL yaza bilərsən. Fayl yükləməsi üçün Supabase-də <b>product-images</b> adlı Storage bucket və admin upload policy bir dəfə qurulmalıdır.</div>
           </form>
@@ -611,14 +780,20 @@
         </div>
 
         <div class="admin-view" id="adminView-orders">
-          <div class="admin-toolbar"><select id="adminOrderFilter" data-change-action="renderAdminOrders"><option value="">Bütün statuslar</option><option value="pending_confirmation">Təsdiq gözləyir</option><option value="confirmed">Təsdiqləndi</option><option value="preparing">Hazırlanır</option><option value="ready">Hazırdır</option><option value="shipped">Göndərildi</option><option value="completed">Tamamlandı</option><option value="cancelled">Ləğv edildi</option></select><button data-action="loadAdminOrders">↻ Yenilə</button></div>
+          <div class="admin-toolbar admin-orders-toolbar">
+            <input id="adminOrderSearch" placeholder="Sifariş kodu, ad, telefon və ya məhsul axtar..." data-input-action="renderAdminOrders" aria-label="Sifariş axtarışı">
+            <select id="adminOrderFilter" data-change-action="renderAdminOrders" aria-label="Sifariş status filtri"><option value="">Bütün statuslar</option><option value="pending_confirmation">Təsdiq gözləyir</option><option value="confirmed">Təsdiqləndi</option><option value="preparing">Hazırlanır</option><option value="ready">Hazırdır</option><option value="shipped">Göndərildi</option><option value="completed">Tamamlandı</option><option value="cancelled">Ləğv edildi</option></select>
+            <select id="adminOrderSort" data-change-action="renderAdminOrders" aria-label="Sifariş sıralaması"><option value="newest">Ən yenilər əvvəl</option><option value="oldest">Ən köhnələr əvvəl</option></select>
+            <button data-action="loadAdminOrders">↻ Yenilə</button>
+          </div>
+          <div class="admin-note">Sifariş statusu dəyişəndə Supabase-də saxlanılır. Müştəri ilə birbaşa WhatsApp-dan əlaqə saxlamaq və sifariş məlumatını kopyalamaq mümkündür.</div>
           <div id="adminOrdersList"></div>
         </div>
 
         <div class="admin-view" id="adminView-customers">
           <div class="admin-toolbar">
-            <input id="adminCustomerSearch" placeholder="Ad, telefon və ya email axtar..." data-input-action="renderAdminCustomers">
-            <select id="adminCustomerFilter" data-change-action="renderAdminCustomers"><option value="">Bütün müştərilər</option><option value="active">Aktiv</option><option value="blocked">Bloklanmış</option></select>
+            <input id="adminCustomerSearch" placeholder="Ad, telefon və ya email axtar..." data-input-action="renderAdminCustomers" aria-label="Müştəri axtarışı">
+            <select id="adminCustomerFilter" data-change-action="renderAdminCustomers" aria-label="Müştəri status filtri"><option value="">Bütün müştərilər</option><option value="active">Aktiv</option><option value="blocked">Bloklanmış</option></select>
             <button data-action="loadAdminCustomers">↻ Yenilə</button>
           </div>
           <div class="admin-customer-summary">
@@ -631,7 +806,7 @@
         </div>
 
         <div class="admin-view" id="adminView-reviews">
-          <div class="admin-toolbar"><select id="adminReviewFilter" data-change-action="renderAdminReviews"><option value="">Bütün rəylər</option><option value="pending">Gözləyən</option><option value="approved">Təsdiqlənmiş</option><option value="rejected">Rədd edilmiş</option></select><button data-action="loadAdminReviews">↻ Yenilə</button></div>
+          <div class="admin-toolbar"><select id="adminReviewFilter" data-change-action="renderAdminReviews" aria-label="Rəy status filtri"><option value="">Bütün rəylər</option><option value="pending">Gözləyən</option><option value="approved">Təsdiqlənmiş</option><option value="rejected">Rədd edilmiş</option></select><button data-action="loadAdminReviews">↻ Yenilə</button></div>
           <div id="adminReviewsList"></div>
         </div>
 
@@ -642,28 +817,28 @@
               <h3>💬 Əlaqə</h3>
               <p>WhatsApp nömrəsi və sosial şəbəkə hesablarını buradan dəyiş.</p>
               <div class="form">
-                <input id="siteSettingWhatsapp" inputmode="tel" placeholder="WhatsApp nömrəsi (məs: 994501234567)">
-                <input id="siteSettingInstagram" type="url" placeholder="Instagram URL-i">
-                <input id="siteSettingTiktok" type="url" placeholder="TikTok URL-i">
+                <input id="siteSettingWhatsapp" inputmode="tel" placeholder="WhatsApp nömrəsi (məs: 994501234567)" aria-label="WhatsApp nömrəsi">
+                <input id="siteSettingInstagram" type="url" placeholder="Instagram URL-i" aria-label="Instagram URL-i">
+                <input id="siteSettingTiktok" type="url" placeholder="TikTok URL-i" aria-label="TikTok URL-i">
               </div>
             </div>
             <div class="admin-settings-card">
               <h3>📍 Ünvan və iş saatları</h3>
               <p>Müştərilərin gördüyü mağaza ünvanı və iş saatları.</p>
               <div class="form">
-                <input id="siteSettingAddress" placeholder="Ünvan">
-                <input id="siteSettingWeekdayHours" placeholder="I-V günlər (məs: 09:00 - 19:00)">
-                <input id="siteSettingWeekendHours" placeholder="VI-VII günlər (məs: 10:00 - 19:00)">
+                <input id="siteSettingAddress" placeholder="Ünvan" aria-label="Ünvan">
+                <input id="siteSettingWeekdayHours" placeholder="I-V günlər (məs: 09:00 - 19:00)" aria-label="I-V iş saatları">
+                <input id="siteSettingWeekendHours" placeholder="VI-VII günlər (məs: 10:00 - 19:00)" aria-label="VI-VII iş saatları">
               </div>
             </div>
             <div class="admin-settings-card">
               <h3>🚚 Çatdırılma</h3>
               <p>Checkout-da və FAQ bölməsində göstərilən məbləğlər.</p>
               <div class="form">
-                <input id="siteSettingPickup" type="number" min="0" step="0.01" placeholder="Mağazadan götürmə">
-                <input id="siteSettingGanja" type="number" min="0" step="0.01" placeholder="Gəncə daxili">
-                <input id="siteSettingRegion" type="number" min="0" step="0.01" placeholder="Rayonlar / poçt">
-                <input id="siteSettingGiftWrap" type="number" min="0" step="0.01" placeholder="Hədiyyə qablaşdırması">
+                <input id="siteSettingPickup" type="number" min="0" step="0.01" placeholder="Mağazadan götürmə" aria-label="Mağazadan götürmə haqqı">
+                <input id="siteSettingGanja" type="number" min="0" step="0.01" placeholder="Gəncə daxili" aria-label="Gəncə daxili çatdırılma haqqı">
+                <input id="siteSettingRegion" type="number" min="0" step="0.01" placeholder="Rayonlar / poçt" aria-label="Rayonlar və poçt çatdırılma haqqı">
+                <input id="siteSettingGiftWrap" type="number" min="0" step="0.01" placeholder="Hədiyyə qablaşdırması" aria-label="Hədiyyə qablaşdırma haqqı">
               </div>
             </div>
             <div class="admin-settings-card">
@@ -685,7 +860,7 @@
 <!-- TOAST BİLDİRİŞ QUTUSU -->
 <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
 <noscript><div style="padding:16px;background:#fff1f2;color:#7f1d1d;text-align:center;font-family:system-ui">Bu saytın sifariş və məhsul funksiyaları üçün JavaScript aktiv olmalıdır.</div></noscript>
     <script type="module" src="js/app.js"></script>
 </body>

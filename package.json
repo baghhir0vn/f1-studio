@@ -1,0 +1,23 @@
+{
+  "name": "f1-studio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "audit:security": "node tools/static-security-audit.mjs",
+    "audit:integrity": "node tools/source-integrity-audit.mjs",
+    "audit:flow": "node tools/system-flow-audit.mjs",
+    "audit:ui": "node tools/ui-wiring-audit.mjs",
+    "test:e2e": "node tools/e2e-smoke.mjs",
+    "audit:all": "npm run audit:security && npm run audit:integrity && npm run audit:flow && npm run audit:ui && npm run audit:chat && npm run test:chat && npm run audit:design && npm run audit:performance && npm run audit:assets && npm run audit:mobile && npm run audit:accessibility && npm run test:e2e",
+    "audit:design": "node tools/design-consistency-audit.mjs",
+    "audit:performance": "node tools/performance-audit.mjs",
+    "audit:assets": "node tools/asset-loading-audit.mjs",
+    "audit:mobile": "node tools/mobile-responsive-audit.mjs",
+    "audit:accessibility": "node tools/accessibility-ux-audit.mjs",
+    "audit:chat": "node tools/chatbot-audit.mjs",
+    "test:chat": "node tools/chatbot-logic-smoke.mjs"
+  },
+  "devDependencies": {
+    "playwright": "^1.55.0"
+  }
+}

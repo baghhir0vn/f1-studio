@@ -1,7 +1,6 @@
 import { sb } from '../config.js';
 import { fetchAllRows } from './query-utils.js';
-import { isAllowedOrderStatus, isSafeCustomerDesignPath } from '../security.js';
-
+import { isAllowedOrderStatus, isSafeCustomerDesignPath, sanitizeDesignLayout } from '../security.js';
 export function mapOrderRow(o) {
     return {
         id: o.id,
@@ -23,7 +22,6 @@ export function mapOrderRow(o) {
         }))
     };
 }
-
 export const orderService = {
     async listMine() {
         const { data: userData } = await sb.auth.getUser();
@@ -60,7 +58,8 @@ export const orderService = {
                     imagePath: isSafeCustomerDesignPath(c.imagePath || '') ? String(c.imagePath).trim() : '',
                     imageType: String(c.imageType || '').trim().slice(0, 80),
                     imageSize: Number.isFinite(Number(c.imageSize)) ? Math.max(0, Math.min(10 * 1024 * 1024, Number(c.imageSize))) : 0,
-                    note: String(c.note || '').trim().slice(0, 1000)
+                    note: String(c.note || '').trim().slice(0, 1000),
+                    layout: sanitizeDesignLayout(c.layout)
                 };
             }
             return { productId, qty, customization };

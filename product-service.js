@@ -1,8 +1,6 @@
 import { sb } from '../config.js';
 import { safeResourceUrl } from '../security.js';
-
 const PRODUCT_COLUMNS = 'id,name,price,cat,image,images,emoji,badge,material,size,production_time,stock,stock_quantity,description,tags,customizable,updated_at';
-
 export function mapProductRow(p) {
     const rawGallery = Array.isArray(p.images) ? p.images : [];
     const gallery = rawGallery
@@ -29,7 +27,6 @@ export function mapProductRow(p) {
         tags: Array.isArray(p.tags) ? p.tags.slice(0, 30).map(v => String(v).slice(0, 80)) : []
     };
 }
-
 function validateProductPayload(x) {
     const name = String(x.name || '').trim();
     if (name.length < 1 || name.length > 160) throw new Error('INVALID_PRODUCT');
@@ -40,7 +37,6 @@ function validateProductPayload(x) {
     if (!Array.isArray(x.images) || x.images.length > 6 || x.images.some(v => String(v).length > 2048)) throw new Error('INVALID_PRODUCT');
     if (!Array.isArray(x.tags) || x.tags.length > 30 || x.tags.some(v => String(v).length > 80)) throw new Error('INVALID_PRODUCT');
 }
-
 const writePayload = x => {
     const images = Array.isArray(x.images) ? x.images.filter(Boolean).slice(0, 6) : [];
     return {
@@ -61,7 +57,6 @@ const writePayload = x => {
         customizable: x.customizable !== false
     };
 };
-
 export const productService = {
     async list() {
         const { data, error } = await sb.from('products').select(PRODUCT_COLUMNS).order('id');

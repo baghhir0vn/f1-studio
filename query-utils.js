@@ -1,7 +1,4 @@
-/**
- * Shared Supabase pagination helper.
- * Keeps the service layer consistent without changing query semantics.
- */
+
 export async function fetchAllRows(queryFactory, { pageSize = 1000, maxRows = 25000 } = {}) {
     const rows = [];
     for (let from = 0; from < maxRows; from += pageSize) {

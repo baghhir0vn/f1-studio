@@ -1,5 +1,4 @@
 import { ctx } from './state.js';
-
 function parseArgs(raw, event, el){
     if(!raw) return [];
     try{
@@ -7,7 +6,6 @@ function parseArgs(raw, event, el){
     }catch(_){ return []; }
 }
 function invoke(name,args=[]){ const fn=ctx[name]; if(typeof fn==='function') return fn(...args); }
-
 export function initEvents(){
     document.addEventListener('click', event=>{
         const el=event.target?.closest?.('[data-action],[data-actions]');

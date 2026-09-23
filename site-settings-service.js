@@ -1,8 +1,6 @@
 import { sb } from '../config.js';
 import { safeHttpUrl } from '../security.js';
-
 const SITE_SETTINGS_COLUMNS = 'id,whatsapp_number,instagram_url,tiktok_url,address,weekday_hours,weekend_hours,delivery_pickup,delivery_ganja,delivery_region,gift_wrap,updated_at';
-
 export const siteSettingsService = {
     async get() {
         const { data, error } = await sb.from('site_settings').select(SITE_SETTINGS_COLUMNS).eq('id', 1).maybeSingle();

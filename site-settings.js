@@ -3,14 +3,12 @@ import { escapeHTML, money, showToast } from './ui.js';
 import { CONFIG } from './config.js';
 import { siteSettingsService } from './services/site-settings-service.js';
 import { state as s, ctx } from './state.js';
-
 export function initSiteSettings() {
     function ensureCatalogReady(){
         if(s.serverCatalogReady) return true;
         showToast("Məhsullar serverdən yüklənməyib. Səhifəni yeniləyin.");
         return false;
     }
-    
     async function loadSiteSettings(silent=false){
         try{
             const data=await siteSettingsService.get();
@@ -28,14 +26,11 @@ export function initSiteSettings() {
             if(!silent) ctx.setSiteSettingsStatus(`⚠️ Ayarlar yüklənmədi: ${safeUserError(e)}`);
         }
     }
-    
     function setSiteSettingsStatus(text){ const el=document.getElementById("siteSettingsStatus"); if(el) el.textContent=text; }
-    
     function fillAdminSiteSettings(data){
         const map={siteSettingWhatsapp:data.whatsapp_number||"",siteSettingInstagram:data.instagram_url||"",siteSettingTiktok:data.tiktok_url||"",siteSettingAddress:data.address||"",siteSettingWeekdayHours:data.weekday_hours||"",siteSettingWeekendHours:data.weekend_hours||"",siteSettingPickup:data.delivery_pickup??0,siteSettingGanja:data.delivery_ganja??0,siteSettingRegion:data.delivery_region??0,siteSettingGiftWrap:data.gift_wrap??0};
         Object.entries(map).forEach(([id,val])=>{const el=document.getElementById(id);if(el)el.value=val;});
     }
-    
     function updateLocalBusinessStructuredData(data={}){
         const el=document.getElementById("localBusinessStructuredData"); if(!el)return;
         const payload={"@context":"https://schema.org","@type":"LocalBusiness",name:"F1 Studio",description:"Fərdi hədiyyələr, lazer kəsim, çap və avto aksessuarlar.",address:{"@type":"PostalAddress",addressLocality:"Gəncə",addressCountry:"AZ"},url:window.location.href.split("#")[0]};
@@ -48,7 +43,6 @@ export function initSiteSettings() {
         const sameAs=[safeHttpUrl(data.instagram_url),safeHttpUrl(data.tiktok_url)].filter(Boolean); if(sameAs.length) payload.sameAs=sameAs;
         el.textContent=JSON.stringify(payload);
     }
-    
     function updateProductStructuredData(list=[]){
         const el=document.getElementById("productStructuredData"); if(!el)return;
         const baseUrl=window.location.href.split("#")[0];
@@ -58,7 +52,6 @@ export function initSiteSettings() {
             "itemListElement":list.slice(0,50).map((p,idx)=>({"@type":"ListItem",position:idx+1,item:{"@type":"Product",name:p.name,image:safeResourceUrl((Array.isArray(p.images)&&p.images[0])||p.image,{allowData:false,allowBlob:false,allowRelative:true})||undefined,description:p.desc||undefined,offers:{"@type":"Offer",price:Number(p.price||0).toFixed(2),priceCurrency:"AZN",availability:(p.stockQuantity!=null && Number(p.stockQuantity)<=0)?"https://schema.org/OutOfStock":"https://schema.org/InStock",url:baseUrl+`#product-${p.id}`}}}))
         });
     }
-    
     function applySiteSettingsToPage(data){
         ctx.updateLocalBusinessStructuredData(data);
         const address=document.getElementById("siteAddressText"); if(address) address.innerHTML=`<b>${escapeHTML(data.address||"")}</b>`;
@@ -75,7 +68,6 @@ export function initSiteSettings() {
             const tiktokUrl=safeHttpUrl(data.tiktok_url); if(tiktokUrl){const a=document.createElement("a");a.href=tiktokUrl;a.target="_blank";a.rel="noopener noreferrer";a.textContent="TikTok";a.style.cssText="color:var(--ink);text-decoration:none;border:1px solid var(--line);padding:6px 10px;border-radius:999px";socials.appendChild(a);}
         }
     }
-    
     async function saveSiteSettings(){
         if(!ctx.isAdminUser()) return showToast("Admin girişiniz olmalıdır.");
         const rawInstagram=document.getElementById("siteSettingInstagram").value.trim();
@@ -100,7 +92,6 @@ export function initSiteSettings() {
         CONFIG.whatsappNumber=data.whatsapp_number||""; CONFIG.instagram=safeHttpUrl(data.instagram_url)||""; CONFIG.tiktok=safeHttpUrl(data.tiktok_url)||""; CONFIG.delivery={pickup:Number(data.delivery_pickup)||0,ganja:Number(data.delivery_ganja)||0,region:Number(data.delivery_region)||0}; CONFIG.giftWrap=Number(data.gift_wrap)||0;
         ctx.setSiteSettingsStatus("✅ Ayarlar yadda saxlanıldı."); showToast("Sayt ayarları yeniləndi.");
     }
-    
     function buildWhatsAppUrl(baseNumber, orderCode){
         const d=document.getElementById("deliveryOption")?.value||"pickup";
         const wrap=!!document.getElementById("giftWrap")?.checked;
@@ -117,7 +108,6 @@ export function initSiteSettings() {
         if(!digits) return "";
         return `https://wa.me/${digits}?text=${encodeURIComponent(lines.join("\n"))}`;
     }
-
     Object.assign(ctx, {
     ensureCatalogReady,
     loadSiteSettings,

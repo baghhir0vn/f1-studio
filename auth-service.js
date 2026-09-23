@@ -1,11 +1,9 @@
 import { sb } from '../config.js';
 import { getProfileForUser } from './profile-service.js';
-
 function getPasswordResetRedirect() {
     const origin = window.location.origin;
     return /^https?:\/\//i.test(origin) ? `${origin}/` : null;
 }
-
 export const authService = {
     onAuthStateChange(callback) { return sb.auth.onAuthStateChange(callback); },
     async getUser() { return sb.auth.getUser(); },

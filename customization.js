@@ -2,10 +2,9 @@ import { escapeHTML, money, showToast } from './ui.js';
 import { storageService } from './services/storage-service.js';
 import { authService } from './services/auth-service.js';
 import { state as s, ctx } from './state.js';
-
 export function initCustomization() {
     function resetCustomizationForm(){
-        s.customProductId=null; s.customEditingLineId=null; s.customExistingImageName=""; s.customExistingImageUrl=""; s.customExistingImagePath="";
+        s.customProductId=null; s.customEditingLineId=null; s.customExistingImageName=""; s.customExistingImageUrl=""; s.customExistingImagePath=""; s.customDesignLayout=null;
         ["customText","customNote"].forEach(id=>document.getElementById(id).value="");
         document.getElementById("customColor").value="Qara";
         document.getElementById("customSize").value="Standart";
@@ -16,14 +15,28 @@ export function initCustomization() {
         document.getElementById("customImageName").textContent="Fayl seçilməyib";
         document.getElementById("customPreview").innerHTML='<span>Fərdi dizaynınızı burada seçin</span>';
         if(s.customObjectUrl){URL.revokeObjectURL(s.customObjectUrl); s.customObjectUrl=null;}
+        ctx.resetDesignStudio?.();
     }
-    
     function openCustomization(id, lineId=null){
         if(!ctx.ensureCatalogReady()) return;
         const p=ctx.getProduct(id); if(!p) return;
         ctx.resetCustomizationForm();
         s.customProductId=p.id; s.customEditingLineId=lineId;
         document.getElementById("customModalTitle").textContent=lineId?"✏️ Fərdi sifarişi dəyiş":"✨ Fərdi sifariş";
+        if(!lineId){
+            const draft=ctx.loadDesignDraft?.(p.id);
+            if(draft){
+                s.customDesignLayout=draft;
+                ctx.restoreDesignLayout?.(draft);
+                const t=draft.text||{};
+                document.getElementById("customText").value=t.text||"";
+                document.getElementById("customFont").value=t.font||"Klassik";
+                document.getElementById("customColor").value=(Object.entries({Qara:"#111",Ağ:"#fff",Qızılı:"#b88919",Gümüşü:"#8b9299",Digər:"#333"}).find(([,v])=>v===t.color)?.[0])||"Qara";
+                if(document.getElementById("customFontSize")) document.getElementById("customFontSize").value=String(t.fontSize||28);
+                if(document.getElementById("customTextAlign")) document.getElementById("customTextAlign").value=t.align||"center";
+                document.getElementById("customImageName").textContent="💾 Son saxlanmış dizayn qaralaması bərpa edildi.";
+            }
+        }
         document.getElementById("customProductName").textContent=`${p.name} · ${money(p.price)}`;
         document.getElementById("customSubmitBtn").textContent=lineId?"✅ Dəyişiklikləri yadda saxla":"🛒 Fərdiləşdir və səbətə əlavə et";
         if(lineId){
@@ -39,20 +52,24 @@ export function initCustomization() {
                 s.customExistingImageUrl="";
                 document.getElementById("customNote").value=c.note||"";
                 document.getElementById("customImageName").textContent=c.imageName?`Seçilmiş fayl: ${c.imageName}`:"Fayl seçilməyib";
+                s.customDesignLayout=c.layout||null;
+                ctx.restoreDesignLayout?.(s.customDesignLayout);
             }
         }
         ctx.toggleCustomSizeValue();
         ctx.updateCustomizationPreview();
+        ctx.syncDesignStudio?.();
+        if (s.customExistingImagePath && lineId) {
+            ctx.loadExistingDesignIntoStudio?.(s.customExistingImagePath);
+        }
         ["customText","customColor","customSize","customFont","customSizeValue"].forEach(id=>document.getElementById(id).oninput=updateCustomizationPreview);
         ["customColor","customSize","customFont"].forEach(id=>document.getElementById(id).onchange=updateCustomizationPreview);
         ctx.openDialog("customModal", "#customText");
     }
-    
     function closeCustomModal(){
         ctx.closeDialog("customModal");
         if(s.customObjectUrl){URL.revokeObjectURL(s.customObjectUrl);s.customObjectUrl=null;}
     }
-    
     function toggleCustomSizeValue(){
         const select=document.getElementById("customSize"), input=document.getElementById("customSizeValue");
         const custom=select.value==="Xüsusi ölçü";
@@ -60,7 +77,6 @@ export function initCustomization() {
         if(!custom) input.value="";
         ctx.updateCustomizationPreview();
     }
-    
     function handleCustomImage(input){
         const file=input.files?.[0];
         const status=document.getElementById("customImageName");
@@ -84,7 +100,6 @@ export function initCustomization() {
         status.textContent=`Seçilmiş fayl: ${file.name} · ${(file.size/1024/1024).toFixed(2)} MB`;
         ctx.updateCustomizationPreview();
     }
-    
     function updateCustomizationPreview(){
         const box=document.getElementById("customPreview");
         const text=document.getElementById("customText").value.trim();
@@ -113,9 +128,9 @@ export function initCustomization() {
             box.innerHTML='<span>Fərdi dizaynınızı burada seçin</span>';
         }
     }
-    
     function getCustomizationFormData(){
         const file=document.getElementById("customImage").files?.[0];
+        ctx.saveDesignLayout?.();
         return {
             text:document.getElementById("customText").value.trim(),
             color:document.getElementById("customColor").value,
@@ -126,22 +141,19 @@ export function initCustomization() {
             imagePath:s.customExistingImagePath||"",
             imageType:file?.type||"",
             imageSize:file?.size||0,
-            note:document.getElementById("customNote").value.trim()
+            note:document.getElementById("customNote").value.trim(),
+            layout:s.customDesignLayout||null
         };
     }
-    
     function customizationSignature(c){ return JSON.stringify(c||{}); }
-    
     async function uploadCustomerDesign(file){
         if(!file) return null;
         const allowed=["image/png","image/jpeg","image/webp","application/pdf"];
         if(!allowed.includes(file.type)) throw new Error("DESIGN_FILE_TYPE");
         if(file.size>10*1024*1024) throw new Error("DESIGN_FILE_TOO_LARGE");
-    
         const userData=await authService.getUser();
         const user=userData?.data?.user;
         if(!user) throw new Error("AUTH_REQUIRED");
-    
         const extMap={"image/jpeg":"jpg","image/png":"png","image/webp":"webp","application/pdf":"pdf"};
         const ext=extMap[file.type];
         if(!ext) throw new Error("DESIGN_FILE_TYPE");
@@ -154,10 +166,8 @@ export function initCustomization() {
             return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
         })();
         const path=`orders/${user.id}/${token}.${ext}`;
-    
         return storageService.uploadCustomerDesign(path, file);
     }
-    
     async function confirmCustomization(){
         const p=ctx.getProduct(s.customProductId); if(!p) return;
         const submit=document.getElementById("customSubmitBtn");
@@ -172,7 +182,6 @@ export function initCustomization() {
         if(customization.size==="Xüsusi ölçü" && !customization.sizeValue){
             return showToast("Xüsusi ölçü seçmisiniz — ölçünü də yazın.");
         }
-    
         const file=document.getElementById("customImage").files?.[0];
         if(p.stockQuantity!=null){
             const currentQty=s.cart.filter(i=>i.id===p.id && i.lineId!==s.customEditingLineId).reduce((sum,i)=>sum+(Number(i.qty)||0),0);
@@ -191,7 +200,6 @@ export function initCustomization() {
                 customization.imageType=uploaded.type;
                 customization.imageSize=uploaded.size;
             }
-    
             if(s.customEditingLineId){
                 const item=s.cart.find(i=>i.lineId===s.customEditingLineId);
                 if(item){
@@ -224,7 +232,6 @@ export function initCustomization() {
             if(submit){submit.disabled=false;submit.textContent=oldText||"🛒 Fərdiləşdir və səbətə əlavə et";}
         }
     }
-
     Object.assign(ctx, {
     resetCustomizationForm,
     openCustomization,

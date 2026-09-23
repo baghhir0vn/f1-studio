@@ -1,7 +1,6 @@
 import { sb } from '../config.js';
 import { orderService } from './order-service.js';
 import { isUuid } from '../security.js';
-
 export const customerService = {
     async list() {
         const [{ data: profilesData, error: profilesError }, ordersData] = await Promise.all([
