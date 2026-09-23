@@ -1,4 +1,4 @@
-import { sb } from '../config.js';
+import { sb } from '../config.js?v=59.2';
 export const realtimeService = {
     createAdminOrdersChannel(handlers) {
         const channel = sb.channel('f1-admin-orders-live');

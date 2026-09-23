@@ -1,6 +1,6 @@
-import { showToast } from './ui.js';
-import { state as s, ctx } from './state.js';
-import { storageService } from './services/storage-service.js';
+import { showToast } from './ui.js?v=59.2';
+import { state as s, ctx } from './state.js?v=59.2';
+import { storageService } from './services/storage-service.js?v=59.2';
 const CANVAS_W = 300;
 const CANVAS_H = 240;
 const PRINT = { x: 22, y: 22, w: 256, h: 196 };

@@ -1,7 +1,7 @@
-import { sb } from '../config.js';
-import { getProfileForUser } from './profile-service.js';
-import { fetchAllRows } from './query-utils.js';
-import { isAllowedReviewStatus } from '../security.js';
+import { sb } from '../config.js?v=59.2';
+import { getProfileForUser } from './profile-service.js?v=59.2';
+import { fetchAllRows } from './query-utils.js?v=59.2';
+import { isAllowedReviewStatus } from '../security.js?v=59.2';
 export function mapReviewRow(r) {
     return { id: r.id, author: r.author, stars: r.stars, text: r.text, status: r.status, createdAt: r.created_at, isExample: false };
 }

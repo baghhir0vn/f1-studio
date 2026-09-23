@@ -1,9 +1,9 @@
-import { safeHttpUrl, safeResourceUrl, safeUserError } from './security.js';
-import { escapeHTML, money, normalizeText, showToast } from './ui.js';
-import { authService } from './services/auth-service.js';
-import { storageService } from './services/storage-service.js';
-import { state as s, ctx } from './state.js';
-import { ADMIN_API } from './admin-shared.js';
+import { safeHttpUrl, safeResourceUrl, safeUserError } from './security.js?v=59.2';
+import { escapeHTML, money, normalizeText, showToast } from './ui.js?v=59.2';
+import { authService } from './services/auth-service.js?v=59.2';
+import { storageService } from './services/storage-service.js?v=59.2';
+import { state as s, ctx } from './state.js?v=59.2';
+import { ADMIN_API } from './admin-shared.js?v=59.2';
 async function loadAdminProducts(){
         try{
             const data=await ctx.adminApi(ADMIN_API.products);

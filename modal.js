@@ -1,4 +1,4 @@
-import { state as s, ctx } from './state.js';
+import { state as s, ctx } from './state.js?v=59.2';
 const focusStack = [];
 let initialized = false;
 const dialogSelector = '.modal, .modal-center';

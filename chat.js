@@ -1,6 +1,6 @@
-import { escapeHTML, money, normalizeText, showToast } from './ui.js';
-import { CONFIG } from './config.js';
-import { state as s, ctx } from './state.js';
+import { escapeHTML, money, normalizeText, showToast } from './ui.js?v=59.2';
+import { CONFIG } from './config.js?v=59.2';
+import { state as s, ctx } from './state.js?v=59.2';
 const synonymMap = {
 "lipa":[1,2], "nömrə":[1,2], "nomre":[1,2], "alışqan":[3], "alışqan yazı":[3], "domino":[4], "taxta":[4,5,6,12],
 "lazer":[4,5,6,12], "masaüstü":[6], "masaustu":[6], "saat":[7,8], "qol saatı":[8], "qol saati":[8], "şəkil":[9], "sekil":[9], "3x4":[9],
@@ -157,19 +157,12 @@ view.type='button'; view.className='chat-card-secondary'; view.textContent='Bax�
 view.setAttribute('aria-label',`${p.name} detallarına bax`);
 view.onclick=()=>{ s.chatMemory.lastSelectedProduct=p; ctx.openProductModal?.(p.id); };
 actions.appendChild(view);
-if(p.customizable){
-const custom=document.createElement('button');
-custom.type='button'; custom.className='chat-card-secondary'; custom.textContent='Fərdiləşdir';
-custom.setAttribute('aria-label',`${p.name} üçün fərdiləşdirməni aç`);
-custom.onclick=()=>{ s.chatMemory.lastSelectedProduct=p; ctx.openCustomization?.(p.id); };
-actions.appendChild(custom);
-}
 const add=document.createElement("button");
-add.type="button"; add.className='chat-card-primary'; add.textContent=p.customizable?'Fərdiləşdir +':'🛒 Səbətə at';
-add.setAttribute('aria-label',`${p.name} ${p.customizable?'üçün fərdiləşdirməni aç':'səbətə əlavə et'}`);
+add.type="button"; add.className='chat-card-primary'; add.textContent='🛒 Səbətə at';
+add.setAttribute('aria-label',`${p.name} səbətə əlavə et`);
 add.onclick=()=>{
 s.chatMemory.lastSelectedProduct=p;
-p.customizable ? ctx.openCustomization?.(p.id) : ctx.add?.(p.id);
+ctx.add?.(p.id);
 };
 actions.appendChild(add);
 card.appendChild(actions);
@@ -486,7 +479,8 @@ else return {text:`📦 Neçə ədəd ${product.name} istəyirsən? Məsələn, 
 if(prep.step==='customize'){
 if(yes){
 prep.customize=true; prep.step='customizing';
-ctx.openCustomization?.(product.id);
+const existingLine=orderPrepCartLine(product);
+ctx.openCustomization?.(product.id, existingLine?.lineId || null);
 return {text:`✨ ${product.name} üçün fərdiləşdirməni açdım. Yazı, şəkil, rəng və ölçünü seçib “Fərdiləşdir və səbətə əlavə et” düyməsinə bas. Sonra buraya “hazırdır” yaz, sifarişi tamamlayım.`};
 }
 if(no){ prep.customize=false; prep.step='delivery'; }
@@ -628,7 +622,6 @@ return /^(yox|xeyr|xeyr sag ol|yox sag ol|istemirem|lazim deyil)$/i.test(foldAz(
 }
 function addStandardProductQuantity(product,quantity=1){
 if(!product || quantity<1 || !ctx.ensureCatalogReady?.()) return {ok:false,message:'Məhsul hazır deyil.'};
-if(product.customizable) return {ok:false,customizable:true};
 const current=s.cart.filter(i=>i.id===product.id).reduce((sum,i)=>sum+(Number(i.qty)||0),0);
 if(product.stockQuantity!=null){
 const available=Math.max(0,Number(product.stockQuantity)-current);
@@ -670,7 +663,7 @@ if(!pending) return null;
 const product=pending.productId ? (ctx.getProduct?.(pending.productId) || s.products.find(p=>p.id===pending.productId)) : (s.chatMemory.lastSelectedProduct || null);
 if(pending.type==='show-product' && product){
 clearPendingAction(); s.chatMemory.lastSelectedProduct=product; ctx.openProductModal?.(product.id);
-return {text:`👀 ${product.name} üçün məhsul detallarını açdım.`,chips:[{label:'💰 Qiymət',text:'Bunun qiyməti nədir?'},{label:'✨ Fərdiləşdir',text:'Bunu fərdiləşdir'},{label:'🛒 Səbətə at',text:'Bunu səbətə at'}]};
+return {text:`👀 ${product.name} üçün məhsul detallarını açdım.`,chips:[{label:'💰 Qiymət',text:'Bunun qiyməti nədir?'},{label:'🧾 Sifarişə hazırla',text:'Bunu sifarişə hazırla'},{label:'🛒 Səbətə at',text:'Bunu səbətə at'}]};
 }
 if(pending.type==='customize' && product){
 clearPendingAction(); s.chatMemory.lastSelectedProduct=product; ctx.openCustomization?.(product.id);
@@ -678,14 +671,14 @@ return {text:`✨ ${product.name} üçün fərdiləşdirmə pəncərəsini açd�
 }
 if(pending.type==='add-to-cart' && product){
 clearPendingAction(); s.chatMemory.lastSelectedProduct=product;
-if(product.customizable){ ctx.openCustomization?.(product.id); return {text:`✨ ${product.name} fərdiləşdirilə bilir. Fərdiləşdirmə pəncərəsini açdım; məlumatları tamamlayıb səbətə əlavə edə bilərsiniz.`}; }
-ctx.add?.(product.id); return {text:`✅ ${product.name} səbətə əlavə edildi.`};
+ctx.add?.(product.id);
+return {text:`✅ ${product.name} səbətə əlavə edildi.`,chips:product.customizable?[{label:'✨ Fərdiləşdir',text:'Bunu sifariş üçün fərdiləşdir'},{label:'🛍️ Səbəti göstər',text:'Səbətimdə nə var?'},{label:'🧾 Sifarişi tamamla',text:'Sifarişi necə verim?'}]:[{label:'🛍️ Səbəti göstər',text:'Səbətimdə nə var?'},{label:'🧾 Sifarişi tamamla',text:'Sifarişi necə verim?'}]};
 }
 if(pending.type==='compare' && s.chatMemory.lastMentionedProducts?.length>=2){
 clearPendingAction();
 const comparison=s.chatMemory.lastMentionedProducts.slice(0,3);
 s.chatMemory.lastSelectedProduct=comparison[0];
-return {text:'⚖️ Son göstərilən məhsulları müqayisə etdim.',comparison,chips:[{label:'👀 Birincini göstər',text:'Birincini göstər'},{label:'👀 İkincini göstər',text:'İkincini göstər'},{label:'✨ Birincini fərdiləşdir',text:'Birincini fərdiləşdir'}]};
+return {text:'⚖️ Son göstərilən məhsulları müqayisə etdim.',comparison,chips:[{label:'👀 Birincini göstər',text:'Birincini göstər'},{label:'👀 İkincini göstər',text:'İkincini göstər'},{label:'🧾 Birincini sifarişə hazırla',text:'Birincini sifarişə hazırla'}]};
 }
 if(pending.type==='clear-cart'){
 if(!s.cart.length){ clearPendingAction(); return {text:'🛒 Səbət onsuz da boşdur.'}; }
@@ -785,7 +778,7 @@ function responseChips({hasResults=false, hasBudget=false, hasSelected=false}={}
 const chips=[];
 if(hasResults){
 chips.push({label:'💰 Daha ucuz',text:'Bunlardan daha ucuz variantlar göstər'});
-chips.push({label:'✨ Fərdiləşdir',text:'Birincini fərdiləşdir'});
+chips.push({label:'🧾 Sifarişə hazırla',text:'Birincini sifarişə hazırla'});
 }
 if(hasSelected) chips.push({label:'🛒 Səbətə at',text:'Bunu səbətə at'});
 if(!hasResults) chips.push({label:'🎁 Hədiyyə seç',text:'30 AZN-ə sevgilim üçün nə var?'});
@@ -851,7 +844,7 @@ s.chatMemory.giftWizard=null;
 const items=giftRecommendations(wizard);
 s.chatMemory.lastMentionedProducts=items;
 s.chatMemory.lastSelectedProduct=items[0] || null;
-return {text:`🎁 ${giftRecipientLabel(wizard.recipient)} üçün uyğun hədiyyə variantlarını seçdim:`,items,chips:[{label:'💰 Daha ucuz',text:'Bunlardan daha ucuz variantlar göstər'},{label:'⚖️ Müqayisə et',text:'İlk iki variantı müqayisə et'},{label:'✨ Birincini fərdiləşdir',text:'Birincini fərdiləşdir'}]};
+return {text:`🎁 ${giftRecipientLabel(wizard.recipient)} üçün uyğun hədiyyə variantlarını seçdim:`,items,chips:[{label:'💰 Daha ucuz',text:'Bunlardan daha ucuz variantlar göstər'},{label:'⚖️ Müqayisə et',text:'İlk iki variantı müqayisə et'},{label:'🧾 Birincini sifarişə hazırla',text:'Birincini sifarişə hazırla'}]};
 }
 s.chatMemory.giftWizard=wizard;
 if(wizard.step==='budget') return {text:`Əla! ${giftRecipientLabel(wizard.recipient)} üçün seçim edirəm. Büdcən təxminən nə qədərdir?`,chips:[{label:'💸 0–20 ₼',text:'0–20 AZN'},{label:'💰 20–50 ₼',text:'20–50 AZN'},{label:'💎 50+ ₼',text:'50 AZN-dən çox'}]};
@@ -887,7 +880,7 @@ s.chatMemory.giftWizard=null;
 const items=giftRecommendations(wizard);
 s.chatMemory.lastMentionedProducts=items;
 s.chatMemory.lastSelectedProduct=items[0] || null;
-return {text:`🎁 Hazırdır! ${giftRecipientLabel(wizard.recipient)} üçün ${budgetLabel(wizard.budget)} büdcədə, ${occasionLabel(wizard.occasion)} üçün uyğun variantları seçdim:`,items,chips:[{label:'⚖️ İlk ikisini müqayisə et',text:'İlk iki variantı müqayisə et'},{label:'✨ Birincini fərdiləşdir',text:'Birincini fərdiləşdir'},{label:'💸 Daha ucuz',text:'Bunlardan daha ucuz variantlar göstər'}]};
+return {text:`🎁 Hazırdır! ${giftRecipientLabel(wizard.recipient)} üçün ${budgetLabel(wizard.budget)} büdcədə, ${occasionLabel(wizard.occasion)} üçün uyğun variantları seçdim:`,items,chips:[{label:'⚖️ İlk ikisini müqayisə et',text:'İlk iki variantı müqayisə et'},{label:'🧾 Birincini sifarişə hazırla',text:'Birincini sifarişə hazırla'},{label:'💸 Daha ucuz',text:'Bunlardan daha ucuz variantlar göstər'}]};
 }
 return null;
 }
@@ -1161,7 +1154,7 @@ s.chatMemory.lastMentionedProducts=profileItems;
 s.chatMemory.lastSelectedProduct=profileItems[0]||null;
 s.chatMemory.lastFilters={budget:profile.budget,tags:profile.tags,query:l};
 s.chatMemory.lastIntent='profile-recommendation';
-return {text:`🎯 Sənin dediyin məlumatları birləşdirdim: ${giftRecipientLabel(profileRecipient(profile))} üçün, ${budgetLabel(profile.budget)}${profile.occasion?`, ${occasionLabel(profile.occasion)} üçün`:''}. Uyğun variantlar:`,items:profileItems,chips:[{label:'⚖️ İlk ikisini müqayisə et',text:'İlk iki variantı müqayisə et'},{label:'💸 Daha ucuz',text:'Bunlardan daha ucuz variantlar göstər'},{label:'✨ Birincini fərdiləşdir',text:'Birincini fərdiləşdir'}]};
+return {text:`🎯 Sənin dediyin məlumatları birləşdirdim: ${giftRecipientLabel(profileRecipient(profile))} üçün, ${budgetLabel(profile.budget)}${profile.occasion?`, ${occasionLabel(profile.occasion)} üçün`:''}. Uyğun variantlar:`,items:profileItems,chips:[{label:'⚖️ İlk ikisini müqayisə et',text:'İlk iki variantı müqayisə et'},{label:'💸 Daha ucuz',text:'Bunlardan daha ucuz variantlar göstər'},{label:'🧾 Birincini sifarişə hazırla',text:'Birincini sifarişə hazırla'}]};
 }
 }
 const profileReply=profileFollowupReply(profile);
@@ -1245,7 +1238,7 @@ const companions=getCompanionProducts(q,found);
 if(companions.length){
 s.chatMemory.lastMentionedProducts=companions;
 s.chatMemory.lastSelectedProduct=companions[0] || null;
-return {text:`🎁 ${anchor?.name || 'Bu məhsul'} yanında uyğun gedə biləcək variantları seçdim:`,items:companions,chips:[{label:'⚖️ Bu üçünü müqayisə et',text:'İlk iki variantı müqayisə et'},{label:'💸 Daha ucuz',text:'Bunlardan daha ucuz variantlar göstər'},{label:'✨ Birincini fərdiləşdir',text:'Birincini fərdiləşdir'}]};
+return {text:`🎁 ${anchor?.name || 'Bu məhsul'} yanında uyğun gedə biləcək variantları seçdim:`,items:companions,chips:[{label:'⚖️ Bu üçünü müqayisə et',text:'İlk iki variantı müqayisə et'},{label:'💸 Daha ucuz',text:'Bunlardan daha ucuz variantlar göstər'},{label:'🧾 Birincini sifarişə hazırla',text:'Birincini sifarişə hazırla'}]};
 }
 return {text:'Bu məhsul üçün əlavə uyğun variant tapmadım. Başqa model və ya büdcə ilə baxa bilərik.',chips:responseChips({hasResults:Boolean(found.length)})};
 }
@@ -1265,7 +1258,7 @@ const comparison=compareProducts(q,compareFound);
 if(comparison.length>=2){
 s.chatMemory.lastMentionedProducts=comparison;
 s.chatMemory.lastSelectedProduct=comparison[0];
-return {text:`⚖️ İki məhsulu əsas xüsusiyyətlərinə görə müqayisə etdim.`,comparison,chips:[{label:'👀 Birincini göstər',text:'Birincini göstər'},{label:'👀 İkincini göstər',text:'İkincini göstər'},{label:'✨ Birincini fərdiləşdir',text:'Birincini fərdiləşdir'}]};
+return {text:`⚖️ İki məhsulu əsas xüsusiyyətlərinə görə müqayisə etdim.`,comparison,chips:[{label:'👀 Birincini göstər',text:'Birincini göstər'},{label:'👀 İkincini göstər',text:'İkincini göstər'},{label:'🧾 Birincini sifarişə hazırla',text:'Birincini sifarişə hazırla'}]};
 }
 return {text:'Müqayisə etmək üçün ən azı iki məhsul seçməliyik. Məsələn: “Lipa ilə alışqanı müqayisə et” və ya “İlk iki variantı müqayisə et”.',chips:[{label:'🎁 Hədiyyə seç',text:'Mənə hədiyyə seç'},{label:'🛍️ Məhsullar',text:'Məhsulları göstər'}]};
 }
@@ -1273,7 +1266,7 @@ if(wantsCustomOnly(q)){
 const custom=s.products.filter(p=>p.customizable).slice().sort((a,b)=>a.price-b.price).slice(0,4);
 s.chatMemory.lastMentionedProducts=custom;
 s.chatMemory.lastSelectedProduct=custom[0] || null;
-return {text:custom.length?'✨ Fərdiləşdirilə bilən məhsullar:':'Hazırda fərdiləşdirilə bilən məhsul tapılmadı.',items:custom,chips:custom.length?[{label:'✨ Birincini fərdiləşdir',text:'Birincini fərdiləşdir'},{label:'⚖️ İlk ikisini müqayisə et',text:'İlk iki variantı müqayisə et'},{label:'💰 Daha ucuz',text:'Bunlardan daha ucuz variantlar göstər'}]:responseChips()};
+return {text:custom.length?'✨ Fərdiləşdirilə bilən məhsullar:':'Hazırda fərdiləşdirilə bilən məhsul tapılmadı.',items:custom,chips:custom.length?[{label:'🧾 Birincini sifarişə hazırla',text:'Birincini sifarişə hazırla'},{label:'⚖️ İlk ikisini müqayisə et',text:'İlk iki variantı müqayisə et'},{label:'💰 Daha ucuz',text:'Bunlardan daha ucuz variantlar göstər'}]:responseChips()};
 }
 const referenced=getReferencedProduct(q,found);
 if(referenced && wantsOrderPrep(q)){
@@ -1286,22 +1279,17 @@ return {text:'🧾 Sifarişə başlamaq üçün hansı məhsulu nəzərdə tutdu
 if(referenced && wantsAddToCart(q)){
 s.chatMemory.lastSelectedProduct=referenced;
 const requestedQty=ctx.extractQuantity(q)||1;
-if(referenced.customizable){
-ctx.openCustomization?.(referenced.id);
-return requestedQty>1
-? {text:`✨ ${referenced.name} fərdi məhsuldur. Fərdiləşdirmə pəncərəsini açdım; ${requestedQty} ədəd üçün əvvəlcə dizaynı tamamla, sonra səbətdə miqdarı artıra bilərsən.`}
-: {text:`✨ ${referenced.name} fərdi məhsuldur. Fərdiləşdirmə pəncərəsini açdım; detalları seçib səbətə əlavə edə bilərsiniz.`};
-}
 const added=addStandardProductQuantity(referenced,requestedQty);
 if(!added.ok){
 return {text:`⚠️ ${referenced.name}: ${added.message||'səbətə əlavə etmək mümkün olmadı.'}`,chips:[{label:'👀 Detallara bax',text:'Bunun detallarını göstər'},{label:'🛍️ Səbət',text:'Səbətimdə nə var?'}]};
 }
-return {text:`✅ ${referenced.name} səbətə ${requestedQty} ədəd əlavə edildi. Təxmini səbət cəmi ${money(ctx.getEstimatedOrderTotal?.()||0)}.`,chips:[{label:'🛍️ Səbəti göstər',text:'Səbətimdə nə var?'},{label:'🧾 Sifarişi tamamla',text:'Sifarişi necə verim?'}]};
+return {text:`✅ ${referenced.name} səbətə ${requestedQty} ədəd əlavə edildi. Təxmini səbət cəmi ${money(ctx.getEstimatedOrderTotal?.()||0)}.`,chips:referenced.customizable?[{label:'✨ Fərdiləşdir',text:'Bunu sifariş üçün fərdiləşdir'},{label:'🛍️ Səbəti göstər',text:'Səbətimdə nə var?'},{label:'🧾 Sifarişi tamamla',text:'Sifarişi necə verim?'}]:[{label:'🛍️ Səbəti göstər',text:'Səbətimdə nə var?'},{label:'🧾 Sifarişi tamamla',text:'Sifarişi necə verim?'}]};
 }
 if(referenced && wantsPositionOnly(q)){
 s.chatMemory.lastSelectedProduct=referenced;
 if(wantsCustomize(q)){
-ctx.openCustomization?.(referenced.id);
+const existingLine=orderPrepCartLine(referenced);
+ctx.openCustomization?.(referenced.id, existingLine?.lineId || null);
 return {text:`✨ ${referenced.name} üçün fərdiləşdirmə pəncərəsini açdım.`};
 }
 ctx.openProductModal?.(referenced.id);
@@ -1314,12 +1302,13 @@ const attributeReply=attribute==='customize' ? (wantsCustomize(q) ? describeRefe
 if(attributeReply){
 s.chatMemory.lastSelectedProduct=referenced;
 s.chatMemory.lastIntent='product-info';
-return {text:attributeReply,chips:[{label:'👀 Detallara bax',text:'Bunun detallarını göstər'},{label:'✨ Fərdiləşdir',text:'Bunu fərdiləşdir'},{label:'🛒 Səbətə at',text:'Bunu səbətə at'}]};
+return {text:attributeReply,chips:[{label:'👀 Detallara bax',text:'Bunun detallarını göstər'},{label:'🧾 Sifarişə hazırla',text:'Bunu sifarişə hazırla'},{label:'🛒 Səbətə at',text:'Bunu səbətə at'}]};
 }
 }
 if(referenced && wantsCustomize(q)){
 s.chatMemory.lastSelectedProduct=referenced;
-ctx.openCustomization?.(referenced.id);
+const existingLine=orderPrepCartLine(referenced);
+ctx.openCustomization?.(referenced.id, existingLine?.lineId || null);
 return {text:`✨ ${referenced.name} üçün fərdiləşdirmə pəncərəsini açdım. Buradan yazı, rəng, ölçü və digər detalları seçə bilərsiniz.`};
 }
 if(referenced && wantsDetails(q) && !wantsAlternative(q)){
@@ -1337,7 +1326,7 @@ s.chatMemory.lastMentionedProducts=alternatives;
 s.chatMemory.lastSelectedProduct=alternatives[0] || null;
 const colorHint=fuzzyHasAny(q,['rəng','reng']) ? ' Rəng üzrə ayrıca variant məlumatı kataloqda qeyd olunmayıb, ona görə başqa model/variantları göstərirəm.' : '';
 s.chatMemory.lastIntent='alternative';
-return {text:`🔁 Əvvəlkilərdən fərqli variantlar tapdım.${colorHint}`,items:alternatives,chips:[{label:'💰 Daha ucuz',text:'Bunlardan daha ucuz variantlar göstər'},{label:'⚖️ İlk ikisini müqayisə et',text:'İlk iki variantı müqayisə et'},{label:'✨ Birincini fərdiləşdir',text:'Birincini fərdiləşdir'}]};
+return {text:`🔁 Əvvəlkilərdən fərqli variantlar tapdım.${colorHint}`,items:alternatives,chips:[{label:'💰 Daha ucuz',text:'Bunlardan daha ucuz variantlar göstər'},{label:'⚖️ İlk ikisini müqayisə et',text:'İlk iki variantı müqayisə et'},{label:'🧾 Birincini sifarişə hazırla',text:'Birincini sifarişə hazırla'}]};
 }
 return {text:'Hazırkı kataloqda əvvəlkilərdən fərqli uyğun variant tapa bilmədim. Büdcəni və ya məhsul tipini dəyişib yenidən baxa bilərik.',chips:responseChips({hasResults:true})};
 }
@@ -1345,14 +1334,14 @@ if(wantsExtremeFromResults(q,'low') && s.chatMemory.lastMentionedProducts?.lengt
 const chosen=s.chatMemory.lastMentionedProducts.filter(Boolean).slice().sort((a,b)=>a.price-b.price)[0];
 if(chosen){
 s.chatMemory.lastSelectedProduct=chosen;
-return {text:`💸 Bu nəticələr arasında ən ucuz variant ${chosen.name} — ${money(chosen.price)}.`,items:[chosen],chips:[{label:'👀 Detallara bax',text:'Birincini göstər'},{label:'✨ Fərdiləşdir',text:'Bunu fərdiləşdir'},{label:'🛒 Səbətə at',text:'Bunu səbətə at'}]};
+return {text:`💸 Bu nəticələr arasında ən ucuz variant ${chosen.name} — ${money(chosen.price)}.`,items:[chosen],chips:[{label:'👀 Detallara bax',text:'Birincini göstər'},{label:'🧾 Sifarişə hazırla',text:'Bunu sifarişə hazırla'},{label:'🛒 Səbətə at',text:'Bunu səbətə at'}]};
 }
 }
 if(wantsExtremeFromResults(q,'high') && s.chatMemory.lastMentionedProducts?.length){
 const chosen=s.chatMemory.lastMentionedProducts.filter(Boolean).slice().sort((a,b)=>b.price-a.price)[0];
 if(chosen){
 s.chatMemory.lastSelectedProduct=chosen;
-return {text:`💎 Bu nəticələr arasında ən bahalı variant ${chosen.name} — ${money(chosen.price)}.`,items:[chosen],chips:[{label:'👀 Detallara bax',text:'Birincini göstər'},{label:'✨ Fərdiləşdir',text:'Bunu fərdiləşdir'},{label:'🛒 Səbətə at',text:'Bunu səbətə at'}]};
+return {text:`💎 Bu nəticələr arasında ən bahalı variant ${chosen.name} — ${money(chosen.price)}.`,items:[chosen],chips:[{label:'👀 Detallara bax',text:'Birincini göstər'},{label:'🧾 Sifarişə hazırla',text:'Bunu sifarişə hazırla'},{label:'🛒 Səbətə at',text:'Bunu səbətə at'}]};
 }
 }
 if(wantsPriceDirection(q,'low') && s.chatMemory.lastMentionedProducts?.length){

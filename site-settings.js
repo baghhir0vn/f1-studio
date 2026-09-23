@@ -1,12 +1,12 @@
-import { safeHttpUrl, safeResourceUrl, safeUserError } from './security.js';
-import { escapeHTML, money, showToast } from './ui.js';
-import { CONFIG } from './config.js';
-import { siteSettingsService } from './services/site-settings-service.js';
-import { state as s, ctx } from './state.js';
+import { safeHttpUrl, safeResourceUrl, safeUserError } from './security.js?v=59.2';
+import { escapeHTML, money, showToast } from './ui.js?v=59.2';
+import { CONFIG } from './config.js?v=59.2';
+import { siteSettingsService } from './services/site-settings-service.js?v=59.2';
+import { state as s, ctx } from './state.js?v=59.2';
 export function initSiteSettings() {
     function ensureCatalogReady(){
-        if(s.serverCatalogReady) return true;
-        showToast("Məhsullar serverdən yüklənməyib. Səhifəni yeniləyin.");
+        if(s.serverCatalogReady || (Array.isArray(s.products) && s.products.length)) return true;
+        showToast("Məhsullar hazırda əlçatan deyil. Səhifəni yeniləyin.");
         return false;
     }
     async function loadSiteSettings(silent=false){

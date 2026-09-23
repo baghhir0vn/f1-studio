@@ -1,5 +1,5 @@
-import * as UI from './ui.js';
-import { state as s, ctx } from './state.js';
+import * as UI from './ui.js?v=59.2';
+import { state as s, ctx } from './state.js?v=59.2';
 const { escapeHTML, showToast } = UI;
 export function initReviews() {
     function renderReviews() {

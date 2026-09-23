@@ -1,7 +1,7 @@
-import { escapeHTML, money, showToast } from './ui.js';
-import { storageService } from './services/storage-service.js';
-import { authService } from './services/auth-service.js';
-import { state as s, ctx } from './state.js';
+import { escapeHTML, money, showToast } from './ui.js?v=59.2';
+import { storageService } from './services/storage-service.js?v=59.2';
+import { authService } from './services/auth-service.js?v=59.2';
+import { state as s, ctx } from './state.js?v=59.2';
 export function initCustomization() {
     function resetCustomizationForm(){
         s.customProductId=null; s.customEditingLineId=null; s.customExistingImageName=""; s.customExistingImageUrl=""; s.customExistingImagePath=""; s.customDesignLayout=null;

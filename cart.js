@@ -1,9 +1,9 @@
-import { persist, escapeHTML, money, isValidPhone, showToast } from './ui.js';
-import { sanitizeStoredCart } from './security.js';
-import { CONFIG } from './config.js';
-import { storageService } from './services/storage-service.js';
-import { state as s, ctx } from './state.js';
-import { safeUserError } from './security.js';
+import { persist, escapeHTML, money, isValidPhone, showToast } from './ui.js?v=59.2';
+import { sanitizeStoredCart } from './security.js?v=59.2';
+import { CONFIG } from './config.js?v=59.2';
+import { storageService } from './services/storage-service.js?v=59.2';
+import { state as s, ctx } from './state.js?v=59.2';
+import { safeUserError } from './security.js?v=59.2';
 export function initCart() {
     function normalizeCartLines(){
         const before = JSON.stringify(s.cart);
@@ -49,7 +49,13 @@ export function initCart() {
                 if(c.note) details.push(`<b>Qeyd:</b> ${escapeHTML(c.note)}`);
                 custom.innerHTML=details.join("<br>");
                 info.appendChild(custom);
-                const edit=document.createElement("button"); edit.className="cart-edit"; edit.type="button"; edit.textContent="✏️ Fərdiləşdirməni dəyiş"; edit.onclick=()=>ctx.openCustomization(p.id,i.lineId); info.appendChild(edit);
+            }
+            if(p.customizable){
+                const customize=document.createElement("button"); customize.className="cart-edit"; customize.type="button";
+                customize.textContent=i.customization?"✏️ Fərdiləşdirməni dəyiş":"✨ Fərdiləşdir";
+                customize.setAttribute("aria-label",i.customization?`${p.name} üçün fərdiləşdirməni dəyiş`:`${p.name} üçün fərdiləşdirməni aç`);
+                customize.onclick=()=>ctx.openCustomization(p.id,i.lineId);
+                info.appendChild(customize);
             }
             const qty=document.createElement("div"); qty.className="qty";
             [["−",-1],["+",1]].forEach(([label,delta])=>{ const b=document.createElement("button"); b.type="button"; b.textContent=label; b.onclick=()=>ctx.change(i.lineId,delta); qty.appendChild(b); if(delta===-1){const s=document.createElement("span");s.style.margin="0 8px";s.style.fontWeight="600";s.textContent=i.qty;qty.appendChild(s);} });

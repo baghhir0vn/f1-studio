@@ -1,6 +1,6 @@
-import { safeHttpUrl, safeResourceUrl } from './security.js';
-import { persist, escapeHTML, money, normalizeText, showToast } from './ui.js';
-import { state as s, ctx } from './state.js';
+import { safeHttpUrl, safeResourceUrl } from './security.js?v=59.2';
+import { persist, escapeHTML, money, normalizeText, showToast } from './ui.js?v=59.2';
+import { state as s, ctx } from './state.js?v=59.2';
 export function initCatalog() {
     const synonymMap = {
         "lipa":[1,2], "nömrə":[1,2], "nomre":[1,2], "alışqan":[3], "domino":[4], "taxta":[4,5,6,12],
@@ -99,13 +99,8 @@ export function initCatalog() {
         btn.disabled=outOfStock;
         btn.style.opacity=outOfStock?".55":"1";
         btn.style.cursor=outOfStock?"not-allowed":"pointer";
-        if(p.customizable){
-            btn.textContent = outOfStock ? "Stokda yoxdur" : "✨ Fərdiləşdir və səbətə əlavə et";
-            btn.onclick = () => { if(!outOfStock){ ctx.closeProductModal(); ctx.openCustomization(p.id); } };
-        } else {
-            btn.textContent = outOfStock ? "Stokda yoxdur" : "🛒 Səbətə əlavə et";
-            btn.onclick = () => { if(!outOfStock){ ctx.add(p.id); ctx.closeProductModal(); } };
-        }
+        btn.textContent = outOfStock ? "Stokda yoxdur" : "🛒 Səbətə at";
+        btn.onclick = () => { if(!outOfStock){ ctx.add(p.id); ctx.closeProductModal(); } };
         ctx.openDialog("productModal", ".close");
     }
     function closeProductModal() { ctx.closeDialog("productModal"); }
@@ -274,7 +269,17 @@ export function initCatalog() {
             info.appendChild(meta);
             const price=document.createElement("div"); price.className="price"; price.textContent=money(p.price); info.appendChild(price);
             const outOfStock=p.stockQuantity!=null && Number(p.stockQuantity)<=0;
-            const addBtn=document.createElement("button"); addBtn.className="add"; addBtn.type="button"; addBtn.disabled=outOfStock; addBtn.style.opacity=outOfStock?".55":"1"; addBtn.style.cursor=outOfStock?"not-allowed":"pointer"; addBtn.textContent=outOfStock?"Stokda yoxdur":(p.customizable?"✨ Fərdiləşdir":"🛒 Səbətə at"); addBtn.setAttribute("aria-label", outOfStock?`${p.name}: stokda yoxdur`:(p.customizable?`${p.name} üçün fərdi dizayn aç`:`${p.name} səbətə əlavə et`)); addBtn.onclick=e=>{e.stopPropagation();if(outOfStock)return;p.customizable?ctx.openCustomization(p.id):ctx.add(p.id)}; info.appendChild(addBtn);
+            const addBtn=document.createElement("button");
+            addBtn.className="add"; addBtn.type="button"; addBtn.disabled=outOfStock;
+            addBtn.style.opacity=outOfStock?".55":"1"; addBtn.style.cursor=outOfStock?"not-allowed":"pointer";
+            addBtn.textContent=outOfStock?"Stokda yoxdur":"🛒 Səbətə at";
+            addBtn.setAttribute("aria-label", outOfStock?`${p.name}: stokda yoxdur`:`${p.name} səbətə əlavə et`);
+            addBtn.addEventListener("click", e=>{
+                e.preventDefault(); e.stopPropagation();
+                if(outOfStock) return;
+                ctx.add?.(p.id);
+            });
+            info.appendChild(addBtn);
             article.appendChild(info); grid.appendChild(article);
         });
     }
@@ -284,7 +289,6 @@ export function initCatalog() {
         const current=s.cart.filter(i=>i.id===p.id).reduce((sum,i)=>sum+(Number(i.qty)||0),0);
         if(p.stockQuantity!=null && current >= Number(p.stockQuantity)) return showToast("Bu məhsul üçün stok limiti dolub.");
         if(p.stockQuantity!=null && Number(p.stockQuantity)<=0) return showToast("Bu məhsul hazırda stokda yoxdur.");
-        if(p.customizable){ ctx.openCustomization(p.id); return; }
         const item=s.cart.find(i=>i.id===p.id && !i.customization);
         item ? item.qty++ : s.cart.push({id:p.id,qty:1,lineId:ctx.makeClientId(`line-${p.id}`),customization:null});
         ctx.saveCart(); ctx.openCart();

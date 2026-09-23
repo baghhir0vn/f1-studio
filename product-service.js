@@ -1,5 +1,5 @@
-import { sb } from '../config.js';
-import { safeResourceUrl } from '../security.js';
+import { sb } from '../config.js?v=59.2';
+import { safeResourceUrl } from '../security.js?v=59.2';
 const PRODUCT_COLUMNS = 'id,name,price,cat,image,images,emoji,badge,material,size,production_time,stock,stock_quantity,description,tags,customizable,updated_at';
 export function mapProductRow(p) {
     const rawGallery = Array.isArray(p.images) ? p.images : [];

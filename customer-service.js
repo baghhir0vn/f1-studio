@@ -1,6 +1,6 @@
-import { sb } from '../config.js';
-import { orderService } from './order-service.js';
-import { isUuid } from '../security.js';
+import { sb } from '../config.js?v=59.2';
+import { orderService } from './order-service.js?v=59.2';
+import { isUuid } from '../security.js?v=59.2';
 export const customerService = {
     async list() {
         const [{ data: profilesData, error: profilesError }, ordersData] = await Promise.all([

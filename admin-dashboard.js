@@ -1,6 +1,6 @@
-import { escapeHTML, money } from './ui.js';
-import { state as s, ctx } from './state.js';
-import { ADMIN_API, ADMIN_STATUS_LABELS } from './admin-shared.js';
+import { escapeHTML, money } from './ui.js?v=59.2';
+import { state as s, ctx } from './state.js?v=59.2';
+import { ADMIN_API, ADMIN_STATUS_LABELS } from './admin-shared.js?v=59.2';
 function orderAmount(o){
         const n=Number(o.total_cents);
         return Number.isFinite(n)?n/100:Number(o.total||0);
