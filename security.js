@@ -20,7 +20,7 @@ export function safeHttpUrl(value, { allowRelative = false, maxLength = 2048 } =
     if (!raw || raw.length > maxLength) return '';
     const parsed = parseUrl(raw);
     if (!parsed) return '';
-    if (allowRelative && (raw.startsWith('/') || raw.startsWith('./') || raw.startsWith('./')) && parsed.origin === window.location.origin) {
+    if (allowRelative && (raw.startsWith('/') || raw.startsWith('./') || raw.startsWith('../')) && parsed.origin === window.location.origin) {
         return parsed.pathname + parsed.search + parsed.hash;
     }
     if (!HTTP_PROTOCOLS.has(parsed.protocol)) return '';
@@ -33,7 +33,7 @@ export function safeResourceUrl(value, { allowData = false, allowBlob = false, a
     if (!raw || raw.length > maxLength) return '';
     const parsed = parseUrl(raw);
     if (!parsed) return '';
-    if (allowRelative && (raw.startsWith('/') || raw.startsWith('./') || raw.startsWith('./')) && parsed.origin === window.location.origin) {
+    if (allowRelative && (raw.startsWith('/') || raw.startsWith('./') || raw.startsWith('../')) && parsed.origin === window.location.origin) {
         return parsed.pathname + parsed.search + parsed.hash;
     }
     if (!RESOURCE_PROTOCOLS.has(parsed.protocol)) return '';

@@ -1,5 +1,5 @@
-import { sb } from './config.js';
-import { isSafeCustomerDesignPath, isSafeProductImagePath } from './security.js';
+import { sb } from '../config.js';
+import { isSafeCustomerDesignPath, isSafeProductImagePath } from '../security.js';
 
 const ALLOWED_BUCKETS = new Set(['customer-designs', 'product-images']);
 const CUSTOMER_FILE_TYPES = new Set(['image/png','image/jpeg','image/webp','application/pdf']);

@@ -1,5 +1,5 @@
 import { showToast } from './ui.js';
-import { realtimeService } from './realtime-service.js';
+import { realtimeService } from './services/realtime-service.js';
 import { state as s, ctx } from './state.js';
 import { ADMIN_API } from './admin-shared.js';
 import { initDashboard as initAdminDashboard } from './admin-dashboard.js';

@@ -1,9 +1,9 @@
-import { productService, mapProductRow } from './product-service.js';
-import { orderService, mapOrderRow } from './order-service.js';
-import { reviewService, mapReviewRow } from './review-service.js';
-import { customerService } from './customer-service.js';
-import { authService } from './auth-service.js';
-import { getProfileForUser } from './profile-service.js';
+import { productService, mapProductRow } from './services/product-service.js';
+import { orderService, mapOrderRow } from './services/order-service.js';
+import { reviewService, mapReviewRow } from './services/review-service.js';
+import { customerService } from './services/customer-service.js';
+import { authService } from './services/auth-service.js';
+import { getProfileForUser } from './services/profile-service.js';
 
 export function createApi(deps = {}) {
     const isAdminUser = deps.isAdminUser || (() => false);

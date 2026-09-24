@@ -1,4 +1,4 @@
-import { sb } from './config.js';
+import { sb } from '../config.js';
 
 export async function getProfileForUser(user) {
     if (!user) return null;

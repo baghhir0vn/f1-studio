@@ -1,7 +1,7 @@
 import { safeHttpUrl, safeResourceUrl, safeUserError } from './security.js';
 import { escapeHTML, money, normalizeText, showToast } from './ui.js';
-import { authService } from './auth-service.js';
-import { storageService } from './storage-service.js';
+import { authService } from './services/auth-service.js';
+import { storageService } from './services/storage-service.js';
 import { state as s, ctx } from './state.js';
 
 import { ADMIN_API } from './admin-shared.js';

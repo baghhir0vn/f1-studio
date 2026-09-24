@@ -62,14 +62,14 @@ export function subscribeNewsletter() {
 }
 
 export function initTheme() {
-    const saved = localStorage.getItem("f1ThemeV72") || "light";
+    const saved = localStorage.getItem("f1Theme") || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
     document.documentElement.setAttribute("data-theme", saved);
     updateThemeIcon(saved);
 }
 export function toggleTheme() {
     const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
     document.documentElement.setAttribute("data-theme", next);
-    localStorage.setItem("f1ThemeV72", next);
+    localStorage.setItem("f1Theme", next);
     updateThemeIcon(next);
 }
 export function updateThemeIcon(theme) {

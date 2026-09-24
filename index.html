@@ -50,7 +50,7 @@
 }</script>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
 <div class="announcement-bar">🚚 Gəncə daxili çatdırılma · Fərdi sifarişlər qəbul edilir · WhatsApp ilə rahat sifariş</div>
@@ -100,7 +100,7 @@
             <span>✓ Fərdi dizayn</span><span>✓ Keyfiyyətli hazırlanma</span><span>✓ WhatsApp sifarişi</span>
         </div>
     </div>
-    <div class="hero-art gift-scene" aria-label="F1 Studio hədiyyə kompozisiyası"><img src="hero-scene.jpg" alt="F1 Studio hədiyyə qutusu və şam kompozisiyası" fetchpriority="high" decoding="async"><div class="hero-dots" aria-hidden="true"><i></i><i class="active"></i><i></i></div></div>
+    <div class="hero-art gift-scene" aria-label="F1 Studio hədiyyə kompozisiyası"><img src="assets/reference/hero-scene.jpg" alt="F1 Studio hədiyyə qutusu və şam kompozisiyası" fetchpriority="high" decoding="async"><div class="hero-dots" aria-hidden="true"><i></i><i class="active"></i><i></i></div></div>
 </section>
 
 <section class="service-strip reveal" aria-label="F1 Studio üstünlükləri">
@@ -113,12 +113,12 @@
 <section class="section reveal category-showcase" id="categories">
     <div class="section-heading-centered"><div class="section-kicker">F1 STUDIO</div><h2>Kateqoriyalar</h2><span class="heading-rule"><i></i></span></div>
     <div class="categories gift-categories">
-        <button class="cat category-card" type="button" data-action="filterCat" data-action-args='[&quot;Lazer &amp; Taxta&quot;]'><span class="category-photo category-wood"><img src="cat-1.jpg" alt="" loading="lazy" decoding="async"></span><b>Lazer & Taxta</b><small>32 məhsul</small></button>
-        <button class="cat category-card" type="button" data-action="filterCat" data-action-args='[&quot;Avto &amp; Aksessuar&quot;]'><span class="category-photo category-auto"><img src="cat-2.jpg" alt="" loading="lazy" decoding="async"></span><b>Avto & Aksessuar</b><small>48 məhsul</small></button>
-        <button class="cat category-card" type="button" data-action="filterCat" data-action-args='[&quot;Çap &amp; Poliqrafiya&quot;]'><span class="category-photo category-print"><img src="cat-3.jpg" alt="" loading="lazy" decoding="async"></span><b>Çap & Poliqrafiya</b><small>36 məhsul</small></button>
-        <button class="cat category-card" type="button" data-action="filterCat" data-action-args='[&quot;Saatlar &amp; Hədiyyə&quot;]'><span class="category-photo category-clock"><img src="cat-4.jpg" alt="" loading="lazy" decoding="async"></span><b>Saatlar & Hədiyyə</b><small>27 məhsul</small></button>
-        <button class="cat category-card" type="button" data-action="focusProductSearch"><span class="category-photo category-custom"><img src="cat-5.jpg" alt="" loading="lazy" decoding="async"></span><b>Fərdi dizayn</b><small>42 məhsul</small></button>
-        <button class="cat category-card" type="button" data-action="filterCat" data-action-args='[&quot;&quot;]'><span class="category-photo category-all"><img src="cat-6.jpg" alt="" loading="lazy" decoding="async"></span><b>Bütün məhsullar</b><small>19 məhsul</small></button>
+        <button class="cat category-card" type="button" data-action="filterCat" data-action-args='[&quot;Lazer &amp; Taxta&quot;]'><span class="category-photo category-wood"><img src="assets/reference/cat-1.jpg" alt="" loading="lazy" decoding="async"></span><b>Lazer & Taxta</b><small>32 məhsul</small></button>
+        <button class="cat category-card" type="button" data-action="filterCat" data-action-args='[&quot;Avto &amp; Aksessuar&quot;]'><span class="category-photo category-auto"><img src="assets/reference/cat-2.jpg" alt="" loading="lazy" decoding="async"></span><b>Avto & Aksessuar</b><small>48 məhsul</small></button>
+        <button class="cat category-card" type="button" data-action="filterCat" data-action-args='[&quot;Çap &amp; Poliqrafiya&quot;]'><span class="category-photo category-print"><img src="assets/reference/cat-3.jpg" alt="" loading="lazy" decoding="async"></span><b>Çap & Poliqrafiya</b><small>36 məhsul</small></button>
+        <button class="cat category-card" type="button" data-action="filterCat" data-action-args='[&quot;Saatlar &amp; Hədiyyə&quot;]'><span class="category-photo category-clock"><img src="assets/reference/cat-4.jpg" alt="" loading="lazy" decoding="async"></span><b>Saatlar & Hədiyyə</b><small>27 məhsul</small></button>
+        <button class="cat category-card" type="button" data-action="focusProductSearch"><span class="category-photo category-custom"><img src="assets/reference/cat-5.jpg" alt="" loading="lazy" decoding="async"></span><b>Fərdi dizayn</b><small>42 məhsul</small></button>
+        <button class="cat category-card" type="button" data-action="filterCat" data-action-args='[&quot;&quot;]'><span class="category-photo category-all"><img src="assets/reference/cat-6.jpg" alt="" loading="lazy" decoding="async"></span><b>Bütün məhsullar</b><small>19 məhsul</small></button>
     </div>
 </section>
 
@@ -837,8 +837,9 @@
 <!-- TOAST BİLDİRİŞ QUTUSU -->
 <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
-<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
+<!-- Load Supabase before the ES module graph to avoid a race with config.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
 <noscript><div style="padding:16px;background:#fff1f2;color:#7f1d1d;text-align:center;font-family:system-ui">Bu saytın sifariş və məhsul funksiyaları üçün JavaScript aktiv olmalıdır.</div></noscript>
-    <script type="module" src="app.js"></script>
+    <script type="module" src="js/app.js"></script>
 </body>
 </html>

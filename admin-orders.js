@@ -1,5 +1,5 @@
 import { escapeHTML, showToast, money } from './ui.js';
-import { storageService } from './storage-service.js';
+import { storageService } from './services/storage-service.js';
 import { state as s, ctx } from './state.js';
 import { isCustomerDesignPathOwnedBy, isSafeCustomerDesignPath } from './security.js';
 import { ADMIN_API, ADMIN_STATUS_LABELS, formatAdminCustomerDate } from './admin-shared.js';

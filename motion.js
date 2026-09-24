@@ -18,6 +18,15 @@ function initReveal(){
         el.style.setProperty('--reveal-delay', `${Math.min(index * 35, 210)}ms`);
         observer.observe(el);
     });
+    // Activate elements already visible on first paint. This prevents a reveal
+    // animation from leaving the homepage blank on hosts/browsers where the
+    // first IntersectionObserver callback is delayed or skipped.
+    requestAnimationFrame(() => {
+        const viewportH = window.innerHeight || document.documentElement.clientHeight;
+        items.forEach(el => {
+            if (el.getBoundingClientRect().top < viewportH - 20) el.classList.add('active');
+        });
+    });
 }
 
 function initModalMotion(){
@@ -50,6 +59,7 @@ function initHeaderScroll(){
 }
 
 function initMotion(){
+    document.documentElement.classList.add('f1-motion-ready');
     initReveal();
     initModalMotion();
     initPointerPress();

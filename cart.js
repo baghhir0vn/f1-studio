@@ -1,7 +1,7 @@
 import { persist, escapeHTML, money, isValidPhone, showToast } from './ui.js';
 import { sanitizeStoredCart } from './security.js';
 import { CONFIG } from './config.js';
-import { storageService } from './storage-service.js';
+import { storageService } from './services/storage-service.js';
 import { state as s, ctx } from './state.js';
 import { safeUserError } from './security.js';
 
