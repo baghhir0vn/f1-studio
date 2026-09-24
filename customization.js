@@ -1,6 +1,6 @@
 import { escapeHTML, money, showToast } from './ui.js';
-import { storageService } from './services/storage-service.js';
-import { authService } from './services/auth-service.js';
+import { storageService } from './storage-service.js';
+import { authService } from './auth-service.js';
 import { state as s, ctx } from './state.js';
 
 export function initCustomization() {

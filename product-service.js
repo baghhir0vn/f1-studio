@@ -1,5 +1,5 @@
-import { sb } from '../config.js';
-import { safeResourceUrl } from '../security.js';
+import { sb } from './config.js';
+import { safeResourceUrl } from './security.js';
 
 const PRODUCT_COLUMNS = 'id,name,price,cat,image,images,emoji,badge,material,size,production_time,stock,stock_quantity,description,tags,customizable,updated_at';
 

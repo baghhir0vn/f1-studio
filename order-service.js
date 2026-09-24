@@ -1,6 +1,6 @@
-import { sb } from '../config.js';
+import { sb } from './config.js';
 import { fetchAllRows } from './query-utils.js';
-import { isAllowedOrderStatus, isSafeCustomerDesignPath, sanitizeDesignLayout } from '../security.js';
+import { isAllowedOrderStatus, isSafeCustomerDesignPath, sanitizeDesignLayout } from './security.js';
 
 export function mapOrderRow(o) {
     return {

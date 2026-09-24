@@ -1,9 +1,9 @@
 import { escapeHTML, money, isValidPhone, showToast } from './ui.js';
-import { authService } from './services/auth-service.js';
+import { authService } from './auth-service.js';
 import { state as s, ctx } from './state.js';
-import { getProfileForUser } from './services/profile-service.js';
+import { getProfileForUser } from './profile-service.js';
 import { CONFIG } from './config.js';
-import { storageService } from './services/storage-service.js';
+import { storageService } from './storage-service.js';
 import { isCustomerDesignPathOwnedBy } from './security.js';
 
 export function initAuth() {

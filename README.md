@@ -46,3 +46,7 @@ Minimum yoxlanmalı cədvəl və xidmətlər:
 
 ### 6. Release qeydi
 Bu build-ə development/audit skriptləri, lokal Windows start faylları və Supabase migration faylları daxil edilmir.
+
+
+## GitHub upload
+Bu paket qəsdən flat hazırlanıb: ZIP-i açdıqdan sonra içindəki bütün faylları repository-nin root qovluğuna yüklə. index.html, styles.css, app.js və şəkillər root-da qalmalıdır.

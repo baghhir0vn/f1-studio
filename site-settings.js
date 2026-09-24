@@ -1,7 +1,7 @@
 import { safeHttpUrl, safeResourceUrl, safeUserError } from './security.js';
 import { escapeHTML, money, showToast } from './ui.js';
 import { CONFIG } from './config.js';
-import { siteSettingsService } from './services/site-settings-service.js';
+import { siteSettingsService } from './site-settings-service.js';
 import { state as s, ctx } from './state.js';
 
 export function initSiteSettings() {

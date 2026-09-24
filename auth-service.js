@@ -1,4 +1,4 @@
-import { sb } from '../config.js';
+import { sb } from './config.js';
 import { getProfileForUser } from './profile-service.js';
 
 function getPasswordResetRedirect() {

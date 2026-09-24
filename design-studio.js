@@ -1,6 +1,6 @@
 import { showToast } from './ui.js';
 import { state as s, ctx } from './state.js';
-import { storageService } from './services/storage-service.js';
+import { storageService } from './storage-service.js';
 
 const CANVAS_W = 300;
 const CANVAS_H = 240;
