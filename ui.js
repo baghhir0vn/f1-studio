@@ -61,15 +61,20 @@ export function subscribeNewsletter() {
     }
 }
 
+const THEME_KEY = "f1StudioThemeV76";
+
 export function initTheme() {
-    const saved = localStorage.getItem("f1Theme") || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    // Production storefront starts in light mode.
+    // A new versioned key prevents legacy dark-mode values from older builds
+    // from changing the appearance after deployment.
+    const saved = localStorage.getItem(THEME_KEY) === "dark" ? "dark" : "light";
     document.documentElement.setAttribute("data-theme", saved);
     updateThemeIcon(saved);
 }
 export function toggleTheme() {
     const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
     document.documentElement.setAttribute("data-theme", next);
-    localStorage.setItem("f1Theme", next);
+    localStorage.setItem(THEME_KEY, next);
     updateThemeIcon(next);
 }
 export function updateThemeIcon(theme) {
