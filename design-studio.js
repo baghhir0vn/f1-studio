@@ -1,6 +1,7 @@
-import { showToast } from './ui.js?v=59.3';
-import { state as s, ctx } from './state.js?v=59.3';
-import { storageService } from './services/storage-service.js?v=59.3';
+import { showToast } from './ui.js';
+import { state as s, ctx } from './state.js';
+import { storageService } from './services/storage-service.js';
+
 const CANVAS_W = 300;
 const CANVAS_H = 240;
 const PRINT = { x: 22, y: 22, w: 256, h: 196 };
@@ -17,6 +18,7 @@ const FONT_MAP = {
 };
 const COLOR_MAP = { Qara: '#111', Ağ: '#fff', Qızılı: '#b88919', Gümüşü: '#8b9299', Digər: '#333' };
 const DRAFT_PREFIX = 'f1DesignDraft:v1:';
+
 export function initDesignStudio() {
     const studio = {
         canvas: null,
@@ -36,12 +38,15 @@ export function initDesignStudio() {
         history: [],
         future: [],
         historyTimer: null,
-        suppressHistory: false
+        suppressHistory: false,
+        imageLoadToken: 0
     };
+
     const canvas = () => document.getElementById('designCanvas');
     const el = id => document.getElementById(id);
     const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
     const active = () => studio.elements[studio.selected];
+
     function snapshot() {
         return {
             selected: studio.selected,
@@ -51,6 +56,7 @@ export function initDesignStudio() {
             text: { ...studio.elements.text }
         };
     }
+
     function restoreSnapshot(snap) {
         if (!snap) return;
         studio.selected = snap.selected === 'text' ? 'text' : 'image';
@@ -64,6 +70,7 @@ export function initDesignStudio() {
         applyTextControls();
         draw();
     }
+
     function pushHistory(label = '') {
         if (studio.suppressHistory) return;
         const current = snapshot();
@@ -73,13 +80,16 @@ export function initDesignStudio() {
         if (studio.history.length > 60) studio.history.shift();
         studio.future = [];
     }
+
     function queueHistory(label = 'Dəyişiklik') {
         clearTimeout(studio.historyTimer);
         studio.historyTimer = setTimeout(() => pushHistory(label), 350);
     }
+
     function ensureHistoryBaseline() {
         if (!studio.history.length) pushHistory('Başlanğıc');
     }
+
     function undo() {
         clearTimeout(studio.historyTimer);
         ensureHistoryBaseline();
@@ -91,6 +101,7 @@ export function initDesignStudio() {
         studio.suppressHistory = false;
         showToast('↩️ Son dəyişiklik geri qaytarıldı.');
     }
+
     function redo() {
         clearTimeout(studio.historyTimer);
         const next = studio.future.pop();
@@ -101,11 +112,13 @@ export function initDesignStudio() {
         studio.history.push(next);
         showToast('↪️ Dəyişiklik yenidən tətbiq edildi.');
     }
+
     function point(event) {
         const c = canvas();
         const r = c.getBoundingClientRect();
         return { x: (event.clientX - r.left) * (c.width / r.width), y: (event.clientY - r.top) * (c.height / r.height) };
     }
+
     function imageMetrics(imageEl) {
         if (!studio.image) return null;
         const maxBase = 190;
@@ -114,11 +127,13 @@ export function initDesignStudio() {
         const h = studio.image.height * ratio * imageEl.scale;
         return { w, h };
     }
+
     function rotatePoint(x, y, cx, cy, deg) {
         const r = -deg * Math.PI / 180;
         const dx = x - cx, dy = y - cy;
         return { x: cx + dx * Math.cos(r) - dy * Math.sin(r), y: cy + dx * Math.sin(r) + dy * Math.cos(r) };
     }
+
     function hitImage(p) {
         const item = studio.elements.image;
         if (!item.visible || !studio.image) return false;
@@ -126,6 +141,7 @@ export function initDesignStudio() {
         const q = rotatePoint(p.x, p.y, item.x, item.y, item.rotation);
         return Math.abs(q.x - item.x) <= m.w / 2 + 8 && Math.abs(q.y - item.y) <= m.h / 2 + 8;
     }
+
     function textMetrics() {
         const t = studio.elements.text;
         const g = studio.ctx;
@@ -136,6 +152,7 @@ export function initDesignStudio() {
         g.restore();
         return { width, height: Math.max(28, t.fontSize * t.scale * 1.25) };
     }
+
     function hitText(p) {
         const t = studio.elements.text;
         if (!t.visible || !String(t.text || '').trim()) return false;
@@ -143,6 +160,7 @@ export function initDesignStudio() {
         const q = rotatePoint(p.x, p.y, t.x, t.y, t.rotation);
         return Math.abs(q.x - t.x) <= m.width / 2 + 10 && Math.abs(q.y - t.y) <= m.height / 2 + 10;
     }
+
     function drawSelection(g, type) {
         const item = studio.elements[type];
         if (!item.visible) return;
@@ -161,6 +179,7 @@ export function initDesignStudio() {
         }
         g.restore();
     }
+
     function drawElement(g, type) {
         const item = studio.elements[type];
         if (!item.visible) return;
@@ -184,6 +203,7 @@ export function initDesignStudio() {
         }
         g.restore();
     }
+
     function draw() {
         const c = canvas();
         if (!c) return;
@@ -193,6 +213,7 @@ export function initDesignStudio() {
         g.clearRect(0, 0, c.width, c.height);
         g.fillStyle = '#f7f1ed';
         g.fillRect(0, 0, c.width, c.height);
+
         g.save();
         g.fillStyle = 'rgba(255,255,255,.45)';
         g.fillRect(PRINT.x, PRINT.y, PRINT.w, PRINT.h);
@@ -206,10 +227,12 @@ export function initDesignStudio() {
         g.textAlign = 'left';
         g.fillText('ÇAP SAHƏSİ', PRINT.x + 7, PRINT.y + 14);
         g.restore();
+
         for (const type of studio.order) drawElement(g, type);
         drawSelection(g, studio.selected);
         updateStatus();
     }
+
     function updateStatus() {
         const status = el('designSelectionStatus');
         if (!status) return;
@@ -218,6 +241,7 @@ export function initDesignStudio() {
         const hidden = !item?.visible || (studio.selected === 'image' && !studio.image) || (studio.selected === 'text' && !String(item?.text || '').trim());
         status.textContent = `${label} seçilib${hidden ? ' · əlavə edilməyib' : ''}`;
     }
+
     function syncFormToState({ history = true } = {}) {
         const t = studio.elements.text;
         t.text = String(el('customText')?.value || '').trim().slice(0, 80);
@@ -229,6 +253,7 @@ export function initDesignStudio() {
         if (history) queueHistory('Mətn parametri');
         draw();
     }
+
     function applyTextControls() {
         const t = studio.elements.text;
         if (el('customText')) el('customText').value = t.text || '';
@@ -240,17 +265,20 @@ export function initDesignStudio() {
         const sizeLabel = el('customFontSizeValue');
         if (sizeLabel) sizeLabel.textContent = `${t.fontSize || 28}px`;
     }
+
     function select(type, { history = true } = {}) {
         if (!['image', 'text'].includes(type)) return;
         studio.selected = type;
         if (history) pushHistory('Element seçildi');
         draw();
     }
+
     function pointerDistance() {
         const pts = [...studio.pointers.values()];
         if (pts.length < 2) return 0;
         return Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
     }
+
     function down(event) {
         if (event.pointerType === 'mouse' && event.button !== 0) return;
         studio.pointers.set(event.pointerId, point(event));
@@ -283,6 +311,7 @@ export function initDesignStudio() {
         pushHistory('Element hərəkəti');
         event.preventDefault();
     }
+
     function move(event) {
         if (studio.pointers.has(event.pointerId)) studio.pointers.set(event.pointerId, point(event));
         if (studio.pointers.size >= 2 && studio.pinch) {
@@ -303,12 +332,15 @@ export function initDesignStudio() {
         item.y = clamp(p.y - studio.drag.dy, 10, CANVAS_H - 10);
         draw();
     }
+
     function up(event) {
         studio.pointers.delete(event.pointerId);
         if (studio.pointers.size < 2) studio.pinch = null;
         studio.drag = null;
     }
+
     function loadImageObject(img, key) {
+        studio.imageLoadToken += 1;
         studio.images.set(key, img);
         studio.imageKey = key;
         studio.image = img;
@@ -321,7 +353,9 @@ export function initDesignStudio() {
         pushHistory('Şəkil əlavə edildi');
         draw();
     }
+
     function loadFile(file) {
+        const token = ++studio.imageLoadToken;
         if (!file || !file.type.startsWith('image/')) {
             studio.image = null;
             studio.imageKey = '';
@@ -332,19 +366,33 @@ export function initDesignStudio() {
         const url = URL.createObjectURL(file);
         const img = new Image();
         img.onload = () => {
+            if (token !== studio.imageLoadToken) { URL.revokeObjectURL(url); return; }
             const key = `local-${Date.now()}-${Math.random().toString(36).slice(2)}`;
-            loadImageObject(img, key);
+            studio.images.set(key, img);
+            studio.imageKey = key;
+            studio.image = img;
+            studio.elements.image.visible = true;
+            studio.selected = 'image';
+            studio.elements.image.x = 150;
+            studio.elements.image.y = 105;
+            studio.elements.image.scale = 1;
+            studio.elements.image.rotation = 0;
+            pushHistory('Şəkil əlavə edildi');
+            draw();
             URL.revokeObjectURL(url);
         };
         img.onerror = () => URL.revokeObjectURL(url);
         img.src = url;
     }
+
     async function loadExistingImageFromPath(path) {
+        const token = ++studio.imageLoadToken;
         if (!path) return;
         try {
             const url = await storageService.createCustomerDesignSignedUrl(path, 900);
             const img = new Image();
             img.onload = () => {
+                if (token !== studio.imageLoadToken) return;
                 const key = `stored-${path}`;
                 studio.images.set(key, img);
                 studio.imageKey = key;
@@ -358,6 +406,7 @@ export function initDesignStudio() {
             showToast('Mövcud dizayn önizləməsi açıla bilmədi.');
         }
     }
+
     function zoom(delta) {
         const item = active();
         if (!item) return;
@@ -366,6 +415,7 @@ export function initDesignStudio() {
         pushHistory('Ölçü');
         draw();
     }
+
     function rotate(delta) {
         const item = active();
         if (!item) return;
@@ -373,6 +423,7 @@ export function initDesignStudio() {
         pushHistory('Fırlatma');
         draw();
     }
+
     function setFontSize(value) {
         const n = clamp(Number(value) || 28, 12, 72);
         studio.elements.text.fontSize = n;
@@ -381,6 +432,7 @@ export function initDesignStudio() {
         if (studio.selected === 'text') pushHistory('Şrift ölçüsü');
         draw();
     }
+
     function bringForward() {
         const i = studio.order.indexOf(studio.selected);
         if (i < 0 || i === studio.order.length - 1) return;
@@ -388,6 +440,7 @@ export function initDesignStudio() {
         pushHistory('Qat irəli');
         draw();
     }
+
     function sendBackward() {
         const i = studio.order.indexOf(studio.selected);
         if (i <= 0) return;
@@ -395,6 +448,7 @@ export function initDesignStudio() {
         pushHistory('Qat geri');
         draw();
     }
+
     function deleteElement() {
         const item = active();
         if (!item) return;
@@ -409,14 +463,17 @@ export function initDesignStudio() {
         pushHistory('Element silindi');
         draw();
     }
+
     function draftKey(productId = s.customProductId) {
         return productId ? `${DRAFT_PREFIX}${String(productId)}` : '';
     }
+
     function saveDraft(layout) {
         const key = draftKey();
         if (!key || !layout) return;
         try { localStorage.setItem(key, JSON.stringify(layout)); } catch (_) {}
     }
+
     function loadDraft(productId = s.customProductId) {
         const key = draftKey(productId);
         if (!key) return null;
@@ -425,17 +482,21 @@ export function initDesignStudio() {
             return raw ? JSON.parse(raw) : null;
         } catch (_) { return null; }
     }
+
     function clearDraft(productId = s.customProductId) {
         const key = draftKey(productId);
         if (!key) return;
         try { localStorage.removeItem(key); } catch (_) {}
     }
+
     function discardDraft() {
         clearDraft();
         reset();
         showToast('🗑️ Bu məhsul üçün saxlanmış qaralama silindi.');
     }
+
     function reset() {
+        studio.imageLoadToken += 1;
         clearTimeout(studio.historyTimer);
         studio.suppressHistory = true;
         studio.selected = 'image';
@@ -452,12 +513,15 @@ export function initDesignStudio() {
         pushHistory('Sıfırla');
         draw();
     }
+
     function selectNext() {
         select(studio.selected === 'image' ? 'text' : 'image');
     }
+
     function selectPrev() {
         select(studio.selected === 'image' ? 'text' : 'image');
     }
+
     function centerSelected() {
         const item = active();
         if (!item || !item.visible) return;
@@ -466,6 +530,7 @@ export function initDesignStudio() {
         pushHistory('Element mərkəzləndi');
         draw();
     }
+
     function fitSelectedToPrint() {
         const item = active();
         if (!item || !item.visible) return;
@@ -482,6 +547,7 @@ export function initDesignStudio() {
         pushHistory('Çap sahəsinə sığdırıldı');
         draw();
     }
+
     function saveLayout({ silent = false, persistDraft = true } = {}) {
         clearTimeout(studio.historyTimer);
         const layout = {
@@ -514,6 +580,7 @@ export function initDesignStudio() {
         if (!silent) showToast('🎨 Dizayn quruluşu yadda saxlanıldı.');
         return layout;
     }
+
     function restoreLayout(layout) {
         if (!layout || typeof layout !== 'object') return;
         clearTimeout(studio.historyTimer);
@@ -552,6 +619,7 @@ export function initDesignStudio() {
         pushHistory('Layout bərpa edildi');
         draw();
     }
+
     function onKeyDown(event) {
         if (!document.getElementById('customModal')?.classList.contains('show')) return;
         if (event.target?.matches?.('input, textarea, select')) return;
@@ -580,6 +648,7 @@ export function initDesignStudio() {
             draw();
         }
     }
+
     const c = canvas();
     c?.addEventListener('pointerdown', down);
     c?.addEventListener('pointermove', move);
@@ -590,12 +659,14 @@ export function initDesignStudio() {
         if (hitText(p)) select('text');
         else if (hitImage(p)) select('image');
     });
+
     ['customText', 'customFont', 'customColor', 'customFontSize', 'customTextAlign'].forEach(id => {
         el(id)?.addEventListener('input', () => syncFormToState());
         el(id)?.addEventListener('change', () => syncFormToState());
     });
     el('customImage')?.addEventListener('change', event => loadFile(event.target.files?.[0]));
     document.addEventListener('keydown', onKeyDown);
+
     Object.assign(ctx, {
         drawDesignStudio: draw,
         syncDesignStudio: () => syncFormToState({ history: false }),
@@ -628,6 +699,7 @@ export function initDesignStudio() {
         clearDesignDraft: clearDraft,
         discardDesignDraft: discardDraft
     });
+
     requestAnimationFrame(() => {
         ensureHistoryBaseline();
         draw();

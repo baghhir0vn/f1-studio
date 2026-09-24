@@ -10,7 +10,7 @@
 <meta property="og:description" content="F1 Studio — fərdi hədiyyələr, lazer kəsim, çap və avto aksessuarlar.">
 <meta property="og:type" content="website">
 <meta name="robots" content="index,follow">
-<meta name="theme-color" content="#b76e79">
+<meta name="theme-color" content="#536c4d">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; connect-src 'self' https://rfkqxiwbicjsszjbdhzd.supabase.co wss://rfkqxiwbicjsszjbdhzd.supabase.co; img-src 'self' data: blob: https://rfkqxiwbicjsszjbdhzd.supabase.co; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src https://www.google.com https://www.google.com/maps/; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests">
 <meta name="author" content="F1 Studio">
@@ -50,127 +50,80 @@
 }</script>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
-    <link rel="stylesheet" href="css/styles.css?v=59.3">
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+<div class="announcement-bar">🚚 Gəncə daxili çatdırılma · Fərdi sifarişlər qəbul edilir · WhatsApp ilə rahat sifariş</div>
 <header>
     <div class="nav">
-        <a href="#home" class="logo">F1 <span>STUDIO</span></a>
+        <a href="#home" class="logo brand-logo"><span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 17h32v25H8zM8 17l16-8 16 8M24 9v33M4 20h40v6H4z"/></svg></span><span class="brand-name">F1 <b>Studio</b><small>Fərdi hədiyyələr</small></span></a>
         <nav>
             <a href="#home">Ana səhifə</a>
-            <a href="#products">Xidmətlər</a>
-            <a href="#faq">Suallar</a>
-            <a href="#about">Əlaqə & Ünvan</a>
+            <a href="#products">Mağaza</a>
+            <a href="#categories">Kateqoriyalar⌄</a>
+            <a href="#about">Haqqımızda</a>
+            <a href="#reviews">Rəylər</a>
+            <a href="#about">Əlaqə</a>
         </nav>
         <div class="actions">
+            <button class="icon-action" type="button" data-action="focusProductSearch" aria-label="Axtar"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 5 5"></path></svg></button>
+            <button class="icon-action" type="button" data-action="showFavorites" aria-label="Sevimlilər"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.7c0 5-8.8 10-8.8 10s-8.8-5-8.8-10A4.7 4.7 0 0 1 12 6.2a4.7 4.7 0 0 1 8.8 2.5Z"></path></svg><span id="favCount">0</span></button>
+            <button class="icon-action" type="button" data-action="openLogin" aria-label="Profil"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"></circle><path d="M5.5 20c.8-3.5 3-5.3 6.5-5.3s5.7 1.8 6.5 5.3"></path></svg></button>
+            <button class="cart cart-icon" type="button" data-action="openCart" aria-label="Səbət"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l1.6 10.2a2 2 0 0 0 2 1.8h7.9a2 2 0 0 0 1.9-1.5L20 8H6"></path><circle cx="9" cy="19" r="1"></circle><circle cx="17" cy="19" r="1"></circle></svg><span id="count">0</span></button>
             <button class="mobile-menu-btn" id="mobileMenuBtn" data-action="toggleMobileMenu" aria-label="Menyu">☰</button>
-            <button class="theme-toggle-btn" id="themeToggleBtn" data-action="toggleTheme" title="Temanı dəyiş" aria-label="Temanı dəyiş">🌙</button>
-            <button class="btn-login" data-action="showFavorites">❤️ <span id="favCount">0</span></button>
-            <button class="btn-login" data-action="openLogin">👤 Profil</button>
+            <button class="theme-toggle-btn" id="themeToggleBtn" data-action="toggleTheme" title="Temanı dəyiş" aria-label="Temanı dəyiş">☼</button>
             <button class="admin-btn" id="adminBtn" data-action="openAdmin">⚙️ Admin<span id="adminNotifBadge" class="admin-notif-badge hidden">0</span></button>
-            <button class="cart" data-action="openCart">🛒 <span id="count">0</span></button>
         </div>
     </div>
     <div class="mobile-nav" id="mobileNav">
         <a href="#home" data-action="closeMobileMenu">Ana səhifə</a>
-        <a href="#products" data-action="closeMobileMenu">Xidmətlər</a>
+        <a href="#categories" data-action="closeMobileMenu">Kateqoriyalar</a>
+        <a href="#products" data-action="closeMobileMenu">Məhsullar</a>
         <a href="#faq" data-action="closeMobileMenu">Suallar</a>
-        <a href="#about" data-action="closeMobileMenu">Əlaqə & Ünvan</a>
-        <button type="button" data-actions='[[&quot;closeMobileMenu&quot;, []], [&quot;showFavorites&quot;, []]]'>❤️ Sevimlilər</button>
-        <button type="button" data-actions='[[&quot;closeMobileMenu&quot;, []], [&quot;openLogin&quot;, []]]'>👤 Profil</button>
+        <a href="#about" data-action="closeMobileMenu">Əlaqə</a>
+        <button type="button" data-actions='[[&quot;closeMobileMenu&quot;, []], [&quot;showFavorites&quot;, []]]'>♡ Sevimlilər</button>
+        <button type="button" data-actions='[[&quot;closeMobileMenu&quot;, []], [&quot;openLogin&quot;, []]]'>♙ Profil</button>
         <button type="button" id="mobileAdminBtn" data-actions='[[&quot;closeMobileMenu&quot;, []], [&quot;openAdmin&quot;, []]]' style="display:none">⚙️ Admin</button>
     </div>
 </header>
 
 <main id="home">
-<section class="hero reveal">
-    <div>
-        <div class="hero-eyebrow"><span></span> F1 Studio · fərdi hazırlanır</div>
-        <h1>Fərdi hədiyyə. <em>Sənin dizaynın.</em></h1>
-        <p>Fərdi hədiyyələr, lazer kəsim, çap və avto aksessuarlar. Məhsulu seç, Design Studio-da görünüşünü hazırla və sifarişi WhatsApp üzərindən rahat tamamla.</p>
+<section class="hero hero-giftique reveal">
+    <div class="hero-copy">
+        <div class="hero-eyebrow"><span></span> DÜŞÜNÜLMÜŞ HƏDİYYƏLƏR</div>
+        <h1>Hər anı<br><em>xüsusi et.</em></h1>
+        <p>Sevdiklərin üçün mənalı, zövqlü və fərdi hədiyyələr. Sənin üçün hazırlanır, gözəl təqdim olunur.</p>
         <div class="hero-actions">
-            <a class="btn" href="#products">Sifarişə başla <span>→</span></a>
-            <a class="hero-secondary" href="#categories">Kataloqa bax</a>
+            <a class="btn" href="#products" data-action="showAllProducts">İNDİ KƏŞF ET <span>→</span></a><a class="hero-secondary" href="#categories">KATEQORİYALARA BAX</a>
         </div>
         <div class="hero-benefits" aria-label="F1 Studio üstünlükləri">
-            <span>✓ Fərdi dizayn</span>
-            <span>✓ Təhlükəsiz sifariş</span>
-            <span>✓ WhatsApp dəstəyi</span>
+            <span>✓ Fərdi dizayn</span><span>✓ Keyfiyyətli hazırlanma</span><span>✓ WhatsApp sifarişi</span>
         </div>
-        <div class="notice hero-notice">Ödəniş və sifariş detalları WhatsApp üzərindən operatorla dəqiqləşdirilir. Kartla onlayn ödəniş bu saytda istifadə olunmur.</div>
     </div>
-    <div class="hero-art">🎁</div>
+    <div class="hero-art gift-scene" aria-label="F1 Studio hədiyyə kompozisiyası"><img src="assets/reference/hero-scene.jpg" alt="F1 Studio hədiyyə qutusu və şam kompozisiyası" fetchpriority="high" decoding="async"><div class="hero-dots" aria-hidden="true"><i></i><i class="active"></i><i></i></div></div>
 </section>
 
-<section class="studio-proof reveal" aria-label="F1 Studio üstünlükləri">
-  <div class="proof-card"><span class="proof-icon">✦</span><div><b>Fərdi hazırlanır</b><small>Dizaynı özün seç, məhsulu sən formalaşdır.</small></div></div>
-  <div class="proof-card"><span class="proof-icon">⌁</span><div><b>WhatsApp dəstəyi</b><small>Sifariş detalları operatorla rahat dəqiqləşdirilir.</small></div></div>
-  <div class="proof-card"><span class="proof-icon">✓</span><div><b>Yerli və çevik</b><small>Gəncə üzrə sürətli hazırlıq və çatdırılma.</small></div></div>
+<section class="service-strip reveal" aria-label="F1 Studio üstünlükləri">
+  <div><span>▱</span><b>Sürətli hazırlanma</b><small>Sifarişdən sonra operativ proses</small></div>
+  <div><span>✦</span><b>Fərdi hədiyyələr</b><small>İstədiyin mətn və dizayn</small></div>
+  <div><span>✓</span><b>Etibarlı sifariş</b><small>Detallar WhatsApp-da dəqiqləşir</small></div>
+  <div><span>◌</span><b>Müştəri dəstəyi</b><small>Sualın olduqda yanındayıq</small></div>
 </section>
 
-<section class="section reveal process-section">
-  <div class="section-kicker">3 sadə addım</div>
-  <h2>Sənin ideyan, hazır məhsul. <span class="heading-muted">Bu qədər sadə.</span></h2>
-  <div class="process-grid">
-    <article class="process-card"><span class="process-number">01</span><div class="process-icon">🛍️</div><h3>Məhsulu seç</h3><p>Kataloqdan sənə uyğun məhsulu tap, ölçü və variantı müəyyən et.</p></article>
-    <article class="process-card"><span class="process-number">02</span><div class="process-icon">🎨</div><h3>Dizaynını hazırla</h3><p>Design Studio ilə mətn və şəkilləri yerləşdir, görünüşü əvvəlcədən yoxla.</p></article>
-    <article class="process-card"><span class="process-number">03</span><div class="process-icon">💬</div><h3>WhatsApp-da tamamla</h3><p>Sifarişi göndər, son detalları operatorla dəqiqləşdir və hazırlanmasını gözlə.</p></article>
-  </div>
-</section>
-
-<section class="section reveal" style="background:var(--card); padding:40px; border-radius:24px; border:1px dashed var(--accent);">
-    <h2>🔎 Ağıllı Hədiyyə Filtri</h2>
-    <p style="color:var(--muted); margin-bottom: 20px; font-size:15px;">Qərar verə bilmirsiniz? Uyğun meyarları seçin və ən ideal hədiyyəni tapın.</p>
-    <div class="toolbar" style="margin-bottom:0; display:flex; flex-wrap:wrap; gap:10px;">
-        <select id="smartPrice" aria-label="Qiymət aralığı">
-            <option value="">1️⃣ Qiymət aralığı</option>
-            <option value="0-20">0.00 ₼ - 20.00 ₼</option>
-            <option value="20-50">20.00 ₼ - 50.00 ₼</option>
-            <option value="50+">50.00 ₼ və yuxarı</option>
-        </select>
-        <select id="smartPerson" aria-label="Kimin üçün hədiyyə seçimi">
-            <option value="">2️⃣ Kimin üçün?</option>
-            <option value="sevgili">❤️ Sevgili</option>
-            <option value="dost">🤝 Dost / Həmkar</option>
-            <option value="aile">👨‍👩‍👧 Ailə üzvü</option>
-            <option value="usaq">👶 Uşaq</option>
-        </select>
-        <select id="smartType" aria-label="Hədiyyə növü">
-            <option value="">3️⃣ Hədiyyə növü</option>
-            <option value="Saatlar & Hədiyyə">🎁 Hədiyyə qutusu / Saat</option>
-            <option value="Lazer & Taxta">🪵 Taxta & Lazer kəsim</option>
-            <option value="Avto & Aksessuar">🚘 Avto aksessuar</option>
-            <option value="Çap & Poliqrafiya">🖨️ Fərdi Çap</option>
-        </select>
-        <button class="add" style="width:auto; padding:0 30px;" data-action="applySmartFilter">Nəticələri Gör</button>
-    </div>
-</section>
-
-<section class="section reveal">
-    <h2 style="justify-content: center; font-size: 26px; margin-bottom: 20px;">Kimə hədiyyə axtarırsınız? ✨</h2>
-    <div class="target-categories">
-        <button class="target-chip" type="button" data-action="filterByTag" data-action-args='[&quot;sevgili&quot;]'>❤️ <b>Sevgili üçün</b></button>
-        <button class="target-chip" type="button" data-action="filterByTag" data-action-args='[&quot;ana&quot;]'>👩 <b>Ana üçün</b></button>
-        <button class="target-chip" type="button" data-action="filterByTag" data-action-args='[&quot;ata&quot;]'>👨 <b>Ata üçün</b></button>
-        <button class="target-chip" type="button" data-action="filterByTag" data-action-args='[&quot;dost&quot;]'>👭 <b>Dost üçün</b></button>
-        <button class="target-chip" type="button" data-action="filterByTag" data-action-args='[&quot;ad_gunu&quot;]'>🎂 <b>Ad günü</b></button>
-        <button class="target-chip" type="button" data-action="filterByTag" data-action-args='[&quot;xususi_gun&quot;]'>💍 <b>Xüsusi gün</b></button>
-    </div>
-</section>
-
-<section class="section reveal">
-    <h2>Xidmət Kateqoriyaları</h2>
-    <div class="categories">
-        <button class="cat" type="button" data-action="filterCat" data-action-args='[&quot;Lazer &amp; Taxta&quot;]'>🪵<b>Lazer & Taxta</b></button>
-        <button class="cat" type="button" data-action="filterCat" data-action-args='[&quot;Avto &amp; Aksessuar&quot;]'>🚘<b>Avto & Aksessuar</b></button>
-        <button class="cat" type="button" data-action="filterCat" data-action-args='[&quot;Çap &amp; Poliqrafiya&quot;]'>🖨️<b>Çap & Poliqrafiya</b></button>
-        <button class="cat" type="button" data-action="filterCat" data-action-args='[&quot;Saatlar &amp; Hədiyyə&quot;]'>🕰️<b>Saatlar & Hədiyyə</b></button>
-        <button class="cat" type="button" data-action="filterCat" data-action-args='[&quot;&quot;]'>✨<b>Bütün Məhsullar</b></button>
+<section class="section reveal category-showcase" id="categories">
+    <div class="section-heading-centered"><div class="section-kicker">F1 STUDIO</div><h2>Kateqoriyalar</h2><span class="heading-rule"><i></i></span></div>
+    <div class="categories gift-categories">
+        <button class="cat category-card" type="button" data-action="filterCat" data-action-args='[&quot;Lazer &amp; Taxta&quot;]'><span class="category-photo category-wood"><img src="assets/reference/cat-1.jpg" alt="" loading="lazy" decoding="async"></span><b>Lazer & Taxta</b><small>32 məhsul</small></button>
+        <button class="cat category-card" type="button" data-action="filterCat" data-action-args='[&quot;Avto &amp; Aksessuar&quot;]'><span class="category-photo category-auto"><img src="assets/reference/cat-2.jpg" alt="" loading="lazy" decoding="async"></span><b>Avto & Aksessuar</b><small>48 məhsul</small></button>
+        <button class="cat category-card" type="button" data-action="filterCat" data-action-args='[&quot;Çap &amp; Poliqrafiya&quot;]'><span class="category-photo category-print"><img src="assets/reference/cat-3.jpg" alt="" loading="lazy" decoding="async"></span><b>Çap & Poliqrafiya</b><small>36 məhsul</small></button>
+        <button class="cat category-card" type="button" data-action="filterCat" data-action-args='[&quot;Saatlar &amp; Hədiyyə&quot;]'><span class="category-photo category-clock"><img src="assets/reference/cat-4.jpg" alt="" loading="lazy" decoding="async"></span><b>Saatlar & Hədiyyə</b><small>27 məhsul</small></button>
+        <button class="cat category-card" type="button" data-action="focusProductSearch"><span class="category-photo category-custom"><img src="assets/reference/cat-5.jpg" alt="" loading="lazy" decoding="async"></span><b>Fərdi dizayn</b><small>42 məhsul</small></button>
+        <button class="cat category-card" type="button" data-action="filterCat" data-action-args='[&quot;&quot;]'><span class="category-photo category-all"><img src="assets/reference/cat-6.jpg" alt="" loading="lazy" decoding="async"></span><b>Bütün məhsullar</b><small>19 məhsul</small></button>
     </div>
 </section>
 
 <section class="section reveal" id="products">
-    <h2 id="sectionTitle">Məhsul və Xidmətlərimiz</h2>
+    <div class="shop-heading"><div><div class="section-kicker">SEÇİLMİŞLƏR</div><h2 id="sectionTitle">Ən çox seçilənlər</h2></div><a href="#products" class="view-all" data-action="showAllProducts">Hamısına bax →</a></div>
     <div class="toolbar">
         <label class="sr-only" for="search">Məhsul və xidmət axtarışı</label><input id="search" data-input-action="render" placeholder="Xidmət və ya məhsul axtar (məs: Lipa nömrə)...">
         <select id="sort" data-change-action="render">
@@ -183,7 +136,17 @@
     <div class="products" id="grid"></div>
 </section>
 
-<section class="section reveal">
+<section class="section reveal gift-promos">
+  <div class="promo-card promo-personal"><div><span>FƏRDİ HƏDİYYƏLƏR</span><h3>Hədiyyəni daha<br><em>xüsusi et.</em></h3><p>İstədiyin ad, yazı və dizaynı əlavə et.</p><a href="#products" class="btn" data-action="focusProductSearch">FƏRDİLƏŞDİR</a></div><div class="promo-art promo-gift"></div></div>
+  <div class="promo-card promo-offer"><div><span>XÜSUSİ TƏKLİF</span><h3>İlk sifarişinə<br><em>10% endirim</em></h3><p>İlk sifarişində fürsətdən yararlan.</p><a href="#products" class="btn">10% ENDİRİM</a></div><div class="promo-art promo-offer-art"></div></div>
+</section>
+
+<section class="newsletter-strip reveal">
+  <div class="newsletter-copy"><div class="newsletter-icon">✉</div><div><b>Yeniliklərdən xəbərdar ol</b><small>Yeni məhsullar və xüsusi təkliflər üçün qoşul.</small></div></div>
+  <div class="newsletter-form"><input id="newsletterEmail" type="email" placeholder="Email ünvanınız" aria-label="Email ünvanınız" autocomplete="email" inputmode="email"><button type="button" class="btn" data-action="subscribeNewsletter">ABUNƏ OL</button></div>
+</section>
+
+<section class="section reveal" id="reviews">
     <h2>Müştəri Rəyləri ⭐</h2>
     <div class="reviews-section">
         <div id="reviewsList"></div>
@@ -262,11 +225,25 @@
         <div class="footer-column">
             <span class="footer-label">Keçidlər</span>
             <a href="#home">Ana səhifə</a>
-            <a href="#products">Məhsul və xidmətlər</a>
+            <a href="#products" data-action="showAllProducts">Məhsul və xidmətlər</a>
             <a href="#faq">Suallar</a>
             <a href="#about">Əlaqə & Ünvan</a>
         </div>
         <div class="footer-column">
+            <span class="footer-label">Mağaza</span>
+            <a href="#products" data-action="showAllProducts">Bütün məhsullar</a>
+            <a href="#products" data-action="showAllProducts">Yeni məhsullar</a>
+            <a href="#products" data-action="showAllProducts">Ən çox seçilənlər</a>
+            <a href="#categories">Kateqoriyalar</a>
+        </div>
+        <div class="footer-column">
+            <span class="footer-label">Kömək</span>
+            <a href="#faq">FAQ</a>
+            <a href="#about">Sifariş qaydası</a>
+            <a href="#about">Çatdırılma</a>
+            <a href="#about">Əlaqə</a>
+        </div>
+        <div class="footer-column footer-contact-column">
             <span class="footer-label">Sifariş</span>
             <span id="footerWhatsAppText">WhatsApp sifarişi checkout-dan açılır</span>
             <span class="footer-detail">📍 Gəncə · 4 nömrəli poçtun yanı</span>
@@ -353,7 +330,7 @@
 
         <div class="cart-summary">
             <div class="cart-summary-label">Sifariş xülasəsi</div>
-            <h3 id="total"></h3>
+            <h3 id="total" aria-live="polite" aria-atomic="true"></h3>
         </div>
 
         <div id="orderForm" class="form checkout-form" style="display:none">
@@ -424,7 +401,7 @@
                     <div><b>02</b><span>Sifarişdən əvvəl dəqiqləşdirmə</span></div>
                     <div><b>03</b><span>WhatsApp ilə rahat əlaqə</span></div>
                 </div>
-                <button class="add product-modal-cta" id="modalAddToCartBtn" type="button">🛒 Səbətə at</button>
+                <button type="button" class="add product-modal-cta" id="modalAddToCartBtn">🛒 Səbətə əlavə et</button>
                 <p class="product-modal-note">Qiymət və hazırlama müddəti məhsul seçimlərinə görə dəyişə bilər. Son detallar sifariş zamanı təsdiqlənir.</p>
             </div>
         </div>
@@ -544,7 +521,7 @@
               </label>
             </div>
             <div class="notice custom-note">🔒 Dizayn faylı təhlükəsiz, private Storage-da saxlanılır. Fayl yükləmək üçün hesabınıza daxil olun; operator faylı admin paneldən müvəqqəti təhlükəsiz linklə aça bilər.</div>
-            <button class="add custom-submit" id="customSubmitBtn" type="button" data-action="confirmCustomization">✨ Fərdiləşdirməni saxla və səbətə əlavə et</button>
+            <button class="add custom-submit" id="customSubmitBtn" type="button" data-action="confirmCustomization">🛒 Fərdiləşdir və səbətə əlavə et</button>
           </div>
         </div>
     </div>
@@ -862,6 +839,6 @@
 
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
 <noscript><div style="padding:16px;background:#fff1f2;color:#7f1d1d;text-align:center;font-family:system-ui">Bu saytın sifariş və məhsul funksiyaları üçün JavaScript aktiv olmalıdır.</div></noscript>
-    <script type="module" src="js/app.js?v=59.3"></script>
+    <script type="module" src="js/app.js"></script>
 </body>
 </html>

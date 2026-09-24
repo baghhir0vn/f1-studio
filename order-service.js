@@ -1,6 +1,7 @@
-import { sb } from '../config.js?v=59.3';
-import { fetchAllRows } from './query-utils.js?v=59.3';
-import { isAllowedOrderStatus, isSafeCustomerDesignPath, sanitizeDesignLayout } from '../security.js?v=59.3';
+import { sb } from '../config.js';
+import { fetchAllRows } from './query-utils.js';
+import { isAllowedOrderStatus, isSafeCustomerDesignPath, sanitizeDesignLayout } from '../security.js';
+
 export function mapOrderRow(o) {
     return {
         id: o.id,
@@ -22,6 +23,7 @@ export function mapOrderRow(o) {
         }))
     };
 }
+
 export const orderService = {
     async listMine() {
         const { data: userData } = await sb.auth.getUser();

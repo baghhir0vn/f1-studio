@@ -1,10 +1,11 @@
-import { escapeHTML, money, isValidPhone, showToast } from './ui.js?v=59.3';
-import { authService } from './services/auth-service.js?v=59.3';
-import { state as s, ctx } from './state.js?v=59.3';
-import { getProfileForUser } from './services/profile-service.js?v=59.3';
-import { CONFIG } from './config.js?v=59.3';
-import { storageService } from './services/storage-service.js?v=59.3';
-import { isCustomerDesignPathOwnedBy } from './security.js?v=59.3';
+import { escapeHTML, money, isValidPhone, showToast } from './ui.js';
+import { authService } from './services/auth-service.js';
+import { state as s, ctx } from './state.js';
+import { getProfileForUser } from './services/profile-service.js';
+import { CONFIG } from './config.js';
+import { storageService } from './services/storage-service.js';
+import { isCustomerDesignPathOwnedBy } from './security.js';
+
 export function initAuth() {
     authService.onAuthStateChange((event) => {
         if(event === "PASSWORD_RECOVERY"){
@@ -12,6 +13,7 @@ export function initAuth() {
             setTimeout(() => { ctx.openPasswordRecovery(); }, 0);
         }
     });
+
     async function openLogin() {
         if(s.passwordRecoveryMode){
             ctx.openPasswordRecovery();
@@ -27,7 +29,9 @@ export function initAuth() {
         await ctx.renderProfile();
         ctx.openDialog("loginModal", "#profileName");
     }
+    
     function closeLogin() { ctx.closeDialog("loginModal"); }
+    
     function showForgotPassword(){
         const panel=document.getElementById("passwordResetPanel");
         const recovery=document.getElementById("passwordRecoveryPanel");
@@ -37,9 +41,11 @@ export function initAuth() {
         const resetEmail=document.getElementById("resetEmail");
         if(resetEmail && email) resetEmail.value=email;
     }
+    
     function hideForgotPassword(){
         document.getElementById("passwordResetPanel")?.classList.remove("open");
     }
+    
     async function sendPasswordResetEmail(){
         const email=document.getElementById("resetEmail")?.value.trim();
         if(!/^\S+@\S+\.\S+$/.test(email)) return showToast("Düzgün e-poçt ünvanı daxil edin.");
@@ -51,6 +57,7 @@ export function initAuth() {
             console.error("Password reset request error",e);        showToast("Şifrə yeniləmə emaili göndərilə bilmədi. Supabase email ayarlarını yoxlayın.");
         }
     }
+    
     function openPasswordRecovery(){
         document.getElementById("passwordResetPanel")?.classList.remove("open");
         document.getElementById("passwordRecoveryPanel")?.classList.add("open");
@@ -63,6 +70,7 @@ export function initAuth() {
         const status=document.getElementById("profileStatus");
         if(status) status.textContent="Şifrənizi yeniləmək üçün yeni şifrəni daxil edin.";
     }
+    
     async function updatePasswordFromRecovery(){
         const password=document.getElementById("newPassword")?.value||"";
         const confirm=document.getElementById("newPasswordConfirm")?.value||"";
@@ -86,6 +94,7 @@ export function initAuth() {
             showToast("Şifrə yenilənmədi. Keçidin vaxtı bitmiş və ya etibarsız ola bilər.");
         }
     }
+    
     async function registerAccount() {
         const name=document.getElementById("profileName").value.trim(), phone=document.getElementById("profilePhone").value.trim(), email=document.getElementById("profileEmail").value.trim(), password=document.getElementById("profilePassword").value;
         if(name.length<2 || !isValidPhone(phone) || !/^\S+@\S+\.\S+$/.test(email) || password.length<8) return showToast("Ad, telefon, düzgün email və ən azı 8 simvolluq şifrə daxil edin.");
@@ -104,6 +113,7 @@ export function initAuth() {
             showToast(e.message === "EMAIL_EXISTS" ? "Bu email artıq qeydiyyatdadır." : "Qeydiyyat alınmadı.");
         }
     }
+    
     async function loginAccount() {
         if(s.passwordRecoveryMode) return showToast("Əvvəlcə yeni şifrənizi təyin edin.");
         const email=document.getElementById("profileEmail").value.trim(), password=document.getElementById("profilePassword").value;
@@ -115,6 +125,7 @@ export function initAuth() {
         } catch(e) {        showToast("Email və ya şifrə yanlışdır.");
         }
     }
+    
     async function logoutProfile() {
         await ctx.api("/api/auth/logout",{method:"POST"}).catch(()=>{});
         s.authUser=null; s.profile=null; s.orders=[]; s.passwordRecoveryMode=false;
@@ -125,6 +136,7 @@ export function initAuth() {
         ["profileName","profilePhone","profileEmail","profilePassword"].forEach(id => document.getElementById(id).value="");
         showToast("Hesabdan çıxıldı.");
     }
+    
     async function loadCurrentUser() {
         try {
             const data=await ctx.api("/api/me");
@@ -132,6 +144,7 @@ export function initAuth() {
             s.authUser=data.user; s.profile=data.user; await ctx.renderProfile(); await ctx.startAdminRealtime();
         } catch (_) { s.authUser=null; s.profile=null; ctx.stopAdminRealtime(); await ctx.renderProfile(); }
     }
+    
     async function renderProfile() {
         const status=document.getElementById("profileStatus"), logout=document.getElementById("logoutBtn");
         status.textContent=s.authUser ? `Aktiv hesab: ${s.authUser.name} (${s.authUser.email})` : "Hesaba giriş edilməyib.";
@@ -143,9 +156,11 @@ export function initAuth() {
         ctx.updateAdminButton();
         await ctx.renderOrderHistory();
     }
+    
     function customerOrderStatusLabel(status){
         return ({pending_confirmation:'Təsdiq gözləyir',confirmed:'Təsdiqləndi',preparing:'Hazırlanır',ready:'Hazırdır',shipped:'Göndərildi',completed:'Tamamlandı',cancelled:'Ləğv edildi'})[status] || status || 'Naməlum';
     }
+
     function openOrderWhatsApp(orderCode){
         const digits=String(CONFIG.whatsappNumber||'').replace(/\D/g,'');
         if(!digits) return showToast('WhatsApp nömrəsi hələ təyin edilməyib.');
@@ -153,6 +168,7 @@ export function initAuth() {
         const url=`https://wa.me/${digits}?text=${encodeURIComponent(`Salam! F1 Studio sifarişim barədə məlumat almaq istəyirəm. Sifariş kodu: ${code}`)}`;
         window.open(url,'_blank','noopener,noreferrer');
     }
+
     async function openCustomerDesign(path){
         const userId=s.authUser?.id||'';
         if(!isCustomerDesignPathOwnedBy(path,userId)) return showToast('Dizayn faylına giriş icazəsi yoxdur.');
@@ -164,6 +180,7 @@ export function initAuth() {
             showToast('Dizayn faylı açıla bilmədi.');
         }
     }
+
     async function renderOrderHistory(){
         const box=document.getElementById("orderHistory"); if(!box) return;
         if(!s.authUser){ box.innerHTML='<div class="form-help">Sifariş tarixçəsini görmək üçün hesaba daxil olun.</div>'; return; }
@@ -193,6 +210,8 @@ export function initAuth() {
             return `<article class="order-row customer-order-card"><div class="customer-order-top"><div><b>${code}</b><div class="customer-order-date">${date}</div></div><span class="customer-order-status ${o.status==='cancelled'?'is-cancelled':o.status==='completed'?'is-complete':''}">${escapeHTML(customerOrderStatusLabel(o.status))}</span></div><div class="customer-order-progress">${steps}</div><div class="customer-order-items">${items||'Məhsul məlumatı yoxdur'}</div><div class="customer-order-bottom"><b>${money((Number(o.total_cents)||0)/100)}</b><div class="customer-order-actions">${designLinks}<button type="button" class="order-wa-btn" data-action="openOrderWhatsApp" data-action-args='[${JSON.stringify(o.orderCode||o.order_code||'')}]'>💬 WhatsApp</button></div></div></article>`;
         }).join('');
     }
+
+
     Object.assign(ctx, {
     openLogin,
     closeLogin,

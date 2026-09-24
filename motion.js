@@ -1,4 +1,5 @@
 const reduceMotion = () => window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+
 function initReveal(){
     const items = [...document.querySelectorAll('.reveal')];
     if(!items.length) return;
@@ -18,6 +19,7 @@ function initReveal(){
         observer.observe(el);
     });
 }
+
 function initModalMotion(){
     document.addEventListener('transitionend', event=>{
         const modal = event.target?.closest?.('.modal,.modal-center');
@@ -26,6 +28,7 @@ function initModalMotion(){
         if(first && !modal.contains(document.activeElement)) first.focus();
     });
 }
+
 function initPointerPress(){
     document.addEventListener('pointerdown', event=>{
         const el = event.target?.closest?.('button,.btn,a,.cat,.target-chip,.chip,.fav-btn');
@@ -37,9 +40,20 @@ function initPointerPress(){
     document.addEventListener('pointercancel', clear, {passive:true});
     document.addEventListener('pointerleave', clear, {passive:true});
 }
+
+function initHeaderScroll(){
+    const nav = document.querySelector('header .nav');
+    if(!nav) return;
+    const update = () => nav.classList.toggle('scrolled', window.scrollY > 10);
+    update();
+    window.addEventListener('scroll', update, {passive:true});
+}
+
 function initMotion(){
     initReveal();
     initModalMotion();
     initPointerPress();
+    initHeaderScroll();
 }
+
 export { initMotion };

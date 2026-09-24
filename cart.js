@@ -1,17 +1,21 @@
-import { persist, escapeHTML, money, isValidPhone, showToast } from './ui.js?v=59.3';
-import { sanitizeStoredCart } from './security.js?v=59.3';
-import { CONFIG } from './config.js?v=59.3';
-import { storageService } from './services/storage-service.js?v=59.3';
-import { state as s, ctx } from './state.js?v=59.3';
-import { safeUserError } from './security.js?v=59.3';
+import { persist, escapeHTML, money, isValidPhone, showToast } from './ui.js';
+import { sanitizeStoredCart } from './security.js';
+import { CONFIG } from './config.js';
+import { storageService } from './services/storage-service.js';
+import { state as s, ctx } from './state.js';
+import { safeUserError } from './security.js';
+
 export function initCart() {
     function normalizeCartLines(){
         const before = JSON.stringify(s.cart);
         s.cart = sanitizeStoredCart(s.cart);
         if (JSON.stringify(s.cart) !== before) persist("f1Cart", s.cart);
     }
+    
     function openCart() { ctx.renderCart(); ctx.openDialog("modal", ".close"); }
+    
     function closeCart() { ctx.closeDialog("modal"); }
+    
     function handleDeliveryChange(){
         const select=document.getElementById("deliveryOption"), pickup=select.value==="pickup";
         const address=document.getElementById("address"), unknown=document.getElementById("unknownAddress"), label=document.getElementById("unknownAddressLabel");
@@ -19,6 +23,7 @@ export function initCart() {
         else { unknown.disabled=false; label.style.opacity="1"; ctx.toggleAddress(false); }
         ctx.updateTotal();
     }
+    
     function toggleAddress(fromUser=true){
         const checked=document.getElementById("unknownAddress").checked, address=document.getElementById("address");
         address.disabled=checked;
@@ -26,6 +31,7 @@ export function initCart() {
         else address.placeholder="Çatdırılma ünvanı və ya xüsusi qeyd";
         if(fromUser) ctx.updateTotal();
     }
+    
     function renderCart(){
         const box=document.getElementById("cartItems");
         box.innerHTML="";
@@ -49,16 +55,20 @@ export function initCart() {
                 if(c.note) details.push(`<b>Qeyd:</b> ${escapeHTML(c.note)}`);
                 custom.innerHTML=details.join("<br>");
                 info.appendChild(custom);
-            }
-            if(p.customizable){
-                const customize=document.createElement("button"); customize.className="cart-edit"; customize.type="button";
-                customize.textContent=i.customization?"✏️ Fərdiləşdirməni dəyiş":"✨ Fərdiləşdir";
-                customize.setAttribute("aria-label",i.customization?`${p.name} üçün fərdiləşdirməni dəyiş`:`${p.name} üçün fərdiləşdirməni aç`);
-                customize.onclick=()=>ctx.openCustomization(p.id,i.lineId);
-                info.appendChild(customize);
+                const edit=document.createElement("button"); edit.className="cart-edit"; edit.type="button"; edit.textContent="✏️ Fərdiləşdirməni dəyiş"; edit.onclick=()=>ctx.openCustomization(p.id,i.lineId); info.appendChild(edit);
             }
             const qty=document.createElement("div"); qty.className="qty";
-            [["−",-1],["+",1]].forEach(([label,delta])=>{ const b=document.createElement("button"); b.type="button"; b.textContent=label; b.onclick=()=>ctx.change(i.lineId,delta); qty.appendChild(b); if(delta===-1){const s=document.createElement("span");s.style.margin="0 8px";s.style.fontWeight="600";s.textContent=i.qty;qty.appendChild(s);} });
+            const currentProductQty=s.cart.filter(line=>line.id===i.id).reduce((sum,line)=>sum+(Number(line.qty)||0),0);
+            [["−",-1],["+",1]].forEach(([label,delta])=>{
+                const b=document.createElement("button"); b.type="button"; b.textContent=label;
+                b.setAttribute("aria-label", delta>0?`${p.name} miqdarını artır`:`${p.name} miqdarını azalt`);
+                b.title=delta>0?"Miqdarı artır":"Miqdarı azalt";
+                if(delta>0 && p.stockQuantity!=null && currentProductQty>=Number(p.stockQuantity)){
+                    b.disabled=true; b.setAttribute("aria-disabled","true"); b.title="Stok limiti dolub";
+                }
+                b.onclick=()=>ctx.change(i.lineId,delta); qty.appendChild(b);
+                if(delta===-1){const count=document.createElement("span"); count.style.margin="0 8px"; count.style.fontWeight="600"; count.setAttribute("aria-live","polite"); count.textContent=i.qty; qty.appendChild(count);}
+            });
             info.appendChild(qty); row.appendChild(info);
             const sum=document.createElement("b"); sum.textContent=money(p.price*i.qty); row.appendChild(sum); box.appendChild(row);
         });
@@ -66,6 +76,7 @@ export function initCart() {
         ctx.handleDeliveryChange();
         document.getElementById("orderForm").style.display=s.cart.length && document.getElementById("orderForm").style.display!=="none" ? "grid":"none";
     }
+    
     function updateTotal(){
         let total=s.cart.reduce((sum,i)=>{const p=ctx.getProduct(i.id);return sum+(p?p.price*i.qty:0)},0);
         if(document.getElementById("giftWrap").checked && s.cart.length) total += CONFIG.giftWrap;
@@ -73,6 +84,7 @@ export function initCart() {
         if(select && s.cart.length) total += CONFIG.delivery[select.value] || 0;
         document.getElementById("total").textContent=s.cart.length?`Cəmi: ${money(total)}`:"";
     }
+    
     function validateCartStock(){
         const totals=new Map();
         for(const item of s.cart){
@@ -89,6 +101,7 @@ export function initCart() {
         }
         return {ok:true};
     }
+
     function change(lineId,d){
         const item=s.cart.find(i=>i.lineId===lineId); if(!item) return;
         const product=ctx.getProduct(item.id);
@@ -104,19 +117,17 @@ export function initCart() {
         }
         ctx.saveCart(); ctx.renderCart();
     }
+    
     function clearCart(){
         if(!s.cart.length) return;
         const paths=s.cart.map(i=>i.customization?.imagePath).filter(Boolean);
         s.cart=[]; ctx.saveCart();
         if(paths.length) storageService.removeCustomerDesigns(paths).catch(()=>{});
-        document.getElementById("orderForm").style.display="none";
-        document.getElementById("giftWrap").checked=false;
-        document.getElementById("name").value="";
-        document.getElementById("phone").value="";
-        document.getElementById("address").value="";
+        resetCheckoutState();
         ctx.renderCart();
         showToast("Səbət təmizləndi.");
     }
+    
     function validateOrder(){
         const name=document.getElementById("name").value.trim(), phone=document.getElementById("phone").value.trim(), address=document.getElementById("address").value.trim();
         const delivery=document.getElementById("deliveryOption").value, unknown=document.getElementById("unknownAddress").checked;
@@ -125,6 +136,7 @@ export function initCart() {
         if(delivery!=="pickup" && !unknown && address.length<5) return "Çatdırılma ünvanını daxil edin və ya 'ünvanı bilmirəm' seçin.";
         return "";
     }
+    
     function getEstimatedOrderTotal(){
         let total=s.cart.reduce((sum,i)=>{const p=ctx.getProduct(i.id);return sum+(p?p.price*i.qty:0)},0);
         if(document.getElementById("giftWrap").checked && s.cart.length) total += CONFIG.giftWrap;
@@ -132,7 +144,8 @@ export function initCart() {
         if(select && s.cart.length) total += CONFIG.delivery[select.value] || 0;
         return total;
     }
-    function buildEnhancedWhatsAppUrl(baseUrl,orderCode=""){
+    
+    function buildEnhancedWhatsAppUrl(baseUrl,orderCode="",authoritativeTotalCents=null){
         try{
             const url=new URL(baseUrl);
             const lines=["Salam! F1 Studio-dan sifariş vermək istəyirəm."];
@@ -155,7 +168,9 @@ export function initCart() {
             const deliveryLabel=delivery==="pickup"?"Mağazadan götürmə":delivery==="ganja"?"Gəncə daxili çatdırılma":"Rayonlara poçtla göndəriş";
             lines.push("",`Müştəri: ${ctx.customerNameSafe()}`,`Telefon: ${document.getElementById("phone").value.trim()}`,`Çatdırılma: ${deliveryLabel}`);
             if(delivery!=="pickup") lines.push(`Ünvan: ${document.getElementById("unknownAddress").checked?"Telefonla dəqiqləşdirilsin":document.getElementById("address").value.trim()}`);
-            lines.push(`Hədiyyə qablaşdırması: ${document.getElementById("giftWrap").checked?`Bəli (+${money(CONFIG.giftWrap)})`:"Xeyr"}`,`Təxmini cəmi: ${money(ctx.getEstimatedOrderTotal())}`);
+            lines.push(`Hədiyyə qablaşdırması: ${document.getElementById("giftWrap").checked?`Bəli (+${money(CONFIG.giftWrap)})`:"Xeyr"}`);
+            const finalTotal=Number.isFinite(Number(authoritativeTotalCents)) ? Number(authoritativeTotalCents)/100 : ctx.getEstimatedOrderTotal();
+            lines.push(`${Number.isFinite(Number(authoritativeTotalCents)) ? "Sifariş cəmi" : "Təxmini cəmi"}: ${money(finalTotal)}`);
             if(url.searchParams.has("text") || url.searchParams.has("phone") || url.hostname.includes("wa.me")){
                 url.searchParams.set("text",lines.join("\n"));
             } else {
@@ -164,7 +179,21 @@ export function initCart() {
             return url.toString();
         }catch(_){ return baseUrl; }
     }
+    
     function customerNameSafe(){return document.getElementById("name").value.trim();}
+
+    function resetCheckoutState(){
+        const delivery=document.getElementById("deliveryOption");
+        const unknown=document.getElementById("unknownAddress");
+        const form=document.getElementById("orderForm");
+        if(delivery) delivery.value="pickup";
+        if(unknown){ unknown.checked=false; unknown.disabled=true; }
+        ["name","phone","address"].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=""; });
+        const wrap=document.getElementById("giftWrap"); if(wrap) wrap.checked=false;
+        if(form) form.style.display="none";
+        ctx.handleDeliveryChange();
+    }
+    
     async function checkout(){
         if(!ctx.ensureCatalogReady()) return;
         if(!s.cart.length) return showToast("Səbətiniz boşdur.");
@@ -177,10 +206,13 @@ export function initCart() {
         }
         const error=ctx.validateOrder(); if(error) return showToast(error);
         if(!String(CONFIG.whatsappNumber||"").replace(/\D/g,"")) return showToast("WhatsApp nömrəsi hələ təyin edilməyib. Admin paneldə Sayt Ayarlarından əlavə edin.");
+
         const button=document.querySelector('button[data-action="checkout"]');
         if(button?.disabled) return;
         const oldText=button?.textContent;
         if(button){button.disabled=true;button.textContent="⏳ Sifariş yoxlanılır...";}
+
+        // Popup-u klik hadisəsi daxilində açırıq ki, brauzer bloklamasın; backend sifarişi yaratdıqdan sonra real WhatsApp URL-si ilə yönləndiririk.
         const popup=window.open("about:blank","_blank");
         if(!popup){
             if(button){button.disabled=false;button.textContent=oldText||"WhatsApp ilə Sifariş Et";}
@@ -191,6 +223,7 @@ export function initCart() {
         const customerName=document.getElementById("name").value.trim(), customerPhone=document.getElementById("phone").value.trim();
         const address=delivery==="pickup"?"":(unknown?"":document.getElementById("address").value.trim());
         try {
+            // Checkout-dan əvvəl məhsul siyahısını təzələyirik. Son stok qərarı yenə Supabase create_order funksiyasına məxsusdur.
             await ctx.loadServerProducts?.(true);
             ctx.normalizeCartLines?.();
             if(!s.cart.length){ popup.close(); return showToast("Səbət yenilənib və artıq boşdur."); }
@@ -209,7 +242,7 @@ export function initCart() {
                 customer:{name:customerName,phone:customerPhone,email:s.authUser?.email||""},
                 delivery,address,addressUnknown:unknown,giftWrap:isWrap
             })});
-            const whatsappUrl=ctx.buildWhatsAppUrl(CONFIG.whatsappNumber,result.order?.orderCode||"");
+            const whatsappUrl=ctx.buildWhatsAppUrl(CONFIG.whatsappNumber,result.order?.orderCode||"",result.order?.total_cents);
             if(!whatsappUrl){
                 popup.close();
                 showToast("Sifariş yaradıldı, amma WhatsApp keçidi hazırlana bilmədi. Adminlə əlaqə saxlayın.");
@@ -217,9 +250,7 @@ export function initCart() {
             }
             popup.location=whatsappUrl;
             s.cart=[]; ctx.saveCart();
-            document.getElementById("orderForm").style.display="none";
-            document.getElementById("giftWrap").checked=false;
-            ["name","phone","address"].forEach(id=>document.getElementById(id).value="");
+            resetCheckoutState();
             await ctx.renderOrderHistory();
             ctx.closeCart();
             showToast(`Sifariş ${result.order.orderCode} yaradıldı. WhatsApp açıldı.`);
@@ -233,6 +264,7 @@ export function initCart() {
             if(button){button.disabled=false;button.textContent=oldText||"WhatsApp ilə Sifariş Et";}
         }
     }
+
     Object.assign(ctx, {
     normalizeCartLines,
     openCart,
@@ -247,6 +279,7 @@ export function initCart() {
     getEstimatedOrderTotal,
     buildEnhancedWhatsAppUrl,
     customerNameSafe,
+    resetCheckoutState,
     validateCartStock,
     checkout
     });

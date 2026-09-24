@@ -1,19 +1,23 @@
-import { safeHttpUrl, safeResourceUrl, safeUserError } from './security.js?v=59.3';
-import { escapeHTML, money, normalizeText, showToast } from './ui.js?v=59.3';
-import { authService } from './services/auth-service.js?v=59.3';
-import { storageService } from './services/storage-service.js?v=59.3';
-import { state as s, ctx } from './state.js?v=59.3';
-import { ADMIN_API } from './admin-shared.js?v=59.3';
+import { safeHttpUrl, safeResourceUrl, safeUserError } from './security.js';
+import { escapeHTML, money, normalizeText, showToast } from './ui.js';
+import { authService } from './services/auth-service.js';
+import { storageService } from './services/storage-service.js';
+import { state as s, ctx } from './state.js';
+
+import { ADMIN_API } from './admin-shared.js';
+
 async function loadAdminProducts(){
         try{
             const data=await ctx.adminApi(ADMIN_API.products);
             s.adminProducts=Array.isArray(data.products)?data.products:[];
             ctx.renderAdminProducts();
         }catch(e){
+            // Server admin endpoint yoxdursa mövcud kataloqu paneldə göstəririk.
             s.adminProducts=[...s.products]; ctx.renderAdminProducts();
             showToast("Supabase-dən məhsullar oxunmadı; lokal kataloq göstərilir.");
         }
     }
+    
     function renderAdminProducts(){
         const body=document.getElementById("adminProductsBody"); if(!body)return;
         const q=normalizeText(document.getElementById("adminProductSearch")?.value||"");
@@ -29,10 +33,12 @@ async function loadAdminProducts(){
             img.addEventListener("error",()=>{const emoji=img.dataset.fallbackEmoji||"📦"; img.remove(); if(img.parentNode) img.parentNode.textContent=emoji;},{once:true});
         });
     }
+    
     function clearAdminGalleryPreviewUrls(){
         s.adminGalleryPreviewUrls.forEach(u=>{try{URL.revokeObjectURL(u)}catch(_){}});
         s.adminGalleryPreviewUrls=[];
     }
+    
     function renderAdminGalleryPreview(items=[]){
         const box=document.getElementById("adminProductGalleryPreview"); if(!box)return;
         box.innerHTML="";
@@ -43,9 +49,11 @@ async function loadAdminProducts(){
             box.appendChild(wrap);
         });
     }
+    
     function revokeAdminImagePreview(){
         if(s.adminImagePreviewUrl){ URL.revokeObjectURL(s.adminImagePreviewUrl); s.adminImagePreviewUrl=null; }
     }
+    
     function setAdminImagePreview(url, label="Şəkil yoxdur"){
         const box=document.getElementById("adminProductImagePreview"); if(!box)return;
         ctx.revokeAdminImagePreview();
@@ -57,6 +65,7 @@ async function loadAdminProducts(){
             box.textContent=label;
         }
     }
+    
     function handleAdminProductImage(input){
         const files=[...(input.files||[])];
         const status=document.getElementById("adminProductImageStatus");
@@ -76,6 +85,7 @@ async function loadAdminProducts(){
         ctx.renderAdminGalleryPreview(previewItems);
         if(status) status.textContent=`${files.length} yeni şəkil seçildi · Yadda saxlayanda Supabase Storage-a yüklənəcək.`;
     }
+    
     function clearAdminProductImage(){
         const url=document.getElementById("adminProductImage"); if(url)url.value="";
         const file=document.getElementById("adminProductImageFile"); if(file)file.value="";
@@ -85,6 +95,7 @@ async function loadAdminProducts(){
         ctx.renderAdminGalleryPreview([]);
         const status=document.getElementById("adminProductImageStatus"); if(status)status.textContent="Qalereya təmizləndi. Yadda saxlayanda məhsul şəkilsiz qalacaq.";
     }
+    
     function storagePathFromPublicUrl(url,bucket){
         if(!url || !bucket) return "";
         try{
@@ -94,10 +105,12 @@ async function loadAdminProducts(){
             return idx>=0?decodeURIComponent(u.pathname.slice(idx+marker.length)):"";
         }catch(_){return "";}
     }
+    
     async function removeStorageObjects(bucket,urls=[]){
         const paths=urls.map(u=>ctx.storagePathFromPublicUrl(u,bucket)).filter(Boolean);
         if(paths.length) await storageService.remove(bucket, paths);
     }
+    
     async function uploadAdminProductImage(file){
         if(!file) return { url:"", path:"" };
         if(!ctx.isAdminUser()) throw new Error("ADMIN_REQUIRED");
@@ -117,6 +130,7 @@ async function loadAdminProducts(){
         if(status)status.textContent="✅ Şəkil yükləndi.";
         return { url:data.publicUrl, path };
     }
+    
     function resetAdminProductImageUI(){
         const url=document.getElementById("adminProductImage"); if(url)url.value="";
         const file=document.getElementById("adminProductImageFile"); if(file)file.value="";
@@ -126,6 +140,7 @@ async function loadAdminProducts(){
         ctx.renderAdminGalleryPreview([]);
         const status=document.getElementById("adminProductImageStatus"); if(status)status.textContent="Kompüterdən bir neçə şəkil seçə bilərsən. Maksimum 6 şəkil, hər biri 5 MB.";
     }
+    
     function newAdminProduct(){
         s.editingAdminProductId=null; document.getElementById("adminProductForm").style.display="grid"; document.getElementById("adminProductFormTitle").textContent="Yeni məhsul";
         ["adminProductId","adminProductName","adminProductPrice","adminProductEmoji","adminProductBadge","adminProductMaterial","adminProductTime","adminProductStock","adminProductStockQty","adminProductDesc","adminProductTags"].forEach(id=>document.getElementById(id).value="");
@@ -133,6 +148,7 @@ async function loadAdminProducts(){
         ctx.resetAdminProductImageUI();
         document.getElementById("adminProductName").focus();
     }
+    
     function editAdminProduct(id){
         const p=s.adminProducts.find(x=>Number(x.id)===Number(id)); if(!p)return;
         s.editingAdminProductId=Number(id); document.getElementById("adminProductForm").style.display="grid"; document.getElementById("adminProductFormTitle").textContent="Məhsulu dəyiş";
@@ -145,7 +161,9 @@ async function loadAdminProducts(){
         const status=document.getElementById("adminProductImageStatus"); if(status)status.textContent=s.adminExistingGallery.length?`${s.adminExistingGallery.length} mövcud şəkil göstərilir. Yeni şəkillər əlavə edə və ya əvəz edə bilərsiniz.`:"Şəkil əlavə edilməyib. Kompüterdən seçə bilərsiniz.";
         document.getElementById("adminProductName").focus();
     }
+    
     function cancelAdminProduct(){ s.editingAdminProductId=null; ctx.resetAdminProductImageUI(); document.getElementById("adminProductForm").style.display="none"; }
+    
     function collectAdminProduct(){
         const manualRaw=document.getElementById("adminProductImage").value.trim();
         const manualImage=manualRaw ? safeResourceUrl(manualRaw) : "";
@@ -153,6 +171,7 @@ async function loadAdminProducts(){
         const stockQtyRaw=document.getElementById("adminProductStockQty")?.value.trim()||""; const stockQuantity=stockQtyRaw===""?null:Number(stockQtyRaw); if(stockQuantity!=null && (!Number.isInteger(stockQuantity)||stockQuantity<0)) throw new Error("INVALID_STOCK_QUANTITY");
         return {name:document.getElementById("adminProductName").value.trim(),price:Number(document.getElementById("adminProductPrice").value),cat:document.getElementById("adminProductCat").value,image:manualImage,images:[],emoji:document.getElementById("adminProductEmoji").value.trim()||"📦",badge:document.getElementById("adminProductBadge").value.trim(),material:document.getElementById("adminProductMaterial").value.trim(),productionTime:document.getElementById("adminProductTime").value.trim(),stock:document.getElementById("adminProductStock").value.trim()||"Sifarişlə",stockQuantity,desc:document.getElementById("adminProductDesc").value.trim(),tags:document.getElementById("adminProductTags").value.split(",").map(x=>x.trim()).filter(Boolean),customizable:document.getElementById("adminProductCustom").checked};
     }
+    
     async function saveAdminProduct(e){
         e.preventDefault();
         const payload=ctx.collectAdminProduct();
@@ -201,6 +220,7 @@ async function loadAdminProducts(){
             showToast(`Məhsul yadda saxlanmadı: ${visible}`);
         }finally{ if(submitBtn)submitBtn.disabled=false; }
     }
+    
     async function deleteAdminProduct(id){
         const p=s.adminProducts.find(x=>Number(x.id)===Number(id)); if(!p)return;
         if(!confirm(`“${p.name}” məhsulu silinsin?`))return;
@@ -212,6 +232,7 @@ async function loadAdminProducts(){
         }
         catch(e){ console.error("Admin product delete error:", e); showToast(`Məhsul silinmədi: ${safeUserError(e, "Sorğu yerinə yetirilmədi.")}`); }
     }
+
 export function initProducts(){
   Object.assign(ctx, {
     loadAdminProducts, renderAdminProducts, clearAdminGalleryPreviewUrls, renderAdminGalleryPreview, revokeAdminImagePreview, setAdminImagePreview, handleAdminProductImage, clearAdminProductImage, storagePathFromPublicUrl, removeStorageObjects, uploadAdminProductImage, resetAdminProductImageUI, newAdminProduct, editAdminProduct, cancelAdminProduct, collectAdminProduct, saveAdminProduct, deleteAdminProduct

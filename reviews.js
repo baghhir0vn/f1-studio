@@ -1,15 +1,19 @@
-import * as UI from './ui.js?v=59.3';
-import { state as s, ctx } from './state.js?v=59.3';
+import * as UI from './ui.js';
+import { state as s, ctx } from './state.js';
+
 const { escapeHTML, showToast } = UI;
+
 export function initReviews() {
     function renderReviews() {
         const box = document.getElementById('reviewsList');
         if (!box) return;
+
         const all = Array.isArray(s.localReviews) ? s.localReviews.slice(0, 20) : [];
         if (!all.length) {
             box.innerHTML = '<p style="color:var(--muted)">Hələ rəy yoxdur.</p>';
             return;
         }
+
         box.innerHTML = all.map(review => {
             const stars = Math.min(5, Math.max(1, Number(review.stars) || 1));
             return `<div class="review-card">
@@ -19,15 +23,19 @@ export function initReviews() {
             </div>`;
         }).join('');
     }
+
     async function submitReview() {
         if (!s.authUser) return showToast('Rəy göndərmək üçün əvvəlcə hesabınıza daxil olun.');
         if (s.authUser.blocked) return showToast('Bloklanmış hesabdan rəy göndərmək mümkün deyil.');
+
         const name = document.getElementById('revAuthor')?.value.trim() || '';
         const stars = Number.parseInt(document.getElementById('revStars')?.value, 10);
         const text = document.getElementById('revText')?.value.trim() || '';
+
         if (name.length < 2 || text.length < 5) {
             return showToast('Adınızı və ən azı qısa bir rəy yazın.');
         }
+
         try {
             await ctx.api('/api/reviews', {
                 method: 'POST',
@@ -46,6 +54,7 @@ export function initReviews() {
             showToast(message);
         }
     }
+
     Object.assign(ctx, {
         renderReviews,
         submitReview

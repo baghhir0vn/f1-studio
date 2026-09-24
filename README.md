@@ -1,20 +1,48 @@
-# F1 Studio Modular V23
+# F1 Studio V71 — Production Readiness Build
 
-Production candidate for the F1 Studio frontend.
+Bu qovluq Vercel/static hosting üçün təmiz production build-dir. V71-də ZIP-in kökündə `index.html` birbaşa yerləşir.
 
-## Frontend
+## Daxildir
 - `index.html`
-- `css/styles.css`
-- `js/` modular application code and Supabase services
-- `vercel.json` security headers
+- `css/`
+- `js/`
+- `assets/`
+- `vercel.json`
 
-## Supabase
-The `supabase/` folder contains only the two production SQL steps:
+## V71 dəyişiklikləri
+- Sayt Ayarlarında hədiyyə qablaşdırması qiymətinin `site_settings` cədvəlinə `true/false` kimi deyil, rəqəm məbləğ kimi saxlanılması düzəldildi.
+- Release arxivi `v61/` əlavə qovluğu olmadan birbaşa deploy kökü ilə paketlənir.
 
-1. `apply-create-order-hardening.sql` — changes `create_order()` and adds DB-side order abuse protection.
-2. `verify-production.sql` — read-only production gate.
+## Production yoxlama siyahısı
 
-Run the apply script only after normal database backup/review. Then run the verify script.
+### 1. Vercel
+- ZIP-i açın və layihənin kök qovluğu kimi bu qovluğu deploy edin.
+- `index.html` kökdə qalmalıdır.
+- `vercel.json` silinməməlidir; security və cache header-ləri oradadır.
 
-No CAPTCHA/Turnstile is included.
-Do not place a Supabase service-role/secret key in frontend files.
+### 2. Supabase
+Sayt məhsul, auth, sifariş, rəylər, Design Studio faylları və sayt ayarları üçün Supabase istifadə edir. Production Supabase layihəsində tətbiqin SQL/migration addımları və RLS/storage siyasətləri ayrıca tətbiq olunmalıdır.
+
+Minimum yoxlanmalı cədvəl və xidmətlər:
+- `products`
+- `orders` / `order_items`
+- `profiles`
+- `reviews`
+- `site_settings`
+- müştəri dizayn faylları üçün Storage bucket və siyasətlər
+
+### 3. WhatsApp sifarişi
+- Admin paneldə **Sayt Ayarları → WhatsApp nömrəsi** sahəsini doldurun.
+- Nömrə beynəlxalq formatda olmalıdır; sifariş zamanı sayt onu rəqəmlərə normalizasiya edib `wa.me` keçidi yaradır.
+- `site_settings` sətri mövcud deyilsə, checkout WhatsApp nömrəsi konfiqurasiya edilmədiyi üçün sifarişi WhatsApp-a ötürməyəcək.
+
+### 4. Çatdırılma və hədiyyə qablaşdırması
+- Pickup, Gəncə daxili, rayon/poçt və hədiyyə qablaşdırması qiymətlərini Sayt Ayarlarından yoxlayın.
+- Hədiyyə qablaşdırmasının qiyməti rəqəm kimi saxlanılır və checkout hesablamasında həmin məbləğ istifadə olunur.
+
+### 5. Sosial şəbəkə və ünvan
+- Instagram, TikTok, ünvan və iş saatlarını Sayt Ayarlarından yoxlayın.
+- Google Maps iframe və xəritə keçidi üçün domenə çıxışın bloklanmadığını yoxlayın.
+
+### 6. Release qeydi
+Bu build-ə development/audit skriptləri, lokal Windows start faylları və Supabase migration faylları daxil edilmir.

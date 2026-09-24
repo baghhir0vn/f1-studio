@@ -1,11 +1,14 @@
-import { sb } from '../config.js?v=59.3';
-import { getProfileForUser } from './profile-service.js?v=59.3';
-import { fetchAllRows } from './query-utils.js?v=59.3';
-import { isAllowedReviewStatus } from '../security.js?v=59.3';
+import { sb } from '../config.js';
+import { getProfileForUser } from './profile-service.js';
+import { fetchAllRows } from './query-utils.js';
+import { isAllowedReviewStatus } from '../security.js';
+
 export function mapReviewRow(r) {
     return { id: r.id, author: r.author, stars: r.stars, text: r.text, status: r.status, createdAt: r.created_at, isExample: false };
 }
+
 const REVIEW_COLUMNS = 'id,author,stars,text,status,created_at,user_id';
+
 export const reviewService = {
     async listApproved() {
         const { data, error } = await sb.from('reviews').select(REVIEW_COLUMNS)
@@ -43,3 +46,4 @@ export const reviewService = {
         return mapReviewRow(data);
     }
 };
+

@@ -1,11 +1,14 @@
-import { sb } from '../config.js?v=59.3';
-import { isSafeCustomerDesignPath, isSafeProductImagePath } from '../security.js?v=59.3';
+import { sb } from '../config.js';
+import { isSafeCustomerDesignPath, isSafeProductImagePath } from '../security.js';
+
 const ALLOWED_BUCKETS = new Set(['customer-designs', 'product-images']);
 const CUSTOMER_FILE_TYPES = new Set(['image/png','image/jpeg','image/webp','application/pdf']);
 const PRODUCT_FILE_TYPES = new Set(['image/jpeg','image/png','image/webp','image/gif','image/avif']);
+
 function assertBucket(bucket) {
     if (!ALLOWED_BUCKETS.has(bucket)) throw new Error('INVALID_STORAGE_BUCKET');
 }
+
 export const storageService = {
     async uploadCustomerDesign(path, file) {
         if (!isSafeCustomerDesignPath(path)) throw new Error('INVALID_DESIGN_PATH');

@@ -1,18 +1,24 @@
-import { state as s, ctx } from './state.js?v=59.3';
+import { state as s, ctx } from './state.js';
+
 const focusStack = [];
 let initialized = false;
+
 const dialogSelector = '.modal, .modal-center';
+
 function getDialog(id){ return document.getElementById(id); }
+
 function isVisible(el){
     if(!el) return false;
     const style = window.getComputedStyle(el);
     return el.classList.contains('open') && style.visibility !== 'hidden' && style.display !== 'none';
 }
+
 function getFocusable(dialog){
     if(!dialog) return [];
     return [...dialog.querySelectorAll('button:not([disabled]),a[href],input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])')]
         .filter(el => el.offsetParent !== null || el === document.activeElement);
 }
+
 function syncDialogAccessibility(){
     document.querySelectorAll(dialogSelector).forEach(dialog=>{
         const open = dialog.classList.contains('open');
@@ -20,6 +26,7 @@ function syncDialogAccessibility(){
         dialog.inert = !open;
     });
 }
+
 function closeFromOutsideClick(id){
     const map={modal:'closeCart',productModal:'closeProductModal',customModal:'closeCustomModal',loginModal:'closeLogin',adminModal:'closeAdmin'};
     if(id==='privacyModal') return ctx.closeLegal?.('privacy');
@@ -27,20 +34,24 @@ function closeFromOutsideClick(id){
     if(id==='returnsModal') return ctx.closeLegal?.('returns');
     if(map[id] && ctx[map[id]]) return ctx[map[id]]();
 }
+
 function pushFocusOrigin(id){
     const current = focusStack[focusStack.length-1];
     if(current?.id === id) return;
     focusStack.push({ id, opener: document.activeElement instanceof HTMLElement ? document.activeElement : null });
 }
+
 function removeFocusOrigin(id){
     const index = focusStack.map(item=>item.id).lastIndexOf(id);
     if(index >= 0) focusStack.splice(index,1);
 }
+
 function restoreFocus(opener){
     if(opener && document.contains(opener) && !opener.disabled){
         requestAnimationFrame(()=>opener.focus());
     }
 }
+
 export function openDialog(id, focusSelector){
     const el = getDialog(id);
     if(!el) return;
@@ -52,6 +63,7 @@ export function openDialog(id, focusSelector){
         (target || getFocusable(el)[0])?.focus();
     });
 }
+
 export function closeDialog(id){
     const el = getDialog(id);
     if(!el) return;
@@ -69,6 +81,7 @@ export function closeDialog(id){
         restoreFocus(entry.opener);
     }
 }
+
 function handleEscape(){
     const openDialogs = [...document.querySelectorAll(dialogSelector)].filter(isVisible);
     const top = openDialogs[openDialogs.length-1];
@@ -80,6 +93,7 @@ function handleEscape(){
     const fn=map[top.id];
     if(fn && ctx[fn]) ctx[fn]();
 }
+
 export function initModalManager(){
     if(initialized) return;
     initialized = true;
@@ -87,10 +101,12 @@ export function initModalManager(){
     ctx.closeDialog=closeDialog;
     document.querySelectorAll(dialogSelector).forEach(dialog=>dialog.setAttribute('aria-hidden', dialog.classList.contains('open') ? 'false' : 'true'));
     syncDialogAccessibility();
+
     document.addEventListener('click', event=>{
         const target = event.target;
         if(target?.classList?.contains('modal') || target?.classList?.contains('modal-center')) closeFromOutsideClick(target.id);
     });
+
     document.addEventListener('keydown', e=>{
         if(e.key==='Escape'){
             e.preventDefault();
@@ -111,6 +127,7 @@ export function initModalManager(){
             first.focus();
         }
     });
+
     const observer = new MutationObserver(()=>syncDialogAccessibility());
     document.querySelectorAll(dialogSelector).forEach(dialog=>observer.observe(dialog,{attributes:true,attributeFilter:['class']}));
 }

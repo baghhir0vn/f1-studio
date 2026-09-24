@@ -1,30 +1,35 @@
-import { showToast } from './ui.js?v=59.3';
-import { realtimeService } from './services/realtime-service.js?v=59.3';
-import { state as s, ctx } from './state.js?v=59.3';
-import { ADMIN_API } from './admin-shared.js?v=59.3';
-import { initDashboard as initAdminDashboard } from './admin-dashboard.js?v=59.3';
-import { initProducts as initAdminProducts } from './admin-products.js?v=59.3';
-import { initOrders as initAdminOrders } from './admin-orders.js?v=59.3';
-import { initCustomers as initAdminCustomers } from './admin-customers.js?v=59.3';
-import { initReviews as initAdminReviews } from './admin-reviews.js?v=59.3';
+import { showToast } from './ui.js';
+import { realtimeService } from './services/realtime-service.js';
+import { state as s, ctx } from './state.js';
+import { ADMIN_API } from './admin-shared.js';
+import { initDashboard as initAdminDashboard } from './admin-dashboard.js';
+import { initProducts as initAdminProducts } from './admin-products.js';
+import { initOrders as initAdminOrders } from './admin-orders.js';
+import { initCustomers as initAdminCustomers } from './admin-customers.js';
+import { initReviews as initAdminReviews } from './admin-reviews.js';
+
 export function initAdmin() {
     initAdminDashboard();
     initAdminProducts();
     initAdminOrders();
     initAdminCustomers();
     initAdminReviews();
+
         function isAdminUser(){ return !!s.authUser && (s.authUser.role === "admin" || s.authUser.isAdmin === true); }
+        
         function setAdminRealtimeStatus(state, text){
             const el=document.getElementById("adminRealtimeStatus"); if(!el)return;
             const dot=el.querySelector(".admin-realtime-dot");
             if(dot){dot.classList.toggle("on",state==="on");dot.classList.toggle("err",state==="err");}
             el.lastChild.textContent=text;
         }
+        
         function updateAdminNotifBadge(){
             const el=document.getElementById("adminNotifBadge"); if(!el)return;
             el.textContent=String(s.adminUnreadOrders);
             el.classList.toggle("hidden",s.adminUnreadOrders<=0);
         }
+        
         function playAdminNotificationSound(){
             try{
                 const C=window.AudioContext||window.webkitAudioContext; if(!C)return;
@@ -37,6 +42,7 @@ export function initAdmin() {
                 setTimeout(()=>ctx.close().catch(()=>{}),500);
             }catch(_){}
         }
+        
         function stopAdminRealtime(){
             if(s.adminRealtimeChannel){
                 realtimeService.removeChannel(s.adminRealtimeChannel).catch(()=>{});
@@ -44,6 +50,7 @@ export function initAdmin() {
             }
             ctx.setAdminRealtimeStatus("off","Canlı sifariş bildirişləri söndürülüb.");
         }
+        
         async function startAdminRealtime(){
             if(!ctx.isAdminUser()) { ctx.stopAdminRealtime(); return; }
             if(s.adminRealtimeChannel) return;
@@ -74,6 +81,7 @@ export function initAdmin() {
                     else if(status==="CHANNEL_ERROR"||status==="TIMED_OUT") ctx.setAdminRealtimeStatus("err",`🔴 Canlı bildiriş xətası: ${status}`);
                 });
         }
+        
         async function enableAdminDesktopNotifications(){
             if(!ctx.isAdminUser()) return showToast("Admin girişiniz olmalıdır.");
             if(!("Notification" in window)) return showToast("Bu brauzer masaüstü bildirişlərini dəstəkləmir.");
@@ -82,11 +90,13 @@ export function initAdmin() {
                 showToast(permission==="granted"?"✅ Masaüstü bildirişləri aktiv edildi.":"Bildiriş icazəsi verilmədi.");
             }catch(_){showToast("Bildiriş icazəsi alına bilmədi.");}
         }
+        
         function updateAdminButton(){
             const visible=ctx.isAdminUser();
             const btn=document.getElementById("adminBtn"); if(btn) btn.style.display=visible?"inline-block":"none";
             const mobile=document.getElementById("mobileAdminBtn"); if(mobile) mobile.style.display=visible?"block":"none";
         }
+        
         function openAdmin(){
             if(!ctx.isAdminUser()) return showToast("Admin panelinə giriş icazəniz yoxdur.");
             ctx.openDialog("adminModal", "#adminModalTitle");
@@ -95,7 +105,9 @@ export function initAdmin() {
             ctx.loadAdminDashboard();
             ctx.loadSiteSettings(true);
         }
+        
         function closeAdmin(){ ctx.closeDialog?.("adminModal"); }
+        
         function switchAdminView(view){
             document.querySelectorAll("[data-admin-view]").forEach(b=>b.classList.toggle("active",b.dataset.adminView===view));
             document.querySelectorAll(".admin-view").forEach(v=>v.classList.toggle("active",v.id===`adminView-${view}`));
@@ -105,10 +117,12 @@ export function initAdmin() {
             if(view==="customers") ctx.loadAdminCustomers();
             if(view==="settings") ctx.loadSiteSettings(true);
         }
+        
         async function adminApi(path, options={}){
             if(!ctx.isAdminUser()) throw new Error("ADMIN_REQUIRED");
             return ctx.api(path, options);
         }
+        
         async function loadAdminDashboard(){
             try{
                 const [p,o,r]=await Promise.all([
@@ -125,6 +139,8 @@ export function initAdmin() {
                 document.getElementById("adminStatProducts").textContent=s.products.length;
             }
         }
+        
+
     Object.assign(ctx, {
         isAdminUser, setAdminRealtimeStatus, updateAdminNotifBadge, playAdminNotificationSound,
         stopAdminRealtime, startAdminRealtime, enableAdminDesktopNotifications, updateAdminButton,

@@ -1,14 +1,21 @@
-import { escapeHTML, money } from './ui.js?v=59.3';
-import { state as s, ctx } from './state.js?v=59.3';
-import { ADMIN_API, ADMIN_STATUS_LABELS } from './admin-shared.js?v=59.3';
+import { escapeHTML, money } from './ui.js';
+import { state as s, ctx } from './state.js';
+
+import { ADMIN_API, ADMIN_STATUS_LABELS } from './admin-shared.js';
+
 function orderAmount(o){
         const n=Number(o.total_cents);
         return Number.isFinite(n)?n/100:Number(o.total||0);
     }
+    
     function isCancelledOrder(o){ return o.status === "cancelled"; }
+    
     function orderDateValue(o){ const d=new Date(o.createdAt||o.created_at||o.date||0); return Number.isNaN(d.getTime())?null:d; }
+    
     function formatDateShort(d){ return d?d.toLocaleDateString("az-AZ",{day:"2-digit",month:"2-digit"}):"-"; }
+    
     function formatDateLong(d){ return d?d.toLocaleString("az-AZ",{day:"2-digit",month:"2-digit",year:"numeric",hour:"2-digit",minute:"2-digit"}):"-"; }
+    
     async function loadAdminDashboard(){
         try{
             const [p,o,r]=await Promise.all([
@@ -28,6 +35,7 @@ function orderAmount(o){
             if(stat) stat.textContent=s.products.length;
         }
     }
+
     function renderAdminDashboardStats(ps,os,rs){
         const active=os.filter(o=>!ctx.isCancelledOrder(o));
         const completed=os.filter(o=>o.status==="completed");
@@ -50,6 +58,7 @@ function orderAmount(o){
         ctx.renderAdminTopProducts(active);
         ctx.renderAdminRecentOrders(os);
     }
+    
     function renderAdminSalesChart(orders){
         const box=document.getElementById("adminSalesChart"); if(!box)return;
         const days=[]; const base=new Date(); base.setHours(0,0,0,0);
@@ -65,6 +74,7 @@ function orderAmount(o){
             return `<div class="admin-chart-col" title="${x.date.toLocaleDateString("az-AZ")}: ${x.count} sifariş · ${money(x.amount)}"><div class="admin-chart-value">${x.amount?money(x.amount):"0 ₼"}</div><div class="admin-chart-bar" style="height:${h}px"></div><div class="admin-chart-label">${ctx.formatDateShort(x.date)}</div></div>`;
         }).join("");
     }
+    
     function renderAdminTopProducts(orders){
         const box=document.getElementById("adminTopProducts"); if(!box)return;
         const map=new Map();
@@ -77,12 +87,14 @@ function orderAmount(o){
         if(!list.length){box.innerHTML='<div class="admin-empty">Hələ sifariş məlumatı yoxdur.</div>';return;}
         box.innerHTML=list.map((x,idx)=>`<div class="admin-top-product"><div class="admin-top-rank">#${idx+1}</div><div><div class="admin-top-name">${escapeHTML(x.name)}</div><div class="admin-top-meta">${money(x.revenue)} məhsul dəyəri</div></div><div class="admin-top-qty">${x.qty} əd.</div></div>`).join("");
     }
+    
     function renderAdminRecentOrders(orders){
         const box=document.getElementById("adminRecentOrders"); if(!box)return;
         const list=[...orders].sort((a,b)=>(ctx.orderDateValue(b)?.getTime()||0)-(ctx.orderDateValue(a)?.getTime()||0)).slice(0,5);
         if(!list.length){box.innerHTML='<div class="admin-empty">Hələ sifariş yoxdur.</div>';return;}
         box.innerHTML=list.map(o=>`<div class="admin-recent-order"><div class="admin-recent-code">${escapeHTML(o.orderCode||`#${o.id||"?"}`)}</div><div><div class="admin-recent-customer">${escapeHTML(o.customer?.name||o.name||"Müştəri")}</div><div class="admin-recent-date">${ctx.formatDateLong(ctx.orderDateValue(o))} · <span class="admin-recent-status">${escapeHTML(ADMIN_STATUS_LABELS[o.status]||o.status||"Naməlum")}</span></div></div><div class="admin-recent-amount">${money(ctx.orderAmount(o))}</div></div>`).join("");
     }
+
 export function initDashboard(){
   Object.assign(ctx, {
     orderAmount, isCancelledOrder, orderDateValue, formatDateShort, formatDateLong, renderAdminDashboardStats, renderAdminSalesChart, renderAdminTopProducts, renderAdminRecentOrders, loadAdminDashboard

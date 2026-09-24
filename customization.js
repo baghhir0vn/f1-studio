@@ -1,7 +1,8 @@
-import { escapeHTML, money, showToast } from './ui.js?v=59.3';
-import { storageService } from './services/storage-service.js?v=59.3';
-import { authService } from './services/auth-service.js?v=59.3';
-import { state as s, ctx } from './state.js?v=59.3';
+import { escapeHTML, money, showToast } from './ui.js';
+import { storageService } from './services/storage-service.js';
+import { authService } from './services/auth-service.js';
+import { state as s, ctx } from './state.js';
+
 export function initCustomization() {
     function resetCustomizationForm(){
         s.customProductId=null; s.customEditingLineId=null; s.customExistingImageName=""; s.customExistingImageUrl=""; s.customExistingImagePath=""; s.customDesignLayout=null;
@@ -17,6 +18,7 @@ export function initCustomization() {
         if(s.customObjectUrl){URL.revokeObjectURL(s.customObjectUrl); s.customObjectUrl=null;}
         ctx.resetDesignStudio?.();
     }
+    
     function openCustomization(id, lineId=null){
         if(!ctx.ensureCatalogReady()) return;
         const p=ctx.getProduct(id); if(!p) return;
@@ -54,6 +56,7 @@ export function initCustomization() {
                 document.getElementById("customImageName").textContent=c.imageName?`Seçilmiş fayl: ${c.imageName}`:"Fayl seçilməyib";
                 s.customDesignLayout=c.layout||null;
                 ctx.restoreDesignLayout?.(s.customDesignLayout);
+
             }
         }
         ctx.toggleCustomSizeValue();
@@ -66,10 +69,12 @@ export function initCustomization() {
         ["customColor","customSize","customFont"].forEach(id=>document.getElementById(id).onchange=updateCustomizationPreview);
         ctx.openDialog("customModal", "#customText");
     }
+    
     function closeCustomModal(){
         ctx.closeDialog("customModal");
         if(s.customObjectUrl){URL.revokeObjectURL(s.customObjectUrl);s.customObjectUrl=null;}
     }
+    
     function toggleCustomSizeValue(){
         const select=document.getElementById("customSize"), input=document.getElementById("customSizeValue");
         const custom=select.value==="Xüsusi ölçü";
@@ -77,6 +82,7 @@ export function initCustomization() {
         if(!custom) input.value="";
         ctx.updateCustomizationPreview();
     }
+    
     function handleCustomImage(input){
         const file=input.files?.[0];
         const status=document.getElementById("customImageName");
@@ -100,6 +106,7 @@ export function initCustomization() {
         status.textContent=`Seçilmiş fayl: ${file.name} · ${(file.size/1024/1024).toFixed(2)} MB`;
         ctx.updateCustomizationPreview();
     }
+    
     function updateCustomizationPreview(){
         const box=document.getElementById("customPreview");
         const text=document.getElementById("customText").value.trim();
@@ -128,6 +135,7 @@ export function initCustomization() {
             box.innerHTML='<span>Fərdi dizaynınızı burada seçin</span>';
         }
     }
+    
     function getCustomizationFormData(){
         const file=document.getElementById("customImage").files?.[0];
         ctx.saveDesignLayout?.();
@@ -145,15 +153,19 @@ export function initCustomization() {
             layout:s.customDesignLayout||null
         };
     }
+    
     function customizationSignature(c){ return JSON.stringify(c||{}); }
+    
     async function uploadCustomerDesign(file){
         if(!file) return null;
         const allowed=["image/png","image/jpeg","image/webp","application/pdf"];
         if(!allowed.includes(file.type)) throw new Error("DESIGN_FILE_TYPE");
         if(file.size>10*1024*1024) throw new Error("DESIGN_FILE_TOO_LARGE");
+    
         const userData=await authService.getUser();
         const user=userData?.data?.user;
         if(!user) throw new Error("AUTH_REQUIRED");
+    
         const extMap={"image/jpeg":"jpg","image/png":"png","image/webp":"webp","application/pdf":"pdf"};
         const ext=extMap[file.type];
         if(!ext) throw new Error("DESIGN_FILE_TYPE");
@@ -166,8 +178,10 @@ export function initCustomization() {
             return `${h.slice(0,8)}-${h.slice(8,12)}-${h.slice(12,16)}-${h.slice(16,20)}-${h.slice(20)}`;
         })();
         const path=`orders/${user.id}/${token}.${ext}`;
+    
         return storageService.uploadCustomerDesign(path, file);
     }
+    
     async function confirmCustomization(){
         const p=ctx.getProduct(s.customProductId); if(!p) return;
         const submit=document.getElementById("customSubmitBtn");
@@ -182,6 +196,7 @@ export function initCustomization() {
         if(customization.size==="Xüsusi ölçü" && !customization.sizeValue){
             return showToast("Xüsusi ölçü seçmisiniz — ölçünü də yazın.");
         }
+    
         const file=document.getElementById("customImage").files?.[0];
         if(p.stockQuantity!=null){
             const currentQty=s.cart.filter(i=>i.id===p.id && i.lineId!==s.customEditingLineId).reduce((sum,i)=>sum+(Number(i.qty)||0),0);
@@ -200,6 +215,7 @@ export function initCustomization() {
                 customization.imageType=uploaded.type;
                 customization.imageSize=uploaded.size;
             }
+    
             if(s.customEditingLineId){
                 const item=s.cart.find(i=>i.lineId===s.customEditingLineId);
                 if(item){
@@ -232,6 +248,7 @@ export function initCustomization() {
             if(submit){submit.disabled=false;submit.textContent=oldText||"🛒 Fərdiləşdir və səbətə əlavə et";}
         }
     }
+
     Object.assign(ctx, {
     resetCustomizationForm,
     openCustomization,

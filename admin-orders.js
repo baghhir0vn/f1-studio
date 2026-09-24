@@ -1,9 +1,11 @@
-import { escapeHTML, showToast, money } from './ui.js?v=59.3';
-import { storageService } from './services/storage-service.js?v=59.3';
-import { state as s, ctx } from './state.js?v=59.3';
-import { isCustomerDesignPathOwnedBy, isSafeCustomerDesignPath } from './security.js?v=59.3';
-import { ADMIN_API, ADMIN_STATUS_LABELS, formatAdminCustomerDate } from './admin-shared.js?v=59.3';
+import { escapeHTML, showToast, money } from './ui.js';
+import { storageService } from './services/storage-service.js';
+import { state as s, ctx } from './state.js';
+import { isCustomerDesignPathOwnedBy, isSafeCustomerDesignPath } from './security.js';
+import { ADMIN_API, ADMIN_STATUS_LABELS, formatAdminCustomerDate } from './admin-shared.js';
+
 const ADMIN_ORDER_FLOW = ['pending_confirmation','confirmed','preparing','ready','shipped','completed'];
+
 function orderDateValue(order){
     const d=new Date(order?.createdAt||order?.created_at||order?.date||0);
     return Number.isNaN(d.getTime())?null:d;
@@ -58,6 +60,7 @@ function buildOrderCopyText(order){
     });
     return lines.join('\n');
 }
+
 async function loadAdminOrders(){
     try{
         const data=await ctx.adminApi(ADMIN_API.orders);
@@ -69,6 +72,7 @@ async function loadAdminOrders(){
         showToast('Supabase-dən sifarişlər oxunmadı.');
     }
 }
+
 async function getAdminCustomerDesignSignedUrl(path){
     if(!path) throw new Error('DESIGN_PATH_MISSING');
     const cached=s.adminCustomerDesignSignedUrlCache?.get(path);
@@ -77,6 +81,7 @@ async function getAdminCustomerDesignSignedUrl(path){
     s.adminCustomerDesignSignedUrlCache?.set(path,{url,expiresAt:Date.now()+55*60*1000});
     return url;
 }
+
 async function hydrateAdminCustomerDesignLinks(){
     if(!ctx.isAdminUser()) return;
     const links=[...document.querySelectorAll('#adminOrdersList a[data-design-path]')];
@@ -110,6 +115,7 @@ async function hydrateAdminCustomerDesignLinks(){
         }
     }));
 }
+
 function getFilteredOrders(){
     const query=normalizeText(document.getElementById('adminOrderSearch')?.value||'');
     const status=document.getElementById('adminOrderFilter')?.value||'';
@@ -129,11 +135,13 @@ function getFilteredOrders(){
     });
     return list;
 }
+
 function renderAdminOrders(){
     const box=document.getElementById('adminOrdersList');
     if(!box) return;
     const list=getFilteredOrders();
     if(!list.length){box.innerHTML='<div class="admin-empty">Bu filtrə uyğun sifariş tapılmadı.</div>';return;}
+
     box.innerHTML=list.map(order=>{
         const customerName=order.customer?.name||order.name||'Müştəri';
         const customerPhone=order.customer?.phone||order.phone||'Telefon yoxdur';
@@ -158,6 +166,7 @@ function renderAdminOrders(){
                 </div>
                 <div class="admin-status">${escapeHTML(ADMIN_STATUS_LABELS[order.status]||order.status||'Naməlum')}</div>
             </div>
+
             <div class="admin-order-info-grid">
                 <div><span>Status</span><b>${escapeHTML(ADMIN_STATUS_LABELS[order.status]||order.status||'—')}</b></div>
                 <div><span>Sifariş dəyəri</span><b>${escapeHTML(money(orderAmount(order)))}</b></div>
@@ -166,7 +175,9 @@ function renderAdminOrders(){
                 <div><span>Email</span><b>${escapeHTML(order.customer?.email||'—')}</b></div>
                 <div><span>Hədiyyə qablaşdırması</span><b>${order.giftWrap?'Bəli':'Xeyr'}</b></div>
             </div>
+
             <div style="margin-top:10px"><div class="admin-muted" style="margin-bottom:7px"><b>Məhsullar</b></div>${items||'<div class="admin-empty">Məhsul məlumatı yoxdur.</div>'}</div>
+
             <div class="admin-actions admin-order-actions" style="margin-top:12px">
                 <select class="admin-order-status-select" data-order-status-select="${Number(order.id||0)}" aria-label="Sifariş statusu">${Object.entries(ADMIN_STATUS_LABELS).map(([key,label])=>`<option value="${key}" ${order.status===key?'selected':''}>${escapeHTML(label)}</option>`).join('')}</select>
                 <button class="admin-primary" data-action="setAdminOrderStatusFromSelect" data-action-args='[${Number(order.id||0)}]'>Statusu yadda saxla</button>
@@ -179,6 +190,7 @@ function renderAdminOrders(){
     }).join('');
     ctx.hydrateAdminCustomerDesignLinks();
 }
+
 async function setAdminOrderStatus(id,status){
     if(!id) return showToast('Sifariş ID-si tapılmadı.');
     if(status==='cancelled' && !window.confirm('Bu sifarişi ləğv etmək istəyirsiniz?')) return;
@@ -191,11 +203,13 @@ async function setAdminOrderStatus(id,status){
         showToast('Sifariş statusu Supabase-də dəyişdirilmədi.');
     }
 }
+
 async function setAdminOrderStatusFromSelect(id){
     const select=document.querySelector(`select[data-order-status-select="${Number(id||0)}"]`);
     if(!select) return showToast('Status seçimi tapılmadı.');
     return setAdminOrderStatus(Number(id),select.value);
 }
+
 async function copyAdminOrderSummary(id){
     const order=s.adminOrders.find(item=>Number(item.id)===Number(id));
     if(!order) return showToast('Sifariş tapılmadı.');
@@ -208,6 +222,7 @@ async function copyAdminOrderSummary(id){
         showToast('Sifariş məlumatını kopyalamaq alınmadı.');
     }
 }
+
 export function initOrders(){
     Object.assign(ctx, {
         loadAdminOrders,
