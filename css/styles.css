@@ -2124,3 +2124,23 @@ html[data-theme="dark"] .hero-slide-controls{display:none!important}
     box-shadow:0 0 0 3px rgba(148,174,136,.16)!important;
   }
 }
+
+
+/* Keep the customization title and close control above the editor on phones. */
+@media(max-width:760px){
+  #customModal .custom-dialog > .head{
+    display:flex!important;
+    align-items:center!important;
+    justify-content:space-between!important;
+    position:sticky!important;
+    top:0!important;
+    z-index:8!important;
+    flex:0 0 auto!important;
+  }
+  #customModal .custom-dialog > .head h2{min-width:0!important}
+  #customModal .custom-dialog > .head .close{
+    position:static!important;
+    flex:0 0 36px!important;
+    margin:0 0 0 8px!important;
+  }
+}
