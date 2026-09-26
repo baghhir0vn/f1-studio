@@ -90,8 +90,21 @@ export function updateThemeIcon(theme) {
     const btn = document.getElementById("themeToggleBtn");
     if (btn) btn.textContent = theme === "dark" ? "☀️" : "🌙";
 }
-export function toggleMobileMenu() { document.getElementById("mobileNav")?.classList.toggle("open"); }
-export function closeMobileMenu() { document.getElementById("mobileNav")?.classList.remove("open"); }
+function syncMobileMenuButton(open) {
+    const button = document.getElementById("mobileMenuBtn");
+    if (!button) return;
+    button.setAttribute("aria-expanded", String(open));
+    button.setAttribute("aria-label", open ? "Menyunu bağla" : "Menyunu aç");
+}
+export function toggleMobileMenu() {
+    const nav = document.getElementById("mobileNav");
+    if (!nav) return;
+    syncMobileMenuButton(nav.classList.toggle("open"));
+}
+export function closeMobileMenu() {
+    document.getElementById("mobileNav")?.classList.remove("open");
+    syncMobileMenuButton(false);
+}
 export function reveal() {
     document.querySelectorAll(".reveal").forEach(el => {
         if (el.getBoundingClientRect().top < window.innerHeight - 50) el.classList.add("active");
