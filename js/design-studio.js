@@ -146,6 +146,7 @@ export function initDesignStudio() {
     function drawSelection(g, type) {
         const item = studio.elements[type];
         if (!item.visible) return;
+        if (type === 'image' && !studio.image) return;
         g.save();
         g.translate(item.x, item.y);
         g.rotate(item.rotation * Math.PI / 180);

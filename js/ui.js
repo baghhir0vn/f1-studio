@@ -1,3 +1,5 @@
+import { newsletterService } from './services/newsletter-service.js';
+
 export function loadJSON(key, fallback) {
     try {
         const value = JSON.parse(localStorage.getItem(key));
@@ -35,6 +37,43 @@ export function showToast(msg) {
     requestAnimationFrame(() => toast.classList.add("show"));
     clearTimeout(window.__toastTimer);
     window.__toastTimer = setTimeout(() => toast.classList.remove("show"), 3200);
+}
+export async function subscribeNewsletter() {
+    const input = document.getElementById("newsletterEmail");
+    const button = document.getElementById("newsletterButton");
+    if (!input || !button || button.disabled) return;
+    const email = String(input.value || "").trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
+        input.setAttribute("aria-invalid", "true");
+        input.focus();
+        showToast("❌ Zəhmət olmasa düzgün email ünvanı daxil edin.");
+        return;
+    }
+    input.removeAttribute("aria-invalid");
+    button.disabled = true;
+    button.setAttribute("aria-busy", "true");
+    try {
+        const result = await newsletterService.subscribe(email);
+        input.value = "";
+        showToast(result?.already_subscribed || result?.alreadySubscribed
+            ? "✅ Bu email artıq abunədir."
+            : "✅ Abunəliyiniz uğurla qəbul edildi.");
+    } catch (error) {
+        const code = String(error?.code || "");
+        const message = String(error?.message || "");
+        if (code === "INVALID_NEWSLETTER_EMAIL") {
+            input.setAttribute("aria-invalid", "true");
+            showToast("❌ Zəhmət olmasa düzgün email ünvanı daxil edin.");
+        } else if (code === "23505" || /already subscribed|already exists|duplicate key/i.test(message)) {
+            showToast("✅ Bu email artıq abunədir.");
+        } else {
+            showToast("⚠️ Abunəlik hazırda yadda saxlanılmadı. Bir az sonra yenidən cəhd edin.");
+            console.error("F1 newsletter error", error);
+        }
+    } finally {
+        button.disabled = false;
+        button.removeAttribute("aria-busy");
+    }
 }
 export function initTheme() {
     const saved = localStorage.getItem("f1Theme") || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");

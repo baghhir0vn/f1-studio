@@ -86,6 +86,7 @@ const sendButton = document.querySelector('.chat-footer button[data-action="send
 const welcomeMarkup = body?.innerHTML || '';
 let chatBusy = false;
 let pendingTimer = null;
+let chatAudioContext = null;
 if (!s.chatMemory || typeof s.chatMemory !== 'object') s.chatMemory = {};
 Object.assign(s.chatMemory, {
 lastMentionedProducts: Array.isArray(s.chatMemory.lastMentionedProducts) ? s.chatMemory.lastMentionedProducts : [],
@@ -112,6 +113,30 @@ btn?.setAttribute("aria-expanded",String(open));
 if(open) setTimeout(()=>document.getElementById("chatInput")?.focus(),0);
 else btn?.focus();
 }
+function playChatTick(sender){
+if(sender!=='user' && sender!=='bot') return;
+const AudioContextClass=window.AudioContext||window.webkitAudioContext;
+if(!AudioContextClass) return;
+try{
+if(!chatAudioContext) chatAudioContext=new AudioContextClass();
+const audio=chatAudioContext;
+if(audio.state==='suspended') void audio.resume().catch(()=>{});
+const oscillator=audio.createOscillator();
+const gain=audio.createGain();
+const now=audio.currentTime;
+oscillator.type='triangle';
+oscillator.frequency.setValueAtTime(sender==='user'?720:520,now);
+oscillator.frequency.exponentialRampToValueAtTime(sender==='user'?460:360,now+0.045);
+gain.gain.setValueAtTime(0.0001,now);
+gain.gain.exponentialRampToValueAtTime(0.055,now+0.006);
+gain.gain.exponentialRampToValueAtTime(0.0001,now+0.06);
+oscillator.connect(gain);
+gain.connect(audio.destination);
+oscillator.start(now);
+oscillator.stop(now+0.065);
+oscillator.onended=()=>{oscillator.disconnect();gain.disconnect();};
+}catch(_){/* Audio is optional; unsupported or blocked playback must not break chat. */}
+}
 function setBusy(next){
 chatBusy = Boolean(next);
 if(input){ input.disabled=chatBusy; input.setAttribute("aria-busy",String(chatBusy)); }
@@ -131,6 +156,7 @@ container.appendChild(wrap);
 }
 function appendMsg(text,sender,items=[],chips=[],comparison=[]){
 if(!body) return;
+playChatTick(sender);
 const msg=document.createElement("div");
 msg.className=`chat-msg ${sender}`;
 msg.setAttribute('data-chat-message','true');

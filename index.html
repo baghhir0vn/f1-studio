@@ -57,7 +57,7 @@
     <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
     <link rel="icon" type="image/png" href="f1-logo.png?v=128">
     <link rel="apple-touch-icon" href="f1-logo.png?v=128">
-    <link rel="stylesheet" href="css/styles.css?v=129">
+    <link rel="stylesheet" href="css/styles.css?v=130">
 </head>
 <body>
 <div class="announcement-bar" id="announcementBar">🚚 Gəncə daxili çatdırılma · Fərdi sifarişlər qəbul edilir · WhatsApp ilə rahat sifariş</div>
@@ -108,7 +108,7 @@
             <span>✓ <b id="heroBenefit1">Fərdi dizayn</b></span><span>✓ <b id="heroBenefit2">Keyfiyyətli hazırlanma</b></span><span>✓ <b id="heroBenefit3">WhatsApp sifarişi</b></span>
         </div>
     </div>
-    <div class="hero-art gift-scene" aria-label="F1 Studio hədiyyə kompozisiyası"><img src="assets/reference/hero-scene.jpg" alt="F1 Studio hədiyyə qutusu və şam kompozisiyası" fetchpriority="high" decoding="async"><div class="hero-dots" id="heroDots" aria-label="Hero şəkilləri"></div><div class="hero-slide-controls" id="heroSlideControls"><button type="button" class="hero-slide-btn" data-action="heroPrev" aria-label="Əvvəlki hero">‹</button><button type="button" class="hero-slide-btn" data-action="heroNext" aria-label="Növbəti hero">›</button></div></div>
+    <div class="hero-art gift-scene" aria-label="F1 Studio hədiyyə kompozisiyası"><img src="assets/reference/hero-scene.jpg" alt="F1 Studio hədiyyə qutusu və şam kompozisiyası" fetchpriority="high" decoding="async"></div>
 </section>
 
 <section class="service-strip reveal" aria-label="F1 Studio üstünlükləri">
@@ -125,13 +125,13 @@
 
 <section class="section reveal" id="products">
     <div class="shop-heading"><div><div class="section-kicker" id="shopSectionKicker">SEÇİLMİŞLƏR</div><h2 id="sectionTitle">Ən çox seçilənlər</h2></div><a href="#products" class="view-all" id="shopViewAll" data-action="showAllProducts">Hamısına bax →</a></div>
-    <div class="toolbar">
-        <label class="sr-only" for="search">Məhsul və xidmət axtarışı</label><input id="search" data-input-action="render" placeholder="Xidmət və ya məhsul axtar (məs: Lipa nömrə)...">
-        <select id="sort" data-change-action="render">
+    <div class="toolbar" role="search" aria-label="Məhsul və xidmət axtarışı">
+        <label class="toolbar-search"><span class="toolbar-field-label">Məhsul və xidmət axtarışı</span><span class="toolbar-search-control"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 5 5"></path></svg><input id="search" type="search" data-input-action="render" aria-label="Məhsul və xidmət axtarışı" placeholder="Məhsul, xidmət və ya kateqoriya axtar..."></span></label>
+        <label class="toolbar-sort"><span class="toolbar-field-label">Sıralama</span><select id="sort" data-change-action="render" aria-label="Məhsulları sırala">
             <option value="default" id="sortDefaultLabel">Sıralama (Standart)</option>
             <option value="low" id="sortLowLabel">Ucuzdan bahaya</option>
             <option value="high" id="sortHighLabel">Bahadan ucuza</option>
-        </select>
+        </select></label>
     </div>
     <div id="catalogStatus" class="notice" style="display:none;margin:0 0 18px 0;" role="status" aria-live="polite"></div>
     <div class="products" id="grid"></div>
@@ -144,7 +144,7 @@
 
 <section class="newsletter-strip reveal">
   <div class="newsletter-copy"><div class="newsletter-icon">✉</div><div><b id="newsletterTitle">Yeniliklərdən xəbərdar ol</b><small id="newsletterDescription">Yeni məhsullar və xüsusi təkliflər üçün qoşul.</small></div></div>
-  <div class="newsletter-form"><input id="newsletterEmail" type="email" placeholder="Email ünvanınız" aria-label="Email ünvanınız" autocomplete="email" inputmode="email"><button type="button" class="btn" data-action="subscribeNewsletter" id="newsletterButton">ABUNƏ OL</button></div>
+  <form class="newsletter-form" id="newsletterForm" data-submit-action="subscribeNewsletter" novalidate><input id="newsletterEmail" type="email" maxlength="254" placeholder="Email ünvanınız" aria-label="Email ünvanınız" autocomplete="email" inputmode="email" required><button type="submit" class="btn" id="newsletterButton">ABUNƏ OL</button></form>
 </section>
 
 <section class="section reveal" id="reviews">
@@ -329,7 +329,6 @@
             <input type="checkbox" id="giftWrap" data-change-action="updateTotal">
             <span class="gift-wrap-icon">🎁</span>
             <span class="gift-wrap-copy"><b>Xüsusi hədiyyə qablaşdırması</b><small>Məhsulu hədiyyə kimi hazır göndərək · +5.00 ₼</small></span>
-            <span class="gift-wrap-check">✓</span>
         </label>
 
         <div class="cart-summary">
@@ -1086,6 +1085,6 @@
 
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
 <noscript><div style="padding:16px;background:#fff1f2;color:#7f1d1d;text-align:center;font-family:system-ui">Bu saytın sifariş və məhsul funksiyaları üçün JavaScript aktiv olmalıdır.</div></noscript>
-    <script type="module" src="js/app.js"></script>
+    <script type="module" src="js/app.js?v=130"></script>
 </body>
 </html>

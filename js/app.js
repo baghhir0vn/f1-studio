@@ -1,6 +1,6 @@
 import { createApi } from './api.js';
 import { state, ctx } from './state.js';
-import { initTheme, initUiGlobalEvents, toggleTheme, toggleMobileMenu, closeMobileMenu } from './ui.js';
+import { initTheme, initUiGlobalEvents, toggleTheme, toggleMobileMenu, closeMobileMenu, subscribeNewsletter } from './ui.js';
 import { openDialog, closeDialog, initModalManager } from './modal.js';
 import { initSiteSettings } from './site-settings.js';
 import { initCatalog } from './catalog.js';
@@ -15,7 +15,7 @@ import { initReviews } from './reviews.js';
 import { initEvents } from './events.js';
 import { makeClientId } from './security.js';
 import { initMotion } from './motion.js';
-Object.assign(ctx, { openDialog, closeDialog, makeClientId, toggleTheme, toggleMobileMenu, closeMobileMenu });
+Object.assign(ctx, { openDialog, closeDialog, makeClientId, toggleTheme, toggleMobileMenu, closeMobileMenu, subscribeNewsletter });
 initModalManager();
 initSiteSettings();
 initCatalog();
