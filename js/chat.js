@@ -118,9 +118,10 @@ if(sender!=='user' && sender!=='bot') return;
 const AudioContextClass=window.AudioContext||window.webkitAudioContext;
 if(!AudioContextClass) return;
 try{
-if(!chatAudioContext) chatAudioContext=new AudioContextClass();
+if(!chatAudioContext || chatAudioContext.state==='closed') chatAudioContext=new AudioContextClass();
 const audio=chatAudioContext;
-if(audio.state==='suspended') void audio.resume().catch(()=>{});
+const scheduleTick=()=>{
+if(audio.state!=='running') return;
 const oscillator=audio.createOscillator();
 const gain=audio.createGain();
 const now=audio.currentTime;
@@ -135,6 +136,9 @@ gain.connect(audio.destination);
 oscillator.start(now);
 oscillator.stop(now+0.065);
 oscillator.onended=()=>{oscillator.disconnect();gain.disconnect();};
+};
+if(audio.state==='running') scheduleTick();
+else if(audio.state!=='closed') void audio.resume().then(scheduleTick).catch(()=>{});
 }catch(_){/* Audio is optional; unsupported or blocked playback must not break chat. */}
 }
 function setBusy(next){
