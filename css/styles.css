@@ -2347,3 +2347,17 @@ html.f1-motion-ready .reveal{
   .footer-column .footer-label{line-height:1.35!important}
   .footer-contact-column{grid-column:auto!important}
 }
+
+
+/* Keep compact mobile chatbot controls legible in dark mode. */
+@media(max-width:760px){
+  html[data-theme="dark"] .chat-box .chat-head-actions button{
+    background:#292e27!important;
+    border-color:#454d41!important;
+    color:#d8dfd3!important;
+  }
+  html[data-theme="dark"] .chat-box .chat-head-actions button:hover{
+    background:#353c32!important;
+    color:#fff!important;
+  }
+}
