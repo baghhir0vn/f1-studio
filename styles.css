@@ -1794,7 +1794,12 @@ html[data-theme="dark"] #modal .checkout-cta{background:rgba(28,32,27,.97)!impor
 .admin-newsletter-row span{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .admin-newsletter-row time{color:var(--muted);white-space:nowrap}
 
-/* V130 desktop repair: balanced hero, legible benefits, and a real search toolbar. */
+/* V131 desktop repair: balanced header and hero, legible benefits, and a real search toolbar. */
+.nav{display:flex!important;align-items:center!important;box-sizing:border-box!important}
+.brand-logo{width:auto!important;flex:0 0 218px!important}
+header .nav nav{width:auto!important;min-width:0!important}
+.actions{width:auto!important;min-width:0!important}
+.mobile-menu-btn{display:none!important}
 .hero-giftique{display:grid!important;grid-template-columns:minmax(0,.96fr) minmax(0,1.04fr)!important;align-items:stretch!important;width:calc(100% - 48px)!important;min-height:440px!important;height:auto!important;overflow:hidden!important}
 .hero-giftique .hero-copy{min-width:0!important;padding:48px 38px 42px 48px!important}
 .hero-giftique h1{font-size:clamp(46px,4.5vw,68px)!important}
@@ -1836,6 +1841,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,te
   .service-strip>div:nth-child(-n+2){border-bottom:1px solid var(--f1-line)!important}
 }
 @media(max-width:760px){
+  .nav{display:flex!important;width:100%!important;min-height:58px!important;padding:8px 12px!important;gap:7px!important}
+  .brand-logo{min-width:0!important;width:auto!important;flex:1 1 auto!important}
+  .mobile-menu-btn{display:grid!important}
   .hero-giftique{display:grid!important;grid-template-columns:minmax(0,1fr)!important;width:calc(100% - 24px)!important;min-height:0!important;margin:12px 12px 0!important}
   .hero-giftique .hero-copy{padding:30px 22px 24px!important}
   .hero-giftique h1{font-size:clamp(38px,10vw,48px)!important}
