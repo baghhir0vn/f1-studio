@@ -6,17 +6,42 @@ function initReveal(){
         items.forEach(el=>el.classList.add('active'));
         return;
     }
+    const observed = new WeakSet();
+    let revealIndex = 0;
     const observer = new IntersectionObserver((entries, obs)=>{
         entries.forEach(entry=>{
             if(!entry.isIntersecting) return;
-            entry.target.classList.add('active');
-            obs.unobserve(entry.target);
+            const el=entry.target;
+            el.classList.add('active');
+            obs.unobserve(el);
+            if(el.classList.contains('product')){
+                window.setTimeout(()=>{
+                    el.classList.remove('reveal','active');
+                    el.style.removeProperty('--reveal-delay');
+                }, 1100);
+            }
         });
     }, {rootMargin:'0px 0px -8% 0px', threshold:0.08});
-    items.forEach((el, index)=>{
-        el.style.setProperty('--reveal-delay', `${Math.min(index * 35, 210)}ms`);
-        observer.observe(el);
+    const watchNode = node=>{
+        if(!(node instanceof Element)) return;
+        const candidates=[];
+        if(node.matches('.reveal,.product')) candidates.push(node);
+        candidates.push(...node.querySelectorAll('.reveal,.product'));
+        candidates.forEach(el=>{
+            if(el.classList.contains('product')) el.classList.add('reveal');
+            if(!el.classList.contains('reveal') || observed.has(el)) return;
+            observed.add(el);
+            el.style.setProperty('--reveal-delay', Math.min(revealIndex * 35, 210) + 'ms');
+            revealIndex++;
+            observer.observe(el);
+        });
+    };
+    items.forEach(watchNode);
+    document.documentElement.classList.add('f1-motion-ready');
+    const additions=new MutationObserver(records=>{
+        records.forEach(record=>record.addedNodes.forEach(watchNode));
     });
+    additions.observe(document.body,{childList:true,subtree:true});
 }
 function initModalMotion(){
     document.addEventListener('transitionend', event=>{

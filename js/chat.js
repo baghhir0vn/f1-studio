@@ -104,14 +104,31 @@ profile: s.chatMemory.profile && typeof s.chatMemory.profile === 'object' ? s.ch
 if(!Array.isArray(s.chatMemory.profile.tags)) s.chatMemory.profile.tags=[];
 if(!s.chatMemory.giftWizard || typeof s.chatMemory.giftWizard !== 'object') s.chatMemory.giftWizard = null;
 if(!s.chatMemory.orderPrep || typeof s.chatMemory.orderPrep !== 'object') s.chatMemory.orderPrep = null;
+function syncChatFullscreenButton(fullscreen){
+const button=document.getElementById("chatFullscreenBtn");
+const trigger=document.querySelector(".chat-trigger");
+button?.setAttribute("aria-pressed",String(fullscreen));
+button?.setAttribute("aria-label",fullscreen?"Kiçik pəncərəyə qayıt":"Tam ekrana keçir");
+if(button) button.textContent=fullscreen?"⤢":"⛶";
+if(trigger) trigger.hidden=fullscreen;
+}
 function toggleChat(){
 const box=document.getElementById("chatBox"), btn=document.querySelector(".chat-trigger");
 if(!box) return;
 const open=box.classList.toggle("open");
-box?.setAttribute("aria-hidden",String(!open));
+if(!open) box.classList.remove("chat-fullscreen");
+syncChatFullscreenButton(false);
+box.setAttribute("aria-hidden",String(!open));
 btn?.setAttribute("aria-expanded",String(open));
 if(open) setTimeout(()=>document.getElementById("chatInput")?.focus(),0);
 else btn?.focus();
+}
+function toggleChatFullscreen(){
+const box=document.getElementById("chatBox");
+if(!box) return;
+if(!box.classList.contains("open")) toggleChat();
+if(!box.classList.contains("open")) return;
+syncChatFullscreenButton(box.classList.toggle("chat-fullscreen"));
 }
 function playChatTick(sender){
 if(sender!=='user' && sender!=='bot') return;
@@ -1444,6 +1461,7 @@ function processBotQuery(q){
 }
 Object.assign(ctx, {
 toggleChat,
+toggleChatFullscreen,
 clearChat,
 sendQuickMsg,
 appendMsg,

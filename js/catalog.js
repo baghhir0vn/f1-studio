@@ -95,17 +95,27 @@ export function initCatalog() {
         });
         detail.insertAdjacentElement("afterend", meta);
         const btn = document.getElementById("modalAddToCartBtn");
+        const customizeBtn = document.getElementById("modalCustomizeBtn");
+        const actions = document.getElementById("productModalActions");
         const outOfStock=p.stockQuantity!=null && Number(p.stockQuantity)<=0;
         btn.disabled=outOfStock;
         btn.style.opacity=outOfStock?".55":"1";
         btn.style.cursor=outOfStock?"not-allowed":"pointer";
-        if(p.customizable){
-            btn.textContent = outOfStock ? "Stokda yoxdur" : "✨ Fərdiləşdir və səbətə əlavə et";
-            btn.onclick = () => { if(!outOfStock){ ctx.closeProductModal(); ctx.openCustomization(p.id); } };
-        } else {
-            btn.textContent = outOfStock ? "Stokda yoxdur" : "🛒 Səbətə əlavə et";
-            btn.onclick = () => { if(!outOfStock){ ctx.add(p.id); ctx.closeProductModal(); } };
-        }
+        btn.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l1.6 10.2a2 2 0 0 0 2 1.8h7.9a2 2 0 0 0 1.9-1.5L20 8H6"></path><circle cx="9" cy="19" r="1"></circle><circle cx="17" cy="19" r="1"></circle></svg><span>Səbətə at</span>';
+        btn.onclick = () => {
+            if(outOfStock) return;
+            ctx.closeProductModal();
+            ctx.add(p.id, { skipCustomization: true });
+        };
+        customizeBtn.hidden=!p.customizable;
+        customizeBtn.disabled=outOfStock;
+        customizeBtn.setAttribute("aria-hidden",String(!p.customizable));
+        customizeBtn.onclick=()=>{
+            if(outOfStock || !p.customizable) return;
+            ctx.closeProductModal();
+            ctx.openCustomization(p.id);
+        };
+        actions?.classList.toggle("product-modal-only-cart",!p.customizable);
         ctx.openDialog("productModal", ".close");
     }
     function closeProductModal() { ctx.closeDialog("productModal"); }
@@ -277,17 +287,17 @@ export function initCatalog() {
             info.appendChild(meta);
             const price=document.createElement("div"); price.className="price"; price.textContent=money(p.price); info.appendChild(price);
             const outOfStock=p.stockQuantity!=null && Number(p.stockQuantity)<=0;
-            const addBtn=document.createElement("button"); addBtn.className="add"; addBtn.type="button"; addBtn.disabled=outOfStock; addBtn.style.opacity=outOfStock?".55":"1"; addBtn.style.cursor=outOfStock?"not-allowed":"pointer"; addBtn.textContent=outOfStock?"Stokda yoxdur":(p.customizable?"✨ Fərdiləşdir":"🛒 Səbətə at"); addBtn.setAttribute("aria-label", outOfStock?`${p.name}: stokda yoxdur`:(p.customizable?`${p.name} üçün fərdi dizayn aç`:`${p.name} səbətə əlavə et`)); addBtn.onclick=e=>{e.stopPropagation();if(outOfStock)return;p.customizable?ctx.openCustomization(p.id):ctx.add(p.id)}; info.appendChild(addBtn);
+            const addBtn=document.createElement("button"); addBtn.className="add"; addBtn.type="button"; addBtn.disabled=outOfStock; addBtn.style.opacity=outOfStock?".55":"1"; addBtn.style.cursor=outOfStock?"not-allowed":"pointer"; addBtn.textContent=outOfStock?"Stokda yoxdur":"🛒 Səbətə at"; addBtn.setAttribute("aria-label", outOfStock?`${p.name}: stokda yoxdur`:`${p.name} səbətə əlavə et`); addBtn.onclick=e=>{e.stopPropagation();if(outOfStock)return;ctx.add(p.id,{skipCustomization:true})}; info.appendChild(addBtn);
             article.appendChild(info); grid.appendChild(article);
         });
     }
-    function add(id) {
+    function add(id, options={}) {
         if(!ctx.ensureCatalogReady()) return;
         const p=ctx.getProduct(id); if(!p) return;
         const current=s.cart.filter(i=>i.id===p.id).reduce((sum,i)=>sum+(Number(i.qty)||0),0);
         if(p.stockQuantity!=null && current >= Number(p.stockQuantity)) return showToast("Bu məhsul üçün stok limiti dolub.");
         if(p.stockQuantity!=null && Number(p.stockQuantity)<=0) return showToast("Bu məhsul hazırda stokda yoxdur.");
-        if(p.customizable){ ctx.openCustomization(p.id); return; }
+        if(p.customizable && !options?.skipCustomization){ ctx.openCustomization(p.id); return; }
         const item=s.cart.find(i=>i.id===p.id && !i.customization);
         item ? item.qty++ : s.cart.push({id:p.id,qty:1,lineId:ctx.makeClientId(`line-${p.id}`),customization:null});
         ctx.saveCart(); ctx.openCart();

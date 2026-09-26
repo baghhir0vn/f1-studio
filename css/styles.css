@@ -2240,3 +2240,110 @@ html[data-theme="dark"] .hero-slide-controls{display:none!important}
     position:static!important;
   }
 }
+
+/* Mobile follow-up: restore the intended reveal system, compact chat panel,
+   and balanced footer groups without changing desktop layouts. */
+@keyframes f1HeroContentIn{
+  from{opacity:0;transform:translate3d(0,14px,0)}
+  to{opacity:1;transform:translate3d(0,0,0)}
+}
+@keyframes f1HeroImageIn{
+  from{opacity:0;transform:translate3d(0,12px,0) scale(.985)}
+  to{opacity:1;transform:translate3d(0,0,0) scale(1)}
+}
+@keyframes f1HeroFloat{
+  0%,100%{transform:translate3d(0,0,0)}
+  50%{transform:translate3d(0,-7px,0)}
+}
+html.f1-motion-ready .hero-giftique.active .hero-copy>*{
+  animation:f1HeroContentIn .72s cubic-bezier(.2,.7,.2,1) both;
+}
+html.f1-motion-ready .hero-giftique.active .hero-copy>*:nth-child(2){animation-delay:.08s}
+html.f1-motion-ready .hero-giftique.active .hero-copy>*:nth-child(3){animation-delay:.14s}
+html.f1-motion-ready .hero-giftique.active .hero-copy>*:nth-child(4){animation-delay:.2s}
+html.f1-motion-ready .hero-giftique.active .hero-copy>*:nth-child(5){animation-delay:.26s}
+html.f1-motion-ready .hero-giftique.active .gift-scene img{
+  animation:f1HeroImageIn .82s cubic-bezier(.2,.7,.2,1) .16s both,
+            f1HeroFloat 9s ease-in-out 1s infinite;
+}
+html.f1-motion-ready .reveal{
+  transition-duration:.72s!important;
+}
+@media (prefers-reduced-motion:reduce){
+  html.f1-motion-ready .hero-giftique.active .hero-copy>*,
+  html.f1-motion-ready .hero-giftique.active .gift-scene img{
+    animation:none!important;
+  }
+}
+
+.product-modal-actions.product-modal-only-cart{grid-template-columns:minmax(0,1fr)!important}
+.product-modal-actions button[hidden]{display:none!important}
+
+.chat-fullscreen-toggle{font-size:17px!important;line-height:1!important}
+.chat-trigger[hidden]{display:none!important}
+.chat-box.chat-fullscreen{
+  z-index:140!important;
+  left:50%!important;
+  right:auto!important;
+  top:50%!important;
+  bottom:auto!important;
+  width:min(640px,calc(100vw - 40px))!important;
+  height:min(760px,calc(100dvh - 40px))!important;
+  max-width:calc(100vw - 40px)!important;
+  max-height:calc(100dvh - 40px)!important;
+  transform:translate(-50%,-50%)!important;
+  border-radius:20px!important;
+}
+@media(max-width:760px){
+  body.f1-custom-modal-open{overflow:hidden!important;overscroll-behavior:none!important}
+  .chat-box{
+    box-sizing:border-box!important;
+    z-index:140!important;
+    top:auto!important;
+    left:auto!important;
+    right:max(14px,env(safe-area-inset-right,0px))!important;
+    bottom:calc(68px + env(safe-area-inset-bottom,0px))!important;
+    width:min(380px,88vw)!important;
+    max-width:calc(100vw - 28px)!important;
+    height:min(560px,calc(100dvh - 128px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))!important;
+    max-height:calc(100dvh - 110px)!important;
+    min-height:min(390px,calc(100dvh - 140px))!important;
+    overflow:hidden!important;
+  }
+  .chat-box .chat-header,.chat-box .chat-footer{flex:0 0 auto!important}
+  .chat-box .chat-head-actions{gap:5px!important}
+  .chat-box .chat-head-actions button{
+    box-sizing:border-box!important;
+    width:36px!important;
+    min-width:36px!important;
+    height:36px!important;
+    min-height:36px!important;
+  }
+  .chat-box.chat-fullscreen{
+    inset:max(8px,env(safe-area-inset-top,0px)) 8px max(8px,env(safe-area-inset-bottom,0px)) 8px!important;
+    width:auto!important;
+    height:auto!important;
+    min-height:0!important;
+    max-width:none!important;
+    max-height:none!important;
+    transform:none!important;
+    border-radius:20px!important;
+  }
+}
+@media(max-width:440px){
+  .footer-shell{
+    grid-template-columns:repeat(2,minmax(0,1fr))!important;
+    align-items:start!important;
+    gap:22px 14px!important;
+    padding-inline:12px!important;
+  }
+  .footer-brand{grid-column:1/-1!important}
+  .footer-column{
+    grid-column:auto!important;
+    min-width:0!important;
+    gap:8px!important;
+  }
+  .footer-column a,.footer-column span{overflow-wrap:anywhere!important}
+  .footer-column .footer-label{line-height:1.35!important}
+  .footer-contact-column{grid-column:auto!important}
+}

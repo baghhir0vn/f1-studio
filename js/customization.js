@@ -3,6 +3,46 @@ import { storageService } from './services/storage-service.js';
 import { authService } from './services/auth-service.js';
 import { state as s, ctx } from './state.js';
 export function initCustomization() {
+    const customHistoryKey="__f1CustomModal";
+    let customHistoryToken=null;
+    let customBackPending=false;
+    function pushCustomHistoryEntry(){
+        const token="f1-custom-"+Date.now()+"-"+Math.random().toString(36).slice(2);
+        const current=window.history.state;
+        const state=current && typeof current==="object" && !Array.isArray(current) ? current : {};
+        window.history.pushState({...state,[customHistoryKey]:token},"",window.location.href);
+        return token;
+    }
+    function closeCustomModal(options={}){
+        const modal=document.getElementById("customModal");
+        const wasOpen=!!modal?.classList.contains("open");
+        ctx.closeDialog("customModal");
+        if(s.customObjectUrl){URL.revokeObjectURL(s.customObjectUrl);s.customObjectUrl=null;}
+        if(wasOpen){
+            document.body.classList.remove("f1-custom-modal-open");
+            ctx.resetCustomizationForm();
+        }
+        if(!options.fromHistory && customHistoryToken){
+            const token=customHistoryToken;
+            customHistoryToken=null;
+            if(window.history.state?.[customHistoryKey]===token){
+                customBackPending=true;
+                window.history.back();
+            }
+        }
+    }
+    window.addEventListener("popstate",()=>{
+        const isOpen=document.getElementById("customModal")?.classList.contains("open");
+        if(customBackPending){
+            customBackPending=false;
+            if(isOpen && !customHistoryToken) customHistoryToken=pushCustomHistoryEntry();
+            return;
+        }
+        if(isOpen && customHistoryToken){
+            customHistoryToken=null;
+            closeCustomModal({fromHistory:true});
+        }
+    });
     function resetCustomizationForm(){
         s.customProductId=null; s.customEditingLineId=null; s.customExistingImageName=""; s.customExistingImageUrl=""; s.customExistingImagePath=""; s.customDesignLayout=null;
         ["customText","customNote"].forEach(id=>document.getElementById(id).value="");
@@ -20,6 +60,8 @@ export function initCustomization() {
     function openCustomization(id, lineId=null){
         if(!ctx.ensureCatalogReady()) return;
         const p=ctx.getProduct(id); if(!p) return;
+        const modal=document.getElementById("customModal");
+        const wasOpen=!!modal?.classList.contains("open");
         ctx.resetCustomizationForm();
         s.customProductId=p.id; s.customEditingLineId=lineId;
         document.getElementById("customModalTitle").textContent=lineId?"✏️ Fərdi sifarişi dəyiş":"✨ Fərdi sifariş";
@@ -65,10 +107,10 @@ export function initCustomization() {
         ["customText","customColor","customSize","customFont","customSizeValue"].forEach(id=>document.getElementById(id).oninput=updateCustomizationPreview);
         ["customColor","customSize","customFont"].forEach(id=>document.getElementById(id).onchange=updateCustomizationPreview);
         ctx.openDialog("customModal", "#customText");
-    }
-    function closeCustomModal(){
-        ctx.closeDialog("customModal");
-        if(s.customObjectUrl){URL.revokeObjectURL(s.customObjectUrl);s.customObjectUrl=null;}
+        if(!wasOpen){
+            document.body.classList.add("f1-custom-modal-open");
+            if(!customHistoryToken && !customBackPending) customHistoryToken=pushCustomHistoryEntry();
+        }
     }
     function toggleCustomSizeValue(){
         const select=document.getElementById("customSize"), input=document.getElementById("customSizeValue");
