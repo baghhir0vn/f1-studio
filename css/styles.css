@@ -2013,3 +2013,114 @@ html[data-theme="dark"] .hero-slide-controls{display:none!important}
   html[data-theme="dark"] .service-strip{margin-inline:12px!important}
   html[data-theme="dark"] .newsletter-strip{width:calc(100% - 24px)!important}
 }
+
+
+/* Mobile QA fixes: compact card actions, contain product gallery thumbnails,
+   and restore readable dark-mode review controls on narrow screens. */
+@media (max-width:760px){
+  #grid .product .info > .add,
+  #reviews .form > .add,
+  #customModal #customSubmitBtn{
+    box-sizing:border-box!important;
+    display:flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    gap:6px!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    min-height:42px!important;
+    height:auto!important;
+    margin:10px 0 0!important;
+    padding:9px 12px!important;
+    border-radius:11px!important;
+    font-size:10px!important;
+    font-weight:700!important;
+    line-height:1.3!important;
+    text-align:center!important;
+    white-space:normal!important;
+    overflow-wrap:anywhere!important;
+    float:none!important;
+    position:static!important;
+  }
+  #reviews .form > .add{grid-column:1/-1!important}
+  #grid .product .info > .add:focus-visible,
+  #reviews .form > .add:focus-visible,
+  #customModal #customSubmitBtn:focus-visible{
+    outline:3px solid #89a17e!important;
+    outline-offset:2px!important;
+  }
+
+  #productModal .product-detail-dialog{
+    min-width:0!important;
+    overflow-x:hidden!important;
+  }
+  #productModal .product-gallery-thumbs{
+    display:flex!important;
+    align-items:center!important;
+    gap:8px!important;
+    box-sizing:border-box!important;
+    width:100%!important;
+    min-width:0!important;
+    max-width:100%!important;
+    height:auto!important;
+    max-height:64px!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    padding:4px 1px 6px!important;
+    overscroll-behavior-x:contain;
+  }
+  #productModal .product-gallery-thumb{
+    box-sizing:border-box!important;
+    display:block!important;
+    flex:0 0 54px!important;
+    width:54px!important;
+    min-width:54px!important;
+    max-width:54px!important;
+    height:54px!important;
+    min-height:54px!important;
+    max-height:54px!important;
+    padding:0!important;
+    overflow:hidden!important;
+    border-radius:10px!important;
+  }
+  #productModal .product-gallery-thumb img{
+    display:block!important;
+    width:100%!important;
+    height:100%!important;
+    max-width:100%!important;
+    max-height:100%!important;
+    object-fit:cover!important;
+  }
+
+  html[data-theme="dark"] #reviews #reviewsSectionTitle,
+  html[data-theme="dark"] #reviews .review-author{
+    color:#f0f1e9!important;
+  }
+  html[data-theme="dark"] #reviews .review-text{
+    color:#b2b9ad!important;
+  }
+  html[data-theme="dark"] #reviews .review-label{
+    background:#292e27!important;
+    border-color:#454d41!important;
+    color:#c9d1c3!important;
+  }
+  html[data-theme="dark"] #reviews .form input,
+  html[data-theme="dark"] #reviews .form select,
+  html[data-theme="dark"] #reviews .form textarea{
+    background:#22261f!important;
+    border-color:#41483d!important;
+    color:#f0f1e9!important;
+  }
+  html[data-theme="dark"] #reviews .form input::placeholder,
+  html[data-theme="dark"] #reviews .form textarea::placeholder{
+    color:#929b8e!important;
+    opacity:1!important;
+  }
+  html[data-theme="dark"] #reviews .form input:focus,
+  html[data-theme="dark"] #reviews .form select:focus,
+  html[data-theme="dark"] #reviews .form textarea:focus{
+    border-color:#89a17e!important;
+    box-shadow:0 0 0 3px rgba(148,174,136,.16)!important;
+  }
+}
