@@ -2361,3 +2361,36 @@ html.f1-motion-ready .reveal{
     color:#fff!important;
   }
 }
+
+
+/* Mobile Design Studio: keep the full editor reachable in one vertical scroll area. */
+@media(max-width:760px){
+  #customModal .dialog.custom-dialog{
+    overflow:hidden!important;
+    min-height:0!important;
+  }
+  #customModal .dialog.custom-dialog>.head,
+  #customModal .custom-product-name{
+    flex:0 0 auto!important;
+  }
+  #customModal .custom-layout{
+    display:flex!important;
+    flex:1 1 auto!important;
+    flex-direction:column!important;
+    min-height:0!important;
+    height:auto!important;
+    overflow-x:hidden!important;
+    overflow-y:auto!important;
+    overscroll-behavior:contain;
+    gap:12px!important;
+    padding:0 9px 88px!important;
+    box-sizing:border-box!important;
+  }
+  #customModal .design-studio-box,
+  #customModal .custom-details{
+    flex:0 0 auto!important;
+    height:auto!important;
+    max-height:none!important;
+    overflow:visible!important;
+  }
+}
