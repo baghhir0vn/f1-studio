@@ -1794,12 +1794,16 @@ html[data-theme="dark"] #modal .checkout-cta{background:rgba(28,32,27,.97)!impor
 .admin-newsletter-row span{min-width:0;overflow:hidden;text-overflow:ellipsis}
 .admin-newsletter-row time{color:var(--muted);white-space:nowrap}
 
-/* V131 desktop repair: balanced header and hero, legible benefits, and a real search toolbar. */
+/* V132 desktop repair: polished navigation and hero labels with balanced storefront controls. */
 .nav{display:flex!important;align-items:center!important;box-sizing:border-box!important}
 .brand-logo{width:auto!important;flex:0 0 218px!important}
 header .nav nav{width:auto!important;min-width:0!important}
+header .nav nav a{text-decoration:none!important}
 .actions{width:auto!important;min-width:0!important}
 .mobile-menu-btn{display:none!important}
+.hero-giftique .hero-eyebrow{white-space:nowrap!important}
+.hero-giftique .hero-eyebrow>span:first-child{width:6px!important;height:6px!important;flex:0 0 6px!important}
+.hero-giftique .hero-eyebrow>span:last-child{width:auto!important;height:auto!important;display:inline!important;flex:0 1 auto!important;background:transparent!important;border-radius:0!important}
 .hero-giftique{display:grid!important;grid-template-columns:minmax(0,.96fr) minmax(0,1.04fr)!important;align-items:stretch!important;width:calc(100% - 48px)!important;min-height:440px!important;height:auto!important;overflow:hidden!important}
 .hero-giftique .hero-copy{min-width:0!important;padding:48px 38px 42px 48px!important}
 .hero-giftique h1{font-size:clamp(46px,4.5vw,68px)!important}
