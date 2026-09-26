@@ -182,7 +182,10 @@ export function initCatalog() {
     }
     function clearFilters() {
         s.smartFilterActive = false; s.viewingFavs = false; s.activeCat = ""; s.activeTag = "";
-        ["smartPrice","smartPerson","smartType","search"].forEach(id => document.getElementById(id).value = "");
+        ["smartPrice","smartPerson","smartType","search"].forEach(id => {
+            const input = document.getElementById(id);
+            if (input) input.value = "";
+        });
         ctx.render();
     }
     function filterByTag(tag) { s.activeTag = tag; s.activeCat = ""; s.viewingFavs = false; s.smartFilterActive = false; document.getElementById("search").value=""; ctx.render(); document.getElementById("products").scrollIntoView({behavior:"smooth", block:"start"}); }
