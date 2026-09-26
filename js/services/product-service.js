@@ -1,13 +1,28 @@
 import { sb } from '../config.js';
 import { safeResourceUrl } from '../security.js';
 const PRODUCT_COLUMNS = 'id,name,price,cat,image,images,emoji,badge,material,size,production_time,stock,stock_quantity,description,tags,customizable,updated_at';
+const PRODUCT_IMAGE_EXTERNAL_ORIGINS = new Set([
+    'https://rfkqxiwbicjsszjbdhzd.supabase.co',
+    'https://images.pexels.com'
+]);
+function resolveProductImage(value) {
+    const url = safeResourceUrl(value, { allowData: false, allowBlob: false, allowRelative: true });
+    if (!url) return '';
+    try {
+        const parsed = new URL(url, window.location.href);
+        if ((parsed.origin !== window.location.origin && !PRODUCT_IMAGE_EXTERNAL_ORIGINS.has(parsed.origin)) || parsed.pathname.startsWith('/images/')) return '';
+        return url;
+    } catch (_) {
+        return '';
+    }
+}
 export function mapProductRow(p) {
     const rawGallery = Array.isArray(p.images) ? p.images : [];
     const gallery = rawGallery
-        .map(v => safeResourceUrl(v, { allowData: false, allowBlob: false, allowRelative: true }))
+        .map(resolveProductImage)
         .filter(Boolean)
         .slice(0, 6);
-    const primary = safeResourceUrl(p.image, { allowData: false, allowBlob: false, allowRelative: true }) || gallery[0] || '';
+    const primary = resolveProductImage(p.image) || gallery[0] || '';
     return {
         id: p.id,
         name: p.name,
