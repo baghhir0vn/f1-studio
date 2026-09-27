@@ -2398,7 +2398,7 @@ html.f1-motion-ready .reveal{
 
 /* F1 newsletter subscription feedback */
 .newsletter-feedback[hidden]{display:none!important}
-.newsletter-feedback:not([hidden]){grid-column:1/-1;display:flex;align-items:center;gap:10px;width:100%;margin-top:-18px;padding:10px 12px;border:1px solid #dce6d7;border-radius:12px;background:#f3f7f0;color:#3f6540;font-size:13px;font-weight:700;line-height:1.4}
+.newsletter-feedback:not([hidden]){grid-column:1/-1;display:flex;align-items:center;gap:10px;width:100%;margin-top:0;padding:10px 12px;border:1px solid #dce6d7;border-radius:12px;background:#f3f7f0;color:#3f6540;font-size:13px;font-weight:700;line-height:1.4}
 .newsletter-feedback-icon{display:grid;place-items:center;flex:0 0 25px;width:25px;height:25px;border:1px solid currentColor;border-radius:50%;font-size:15px;font-weight:900}
 .newsletter-feedback-icon.is-success{animation:f1NewsletterCheckPop 620ms cubic-bezier(.2,.85,.3,1.35) both}
 .newsletter-feedback.is-error{border-color:#f0d0cc;background:#fff6f4;color:#9c3c32}
