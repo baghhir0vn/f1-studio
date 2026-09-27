@@ -61,7 +61,9 @@ export function initSiteSettings() {
         const pickup=document.querySelector('#deliveryOption option[value="pickup"]'); if(pickup) pickup.textContent=`🏬 Mağazadan götürmə (${(Number(data.delivery_pickup)||0)===0?"Ödənişsiz / 0.00 ₼":money(Number(data.delivery_pickup))})`;
         const ganja=document.querySelector('#deliveryOption option[value="ganja"]'); if(ganja) ganja.textContent=`🚚 Ünvanla çatdırılma (Gəncə daxili +${money(Number(data.delivery_ganja)||0)})`;
         const region=document.querySelector('#deliveryOption option[value="region"]'); if(region) region.textContent=`📦 Ünvanla çatdırılma (Rayonlar / Poçtlə +${money(Number(data.delivery_region)||0)})`;
-        const wrap=document.querySelector('#wrapContainer span'); if(wrap) wrap.textContent=`🎁 Xüsusi hədiyyə qablaşdırması istəyirəm (+${money(Number(data.gift_wrap)||0)})`;
+        // Only update the price copy; keep the icon and title spans intact.
+        const wrapPrice=document.querySelector('#wrapContainer .gift-wrap-copy small');
+        if(wrapPrice) wrapPrice.textContent=`Məhsulu hədiyyə kimi hazır göndərək · +${money(Number(data.gift_wrap)||0)}`;
         const socials=document.getElementById("footerSocials"); if(socials){
             socials.innerHTML="";
             const instagramUrl=safeHttpUrl(data.instagram_url); if(instagramUrl){const a=document.createElement("a");a.href=instagramUrl;a.target="_blank";a.rel="noopener noreferrer";a.textContent="Instagram";a.style.cssText="color:var(--ink);text-decoration:none;border:1px solid var(--line);padding:6px 10px;border-radius:999px";socials.appendChild(a);}
