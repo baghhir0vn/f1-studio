@@ -1,0 +1,45 @@
+/* Keep the admin dialog fixed to the viewport and scroll only its content pane. */
+body.f1-admin-modal-open{overflow:hidden!important;overscroll-behavior:none!important}
+.admin-modal{overscroll-behavior:none!important}
+.admin-modal .dialog{
+  display:flex!important;
+  flex-direction:column!important;
+  height:min(900px,calc(100vh - 28px))!important;
+  height:min(900px,calc(100dvh - 28px))!important;
+  max-height:calc(100vh - 28px)!important;
+  max-height:calc(100dvh - 28px)!important;
+  overflow:hidden!important;
+}
+.admin-modal .admin-shell{
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  max-height:none!important;
+  grid-template-rows:minmax(0,1fr)!important;
+  overflow:hidden!important;
+}
+.admin-modal .admin-side,
+.admin-modal .admin-main{min-height:0!important;overscroll-behavior:contain!important}
+.admin-modal .admin-main{
+  height:100%!important;
+  min-width:0!important;
+  overflow-x:hidden!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+  scrollbar-gutter:stable!important;
+}
+.admin-modal .admin-main:focus-visible{outline:2px solid #91a88b!important;outline-offset:-3px!important}
+@media(max-width:900px){
+  .admin-modal .admin-shell{grid-template-columns:minmax(0,1fr)!important;grid-template-rows:auto minmax(0,1fr)!important}
+  .admin-modal .admin-main{height:auto!important}
+}
+@media(max-width:640px){
+  .admin-modal .dialog{
+    height:calc(100vh - 10px)!important;
+    height:calc(100dvh - 10px)!important;
+    max-height:calc(100vh - 10px)!important;
+    max-height:calc(100dvh - 10px)!important;
+  }
+  .admin-modal .admin-shell{grid-template-rows:auto minmax(0,1fr)!important}
+  .admin-modal .admin-main{height:auto!important}
+}

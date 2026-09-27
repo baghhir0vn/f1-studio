@@ -87,15 +87,56 @@ export function initAdmin() {
             const btn=document.getElementById("adminBtn"); if(btn) btn.style.display=visible?"inline-block":"none";
             const mobile=document.getElementById("mobileAdminBtn"); if(mobile) mobile.style.display=visible?"block":"none";
         }
+        let adminScrollSnapshot = null;
+        function lockAdminBackgroundScroll(){
+            if(adminScrollSnapshot) return;
+            const body=document.body;
+            const scrollY=window.scrollY||window.pageYOffset||0;
+            const isMobile=window.matchMedia("(max-width: 760px)").matches;
+            adminScrollSnapshot={
+                scrollY,
+                position:body.style.position,
+                top:body.style.top,
+                width:body.style.width,
+                paddingRight:body.style.paddingRight
+            };
+            const scrollbarWidth=Math.max(0,window.innerWidth-document.documentElement.clientWidth);
+            body.classList.add("f1-admin-modal-open");
+            if(isMobile){
+                body.style.position="fixed";
+                body.style.top=`-${scrollY}px`;
+                body.style.width="100%";
+            }else if(scrollbarWidth){
+                body.style.paddingRight=`${scrollbarWidth}px`;
+            }
+        }
+        function unlockAdminBackgroundScroll(){
+            if(!adminScrollSnapshot) return;
+            const snapshot=adminScrollSnapshot;
+            const body=document.body;
+            body.classList.remove("f1-admin-modal-open");
+            body.style.position=snapshot.position;
+            body.style.top=snapshot.top;
+            body.style.width=snapshot.width;
+            body.style.paddingRight=snapshot.paddingRight;
+            adminScrollSnapshot=null;
+            requestAnimationFrame(()=>window.scrollTo(0,snapshot.scrollY));
+        }
         function openAdmin(){
             if(!ctx.isAdminUser()) return showToast("Admin panelinə giriş icazəniz yoxdur.");
-            ctx.openDialog("adminModal", "#adminModalTitle");
+            const adminMain=document.querySelector("#adminModal .admin-main");
+            if(adminMain && !adminMain.hasAttribute("tabindex")) adminMain.setAttribute("tabindex","0");
+            lockAdminBackgroundScroll();
+            ctx.openDialog("adminModal", ".admin-main");
             document.getElementById("adminUserStatus").textContent=`Aktiv admin: ${s.authUser.name||s.authUser.email||"istifadəçi"}`;
             ctx.switchAdminView("dashboard");
             ctx.loadAdminDashboard();
             ctx.loadSiteSettings(true);
         }
-        function closeAdmin(){ ctx.closeDialog?.("adminModal"); }
+        function closeAdmin(){
+            ctx.closeDialog?.("adminModal");
+            unlockAdminBackgroundScroll();
+        }
         function switchAdminView(view){
             document.querySelectorAll("[data-admin-view]").forEach(b=>b.classList.toggle("active",b.dataset.adminView===view));
             document.querySelectorAll(".admin-view").forEach(v=>v.classList.toggle("active",v.id===`adminView-${view}`));
