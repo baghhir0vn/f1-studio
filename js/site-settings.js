@@ -63,6 +63,7 @@ export function initSiteSettings() {
         ctx.updateLocalBusinessStructuredData(data);
         const contactNote=document.getElementById("aboutWhatsappNote");
         if(contactNote){
+            contactNote.style.setProperty("color","var(--ink)","important");
             const displayNumber=String(data.whatsapp_number||CONFIG.whatsappNumber||"").trim();
             const waDigits=toWhatsAppDigits(displayNumber);
             contactNote.textContent="";
