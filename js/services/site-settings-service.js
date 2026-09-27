@@ -19,7 +19,7 @@ export const siteSettingsService = {
             delivery_pickup: Number.isFinite(Number(payload.delivery_pickup)) ? Math.max(0, Math.min(100000, Number(payload.delivery_pickup))) : 0,
             delivery_ganja: Number.isFinite(Number(payload.delivery_ganja)) ? Math.max(0, Math.min(100000, Number(payload.delivery_ganja))) : 0,
             delivery_region: Number.isFinite(Number(payload.delivery_region)) ? Math.max(0, Math.min(100000, Number(payload.delivery_region))) : 0,
-            gift_wrap: !!payload.gift_wrap
+            gift_wrap: Number.isFinite(Number(payload.gift_wrap)) ? Math.max(0, Math.min(100000, Number(payload.gift_wrap))) : 0
         };
         const { data, error } = await sb.from('site_settings').upsert(clean, { onConflict: 'id' }).select(SITE_SETTINGS_COLUMNS).single();
         if (error) throw error;
