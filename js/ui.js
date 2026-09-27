@@ -38,14 +38,44 @@ export function showToast(msg) {
     clearTimeout(window.__toastTimer);
     window.__toastTimer = setTimeout(() => toast.classList.remove("show"), 3200);
 }
+function setNewsletterFeedback(state, message) {
+    const feedback = document.getElementById("newsletterFeedback");
+    if (!feedback) return;
+    const mark = document.createElement("span");
+    mark.className = `newsletter-feedback-icon${state === "success" ? " is-success" : ""}`;
+    mark.setAttribute("aria-hidden", "true");
+    mark.textContent = state === "success" ? "✓" : "!";
+    const copy = document.createElement("span");
+    copy.textContent = message;
+    feedback.className = `newsletter-feedback is-${state}`;
+    feedback.replaceChildren(mark, copy);
+    feedback.hidden = false;
+}
+function clearNewsletterFeedback() {
+    const feedback = document.getElementById("newsletterFeedback");
+    if (!feedback) return;
+    feedback.hidden = true;
+    feedback.className = "newsletter-feedback";
+    feedback.replaceChildren();
+}
 export async function subscribeNewsletter() {
     const input = document.getElementById("newsletterEmail");
     const button = document.getElementById("newsletterButton");
-    if (!input || !button || button.disabled) return;
+    if (!input || !button) return;
+    if (input.dataset.newsletterFeedbackBound !== "true") {
+        input.addEventListener("input", () => {
+            clearNewsletterFeedback();
+            input.removeAttribute("aria-invalid");
+        });
+        input.dataset.newsletterFeedbackBound = "true";
+    }
+    if (button.disabled) return;
+    clearNewsletterFeedback();
     const email = String(input.value || "").trim().toLowerCase();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
         input.setAttribute("aria-invalid", "true");
         input.focus();
+        setNewsletterFeedback("error", "Zəhmət olmasa düzgün email ünvanı daxil edin.");
         showToast("❌ Zəhmət olmasa düzgün email ünvanı daxil edin.");
         return;
     }
@@ -55,19 +85,27 @@ export async function subscribeNewsletter() {
     try {
         const result = await newsletterService.subscribe(email);
         input.value = "";
-        showToast(result?.already_subscribed || result?.alreadySubscribed
-            ? "✅ Bu email artıq abunədir."
-            : "✅ Abunəliyiniz uğurla qəbul edildi.");
+        const alreadySubscribed = result?.already_subscribed || result?.alreadySubscribed;
+        const successMessage = alreadySubscribed
+            ? "Bu email artıq abunədir."
+            : "Abunəliyiniz uğurla qəbul edildi.";
+        setNewsletterFeedback("success", successMessage);
+        showToast(`✅ ${successMessage}`);
     } catch (error) {
         const code = String(error?.code || "");
         const message = String(error?.message || "");
         if (code === "INVALID_NEWSLETTER_EMAIL") {
             input.setAttribute("aria-invalid", "true");
+            setNewsletterFeedback("error", "Zəhmət olmasa düzgün email ünvanı daxil edin.");
             showToast("❌ Zəhmət olmasa düzgün email ünvanı daxil edin.");
         } else if (code === "23505" || /already subscribed|already exists|duplicate key/i.test(message)) {
-            showToast("✅ Bu email artıq abunədir.");
+            const successMessage = "Bu email artıq abunədir.";
+            setNewsletterFeedback("success", successMessage);
+            showToast(`✅ ${successMessage}`);
         } else {
-            showToast("⚠️ Abunəlik hazırda yadda saxlanılmadı. Bir az sonra yenidən cəhd edin.");
+            const errorMessage = "Abunəlik hazırda yadda saxlanılmadı. Bir az sonra yenidən cəhd edin.";
+            setNewsletterFeedback("error", errorMessage);
+            showToast(`⚠️ ${errorMessage}`);
             console.error("F1 newsletter error", error);
         }
     } finally {
