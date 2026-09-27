@@ -58,7 +58,8 @@ function clearNewsletterFeedback() {
     feedback.className = "newsletter-feedback";
     feedback.replaceChildren();
 }
-export async function subscribeNewsletter() {
+export async function subscribeNewsletter(event) {
+    event?.preventDefault?.();
     const input = document.getElementById("newsletterEmail");
     const button = document.getElementById("newsletterButton");
     if (!input || !button) return;
