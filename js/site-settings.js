@@ -52,8 +52,34 @@ export function initSiteSettings() {
             "itemListElement":list.slice(0,50).map((p,idx)=>({"@type":"ListItem",position:idx+1,item:{"@type":"Product",name:p.name,image:safeResourceUrl((Array.isArray(p.images)&&p.images[0])||p.image,{allowData:false,allowBlob:false,allowRelative:true})||undefined,description:p.desc||undefined,offers:{"@type":"Offer",price:Number(p.price||0).toFixed(2),priceCurrency:"AZN",availability:(p.stockQuantity!=null && Number(p.stockQuantity)<=0)?"https://schema.org/OutOfStock":"https://schema.org/InStock",url:baseUrl+`#product-${p.id}`}}}))
         });
     }
+    function toWhatsAppDigits(value){
+        let digits=String(value||"").replace(/\\D/g,"");
+        if(digits.startsWith("00")) digits=digits.slice(2);
+        else if(digits.startsWith("0")) digits=`994${digits.slice(1)}`;
+        else if(digits.length===9) digits=`994${digits}`;
+        return /^\\d{8,15}$/.test(digits)?digits:"";
+    }
     function applySiteSettingsToPage(data){
         ctx.updateLocalBusinessStructuredData(data);
+        const contactNote=document.getElementById("aboutWhatsappNote");
+        if(contactNote){
+            const displayNumber=String(data.whatsapp_number||CONFIG.whatsappNumber||"").trim();
+            const waDigits=toWhatsAppDigits(displayNumber);
+            contactNote.textContent="";
+            if(waDigits){
+                contactNote.append("💬 WhatsApp: ");
+                const link=document.createElement("a");
+                link.href=`https://wa.me/${waDigits}`;
+                link.target="_blank";
+                link.rel="noopener noreferrer";
+                link.textContent=displayNumber;
+                link.setAttribute("aria-label",`WhatsApp-da ${displayNumber} nömrəsinə yaz`);
+                link.style.cssText="color:inherit;text-decoration:underline;text-underline-offset:3px";
+                contactNote.appendChild(link);
+            }else{
+                contactNote.textContent="💬 WhatsApp nömrəsi mövcud deyil.";
+            }
+        }
         const address=document.getElementById("siteAddressText"); if(address) address.innerHTML=`<b>${escapeHTML(data.address||"")}</b>`;
         const wh=document.getElementById("siteWeekdayHoursText"); if(wh) wh.textContent=`I - V günlər: ${data.weekday_hours||""}`;
         const we=document.getElementById("siteWeekendHoursText"); if(we) we.textContent=`VI - VII günlər: ${data.weekend_hours||""}`;
