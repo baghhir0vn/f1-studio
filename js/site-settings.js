@@ -53,11 +53,11 @@ export function initSiteSettings() {
         });
     }
     function toWhatsAppDigits(value){
-        let digits=String(value||"").replace(/\\D/g,"");
+        let digits=String(value||"").replace(/\D/g,"");
         if(digits.startsWith("00")) digits=digits.slice(2);
         else if(digits.startsWith("0")) digits=`994${digits.slice(1)}`;
         else if(digits.length===9) digits=`994${digits}`;
-        return /^\\d{8,15}$/.test(digits)?digits:"";
+        return /^\d{8,15}$/.test(digits)?digits:"";
     }
     function applySiteSettingsToPage(data){
         ctx.updateLocalBusinessStructuredData(data);
