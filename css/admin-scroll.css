@@ -43,3 +43,41 @@ body.f1-admin-modal-open{overflow:hidden!important;overscroll-behavior:none!impo
   .admin-modal .admin-shell{grid-template-rows:auto minmax(0,1fr)!important}
   .admin-modal .admin-main{height:auto!important}
 }
+
+/* Homepage text editor save controls: clear primary/secondary actions in both themes. */
+.admin-home-save-row{
+  background:rgba(248,250,246,.96)!important;
+  border:1px solid #d8e0d5!important;
+  box-shadow:0 8px 24px rgba(34,45,31,.09)!important;
+}
+.admin-home-save-row .admin-settings-status{
+  flex:1;min-width:180px;color:#687263;font-size:9px;line-height:1.4;
+}
+.admin-home-save-row button{
+  appearance:none!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:7px!important;
+  min-height:40px!important;padding:0 14px!important;border:1px solid #cfd8ca!important;border-radius:11px!important;
+  background:#f5f7f2!important;color:#465741!important;font:inherit!important;font-size:10px!important;font-weight:800!important;
+  line-height:1.2!important;white-space:nowrap!important;cursor:pointer!important;
+  transition:transform .18s ease,box-shadow .18s ease,background-color .18s ease!important;
+}
+.admin-home-save-row button.admin-primary{
+  background:linear-gradient(135deg,#617b57,#4e6749)!important;border-color:#4e6749!important;color:#fff!important;
+  box-shadow:0 5px 14px rgba(60,83,52,.18)!important;
+}
+.admin-home-save-row button[data-action="loadSiteSettings"]{
+  background:#f5f7f2!important;color:#465741!important;border-color:#cfd8ca!important;
+}
+.admin-home-save-row button:not(:disabled):hover{
+  transform:translateY(-1px)!important;box-shadow:0 7px 16px rgba(42,48,39,.13)!important;
+}
+.admin-home-save-row button:focus-visible{outline:3px solid rgba(83,108,77,.32)!important;outline-offset:2px!important}
+.admin-home-save-row button:disabled{opacity:.65!important;cursor:wait!important}
+.admin-home-save-row button.admin-primary:disabled{transform:none!important;box-shadow:none!important}
+html[data-theme="dark"] .admin-home-save-row{
+  background:rgba(27,31,26,.96)!important;border-color:#3d473b!important;box-shadow:0 8px 24px rgba(0,0,0,.22)!important;
+}
+html[data-theme="dark"] .admin-home-save-row .admin-settings-status{color:#bac5b5!important}
+html[data-theme="dark"] .admin-home-save-row button[data-action="loadSiteSettings"]{
+  background:#293027!important;color:#e4eadf!important;border-color:#475342!important;
+}
+html[data-theme="dark"] .admin-home-save-row button:focus-visible{outline-color:rgba(171,197,158,.55)!important}
