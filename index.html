@@ -58,6 +58,7 @@
     <link rel="icon" type="image/png" href="f1-logo.png?v=128">
     <link rel="apple-touch-icon" href="f1-logo.png?v=128">
     <link rel="stylesheet" href="css/styles.css?v=138">
+    <link rel="stylesheet" href="css/order-delivery-info.css?v=1">
 </head>
 <body>
 <div class="announcement-bar" id="announcementBar">🚚 Gəncə daxili çatdırılma · Fərdi sifarişlər qəbul edilir · WhatsApp ilə rahat sifariş</div>
@@ -192,6 +193,36 @@
     </div>
 </section>
 
+<section class="section order-delivery-section" aria-labelledby="orderDeliveryTitle">
+    <div class="order-delivery-heading">
+        <span>KÖMƏK MƏRKƏZİ</span>
+        <h2 id="orderDeliveryTitle">Sifariş və çatdırılma</h2>
+        <p>Sifarişini rahat tamamla — əsas addımlar və çatdırılma seçimləri burada.</p>
+    </div>
+    <div class="order-delivery-grid">
+        <article class="order-delivery-card" id="order-rules" aria-labelledby="orderRulesTitle">
+            <div class="order-delivery-icon" aria-hidden="true">🛍️</div>
+            <h3 id="orderRulesTitle">Sifariş qaydası</h3>
+            <ol class="order-delivery-steps">
+                <li><span class="order-step-number" aria-hidden="true">01</span><div><b>Məhsulu seç</b><p>Kataloqdan məhsulunu tap. Fərdi dizayn istəyirsənsə, məhsul səhifəsində fərdiləşdirmə seçimlərini tamamla.</p></div></li>
+                <li><span class="order-step-number" aria-hidden="true">02</span><div><b>Səbəti və məlumatları doldur</b><p>Məhsulları səbətə əlavə et, adını və telefon nömrəni yaz, sonra çatdırılma üsulunu seç. Ünvanla çatdırılma üçün ünvanı da daxil et.</p></div></li>
+                <li><span class="order-step-number" aria-hidden="true">03</span><div><b>WhatsApp-da dəqiqləşdir</b><p>“WhatsApp ilə Sifariş Et” düyməsi sifariş xülasısını açır. Məhsul və fərdi dizayn detallarını operatorla təsdiqlə.</p></div></li>
+                <li><span class="order-step-number" aria-hidden="true">04</span><div><b>Sifarişi tamamla</b><p>Yekun qiymət, hazırlanma vaxtı və ödəniş üsulu sifarişin xüsusiyyətlərinə uyğun WhatsApp-da razılaşdırılır. Saytda kartla onlayn ödəniş yoxdur.</p></div></li>
+            </ol>
+        </article>
+        <article class="order-delivery-card" id="delivery-info" aria-labelledby="deliveryInfoTitle">
+            <div class="order-delivery-icon" aria-hidden="true">🚚</div>
+            <h3 id="deliveryInfoTitle">Çatdırılma</h3>
+            <div class="order-delivery-options">
+                <div class="order-delivery-option"><span aria-hidden="true">📍</span><div><b>Gəncə daxilində</b><p>Checkout-da ünvanla çatdırılmanı seç və çatdırılma ünvanını qeyd et.</p></div></div>
+                <div class="order-delivery-option"><span aria-hidden="true">📦</span><div><b>Rayonlara göndəriş</b><p>Rayonlara sifarişlər poçt vasitəsilə göndərilir. Ünvan və göndəriş detallarını operatorla dəqiqləşdir.</p></div></div>
+                <div class="order-delivery-option"><span aria-hidden="true">🏬</span><div><b>Mağazadan götürmə</b><p>Götürmə ünvanı: Gəncə şəhəri, 4 nömrəli poçtun yanı. Gəlmə vaxtını əvvəlcədən razılaşdır.</p></div></div>
+            </div>
+            <div class="order-delivery-note"><span aria-hidden="true">ℹ️</span><p>Çatdırılma haqqı checkout-da seçdiyin üsula uyğun göstərilir və sifariş cəminə əlavə olunur. Təhvil vaxtı və son detallar WhatsApp-da təsdiqlənir.</p></div>
+        </article>
+    </div>
+</section>
+
 <section class="section reveal" id="about">
     <h2 id="aboutSectionTitle">Bizimlə Əlaqə & Ünvan</h2>
     <div class="about-grid">
@@ -241,8 +272,8 @@
         <div class="footer-column">
             <span class="footer-label" id="footerHelpTitle">Kömək</span>
             <a href="#faq" id="footerFaqLink">FAQ</a>
-            <a href="#about" id="footerOrderRule">Sifariş qaydası</a>
-            <a href="#about" id="footerDelivery">Çatdırılma</a>
+            <a href="#order-rules" id="footerOrderRule">Sifariş qaydası</a>
+            <a href="#delivery-info" id="footerDelivery">Çatdırılma</a>
             <a href="#about" id="footerContactLink">Əlaqə</a>
         </div>
         <div class="footer-column footer-contact-column">

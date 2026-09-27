@@ -1,0 +1,44 @@
+/* F1 Studio order and delivery information: scoped styles only. */
+.order-delivery-section{max-width:1260px!important;margin:74px auto!important;padding:0 24px!important;scroll-margin-top:100px!important}
+.order-delivery-heading{max-width:720px!important;margin:0 auto 24px!important;text-align:center!important}
+.order-delivery-heading>span{display:block!important;color:var(--f1-green)!important;font-size:9px!important;font-weight:850!important;letter-spacing:.16em!important}
+.order-delivery-heading h2{margin:8px 0!important;color:#30362e!important;font:700 clamp(28px,3vw,38px)/1.12 Georgia,serif!important;letter-spacing:-.4px!important}
+.order-delivery-heading p{margin:0!important;color:#777d74!important;font-size:12px!important;line-height:1.65!important}
+.order-delivery-grid{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:18px!important;align-items:stretch!important}
+.order-delivery-card{min-width:0!important;padding:25px!important;border:1px solid var(--f1-line)!important;border-radius:20px!important;background:#fff!important;box-shadow:var(--f1-shadow-soft)!important;scroll-margin-top:100px!important}
+.order-delivery-icon{display:grid!important;place-items:center!important;width:42px!important;height:42px!important;margin-bottom:13px!important;border:1px solid #dfe7db!important;border-radius:13px!important;background:#f2f6ef!important;font-size:19px!important}
+.order-delivery-card h3{margin:0 0 17px!important;color:#30362e!important;font:700 21px/1.2 Georgia,serif!important}
+.order-delivery-steps,.order-delivery-options{display:grid!important;gap:14px!important;margin:0!important;padding:0!important;list-style:none!important}
+.order-delivery-steps li,.order-delivery-option{display:grid!important;grid-template-columns:30px minmax(0,1fr)!important;gap:10px!important;align-items:start!important;min-width:0!important}
+.order-step-number{display:grid!important;place-items:center!important;width:28px!important;height:28px!important;border:1px solid #dce5d8!important;border-radius:50%!important;background:#f5f8f2!important;color:#536c4d!important;font-size:8px!important;font-weight:850!important}
+.order-delivery-steps li b,.order-delivery-option b{display:block!important;margin:0 0 3px!important;color:#374034!important;font-size:11px!important;font-weight:800!important;line-height:1.4!important}
+.order-delivery-steps li p,.order-delivery-option p{margin:0!important;color:#737a71!important;font-size:10px!important;line-height:1.65!important}
+.order-delivery-option>span{display:grid!important;place-items:center!important;width:28px!important;height:28px!important;border:1px solid #e6e7df!important;border-radius:9px!important;background:#f8f8f4!important;font-size:13px!important}
+.order-delivery-note{display:grid!important;grid-template-columns:20px minmax(0,1fr)!important;gap:9px!important;align-items:start!important;margin-top:17px!important;padding:12px!important;border:1px solid #dfe7db!important;border-radius:12px!important;background:#f5f8f2!important}
+.order-delivery-note>span{font-size:13px!important;line-height:1.5!important}
+.order-delivery-note p{margin:0!important;color:#596456!important;font-size:9px!important;line-height:1.65!important}
+html[data-theme="dark"] .order-delivery-heading h2{color:#f0eee8!important}
+html[data-theme="dark"] .order-delivery-heading p{color:#aeb5aa!important}
+html[data-theme="dark"] .order-delivery-card{background:#1b1e1a!important;border-color:#30362e!important;box-shadow:0 14px 36px rgba(0,0,0,.24)!important}
+html[data-theme="dark"] .order-delivery-card h3{color:#f0eee8!important}
+html[data-theme="dark"] .order-delivery-steps li b,html[data-theme="dark"] .order-delivery-option b{color:#e7e9e3!important}
+html[data-theme="dark"] .order-delivery-steps li p,html[data-theme="dark"] .order-delivery-option p{color:#aeb5aa!important}
+html[data-theme="dark"] .order-delivery-icon,html[data-theme="dark"] .order-step-number{background:#222820!important;border-color:#3c4837!important;color:#dbe5d8!important}
+html[data-theme="dark"] .order-delivery-option>span{background:#232721!important;border-color:#3c4239!important}
+html[data-theme="dark"] .order-delivery-note{background:#222820!important;border-color:#3c4837!important}
+html[data-theme="dark"] .order-delivery-note p{color:#c1c8bd!important}
+@media(max-width:760px){
+ .order-delivery-section{margin:52px auto!important;padding:0 15px!important}
+ .order-delivery-heading{margin-bottom:17px!important;text-align:left!important}
+ .order-delivery-heading h2{font-size:27px!important}
+ .order-delivery-grid{grid-template-columns:1fr!important;gap:12px!important}
+ .order-delivery-card{padding:19px!important;border-radius:16px!important}
+ .order-delivery-card h3{font-size:19px!important}
+ .order-delivery-steps,.order-delivery-options{gap:12px!important}
+ .order-delivery-steps li,.order-delivery-option{grid-template-columns:27px minmax(0,1fr)!important;gap:9px!important}
+ .order-step-number,.order-delivery-option>span{width:27px!important;height:27px!important}
+ .order-delivery-steps li p,.order-delivery-option p{font-size:10px!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .order-delivery-section,.order-delivery-card{scroll-behavior:auto!important;transition:none!important}
+}
