@@ -127,7 +127,9 @@ export function resolveLoadedSiteContent(data){
 function renderSiteCategories(){
   const grid=document.getElementById('categoryGrid');
   if(!grid)return;
-  const active=(s.siteCategories||[]).filter(c=>c.active!==false).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
+  const configured = Array.isArray(s.siteCategories) ? s.siteCategories : [];
+  const source = configured.length ? configured : DEFAULT_CATEGORIES;
+  const active=source.filter(c=>c.active!==false).sort((a,b)=>(a.sort_order||0)-(b.sort_order||0));
   grid.innerHTML=active.length ? active.map((c,idx)=>{
     const image=safeResourceUrl(c.image_url||'',{allowData:false,allowBlob:false,allowRelative:true});
     const count = c.action==='all' ? s.products.length : c.action==='search' ? s.products.filter(p=>p.customizable!==false).length : s.products.filter(p=>p.cat===c.name).length;
