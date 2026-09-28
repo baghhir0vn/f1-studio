@@ -544,3 +544,30 @@ html[data-theme="dark"] .hero-actions .btn, html[data-theme="dark"] .promo-card 
   .category-card b { max-width: 100% !important; overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; font-size: 9px !important; }
   .category-card small, .category-subtitle { font-size: 8px !important; line-height: 1.15 !important; }
 }
+
+
+/* Keep section labels and their "view all" links on one clear reference-style line. */
+.category-heading, .shop-heading {
+  display: flex !important;
+  flex-direction: row !important;
+  justify-content: space-between !important;
+  align-items: flex-end !important;
+  text-align: left !important;
+}
+.category-heading h2, .shop-heading h2 {
+  margin: 0 !important;
+  text-align: left !important;
+}
+.category-heading .view-all, .shop-heading .view-all {
+  flex: 0 0 auto !important;
+  margin-left: auto !important;
+  text-align: right !important;
+}
+@media (max-width: 760px) {
+  .category-heading, .shop-heading {
+    gap: 8px !important;
+    margin-bottom: 12px !important;
+  }
+  .category-heading h2, .shop-heading h2 { font-size: 18px !important; }
+  .category-heading .view-all, .shop-heading .view-all { font-size: 9px !important; }
+}
