@@ -357,6 +357,7 @@ header .nav nav a:hover { background: #f1f1ef !important; color: #111316 !import
   .hero-giftique .hero-copy {
     position:relative !important;
     z-index:2 !important;
+    background:transparent !important;
     width:100% !important;
     min-height:390px !important;
     padding:28px 20px !important;
