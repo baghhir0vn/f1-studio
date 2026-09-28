@@ -353,7 +353,7 @@ header .nav nav a:hover { background: #f1f1ef !important; color: #111316 !import
   }
   .hero-giftique .hero-art { position:absolute !important; inset:0 !important; z-index:0 !important; width:100% !important; height:100% !important; }
   .hero-giftique .hero-art::before { display:none !important; }
-  .hero-giftique .hero-art img { object-position:62% center !important; }
+  .hero-giftique .hero-art img { object-position:62% center !important; max-height:none !important; }
   .hero-giftique .hero-copy {
     position:relative !important;
     z-index:2 !important;
