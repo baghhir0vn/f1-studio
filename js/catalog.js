@@ -205,6 +205,81 @@ export function initCatalog() {
         const hay = normalizeText([p.name,p.desc,p.cat,p.material,...Object.keys(synonymMap).filter(k => synonymMap[k].includes(p.id))].join(" "));
         return hay.includes(normalizeText(q));
     }
+    function renderCategories() {
+        const grid = document.getElementById("categoryGrid");
+        if (!grid) return;
+        const products = Array.isArray(s.products) ? s.products : [];
+        const categories = new Map();
+        products.forEach(product => {
+            const name = String(product.cat || "").trim();
+            if (!name) return;
+            if (!categories.has(name)) categories.set(name, []);
+            categories.get(name).push(product);
+        });
+        const cards = [];
+        categories.forEach((items, name) => {
+            const card = document.createElement("button");
+            card.type = "button";
+            card.className = "cat category-card";
+            card.setAttribute("data-action", "filterCat");
+            card.setAttribute("data-action-args", JSON.stringify([name]));
+            card.setAttribute("aria-pressed", String(s.activeCat === name));
+            const photo = document.createElement("span");
+            photo.className = "category-photo";
+            photo.setAttribute("aria-hidden", "true");
+            const imageProduct = items.find(product => {
+                const source = Array.isArray(product.images) && product.images.length ? product.images[0] : product.image;
+                return !!safeResourceUrl(source, {allowData:false, allowBlob:false, allowRelative:true});
+            });
+            const source = imageProduct && (Array.isArray(imageProduct.images) && imageProduct.images.length ? imageProduct.images[0] : imageProduct.image);
+            const imageUrl = safeResourceUrl(source, {allowData:false, allowBlob:false, allowRelative:true});
+            if (imageUrl) {
+                const image = document.createElement("img");
+                image.src = imageUrl;
+                image.alt = "";
+                image.loading = "lazy";
+                image.decoding = "async";
+                photo.appendChild(image);
+            } else {
+                const icon = document.createElement("span");
+                icon.className = "category-fallback-emoji";
+                icon.textContent = items[0]?.emoji || "✦";
+                photo.appendChild(icon);
+            }
+            const title = document.createElement("b");
+            title.textContent = name;
+            const count = document.createElement("small");
+            count.className = "category-count";
+            count.textContent = `${items.length} məhsul`;
+            card.setAttribute("aria-label", `${name} — ${items.length} məhsul`);
+            card.append(photo, title, count);
+            cards.push(card);
+        });
+        if (products.length) {
+            const more = document.createElement("button");
+            more.type = "button";
+            more.className = "cat category-card category-card-all";
+            more.setAttribute("data-action", "filterCat");
+            more.setAttribute("data-action-args", JSON.stringify([""]));
+            more.setAttribute("aria-pressed", String(!s.activeCat));
+            const photo = document.createElement("span");
+            photo.className = "category-photo";
+            photo.setAttribute("aria-hidden", "true");
+            const icon = document.createElement("span");
+            icon.className = "category-fallback-emoji";
+            icon.textContent = "▦";
+            photo.appendChild(icon);
+            const title = document.createElement("b");
+            title.textContent = "Daha çox";
+            const count = document.createElement("small");
+            count.className = "category-count";
+            count.textContent = `${products.length} məhsul`;
+            more.setAttribute("aria-label", `Bütün məhsullar — ${products.length} məhsul`);
+            more.append(photo, title, count);
+            cards.push(more);
+        }
+        grid.replaceChildren(...cards);
+    }
     function updateCategoryCounts() {
         const buttons = document.querySelectorAll('.categories .cat[data-action="filterCat"]');
         buttons.forEach(btn => {
@@ -219,6 +294,7 @@ export function initCatalog() {
         });
     }
     function render() {
+        renderCategories();
         const q = document.getElementById("search").value;
         const sort = document.getElementById("sort").value;
         let list = [...s.products];
@@ -325,6 +401,7 @@ export function initCatalog() {
     filterCat,
     matchesSearch,
     render,
+    renderCategories,
     updateCategoryCounts,
     drawGrid,
     add,
