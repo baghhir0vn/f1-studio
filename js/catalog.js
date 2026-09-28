@@ -287,7 +287,11 @@ export function initCatalog() {
             info.appendChild(meta);
             const price=document.createElement("div"); price.className="price"; price.textContent=money(p.price); info.appendChild(price);
             const outOfStock=p.stockQuantity!=null && Number(p.stockQuantity)<=0;
-            const addBtn=document.createElement("button"); addBtn.className="add"; addBtn.type="button"; addBtn.disabled=outOfStock; addBtn.style.opacity=outOfStock?".55":"1"; addBtn.style.cursor=outOfStock?"not-allowed":"pointer"; addBtn.textContent=outOfStock?"Stokda yoxdur":"🛒 Səbətə at"; addBtn.setAttribute("aria-label", outOfStock?`${p.name}: stokda yoxdur`:`${p.name} səbətə əlavə et`); addBtn.onclick=e=>{e.stopPropagation();if(outOfStock)return;ctx.add(p.id,{skipCustomization:true})}; info.appendChild(addBtn);
+            const cardActions=document.createElement("div"); cardActions.className="product-card-actions";
+            if(p.customizable){
+                const customizeBtn=document.createElement("button"); customizeBtn.className="product-customize-btn"; customizeBtn.type="button"; customizeBtn.textContent="Fərdiləşdir"; customizeBtn.setAttribute("aria-label",`${p.name} məhsulunu fərdiləşdir`); customizeBtn.onclick=e=>{e.stopPropagation();ctx.openCustomization(p.id)}; cardActions.appendChild(customizeBtn);
+            }
+            const addBtn=document.createElement("button"); addBtn.className="add product-add-btn"; addBtn.type="button"; addBtn.disabled=outOfStock; addBtn.style.opacity=outOfStock?".55":"1"; addBtn.style.cursor=outOfStock?"not-allowed":"pointer"; addBtn.textContent=outOfStock?"Stokda yoxdur":"🛒 Səbətə at"; addBtn.setAttribute("aria-label",outOfStock?`${p.name}: stokda yoxdur`:`${p.name} səbətə əlavə et`); addBtn.onclick=e=>{e.stopPropagation();if(outOfStock)return;ctx.add(p.id,{skipCustomization:true})}; cardActions.appendChild(addBtn); info.appendChild(cardActions);
             article.appendChild(info); grid.appendChild(article);
         });
     }
