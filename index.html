@@ -61,6 +61,7 @@
     <link rel="stylesheet" href="css/admin-scroll.css?v=1">
     <link rel="stylesheet" href="css/order-delivery-info.css?v=1">
     <link rel="stylesheet" href="css/f1-reference-refresh.css?v=1">
+    <link rel="stylesheet" href="css/f1-reference-alignment.css?v=1">
 </head>
 <body>
 <div class="announcement-bar" id="announcementBar">🚚 Gəncə daxili çatdırılma · Fərdi sifarişlər qəbul edilir · WhatsApp ilə rahat sifariş</div>
@@ -122,7 +123,7 @@
 </section>
 
 <section class="section reveal category-showcase" id="categories">
-    <div class="section-heading-centered"><div class="section-kicker" id="categorySectionKicker">F1 STUDIO</div><h2 id="categorySectionTitle">Kateqoriyalar</h2><span class="heading-rule"><i></i></span></div>
+    <div class="shop-heading category-heading"><div><div class="section-kicker" id="categorySectionKicker">F1 STUDIO</div><h2 id="categorySectionTitle">Kateqoriyalar</h2></div><a href="#products" class="view-all" id="categoryViewAll" data-action="showAllProducts">Hamısına bax →</a></div>
     <div class="categories gift-categories" id="categoryGrid"></div>
 </section>
 
@@ -294,6 +295,29 @@
         </div>
     </div>
 </footer>
+
+<nav class="f1-mobile-dock" aria-label="Mobil naviqasiya">
+  <a href="#home" data-nav-target="home" aria-label="Ana səhifə">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></svg>
+    <span>Ana səhifə</span>
+  </a>
+  <a href="#categories" data-nav-target="categories" aria-label="Kateqoriyalar">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>
+    <span>Kateqoriyalar</span>
+  </a>
+  <button type="button" data-action="openCart" aria-label="Səbət">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l1.6 10.2a2 2 0 0 0 2 1.8h7.9a2 2 0 0 0 1.9-1.5L20 8H6"></path><circle cx="9" cy="19" r="1"></circle><circle cx="17" cy="19" r="1"></circle></svg>
+    <span>Səbət</span>
+  </button>
+  <button type="button" data-action="showFavorites" aria-label="Sevimlilər">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.7c0 5-8.8 10-8.8 10s-8.8-5-8.8-10A4.7 4.7 0 0 1 12 6.2a4.7 4.7 0 0 1 8.8 2.5Z"></path></svg>
+    <span>Sevimlilər</span>
+  </button>
+  <button type="button" data-action="openLogin" aria-label="Profil">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"></circle><path d="M5.5 20c.8-3.5 3-5.3 6.5-5.3s5.7 1.8 6.5 5.3"></path></svg>
+    <span>Profil</span>
+  </button>
+</nav>
 
 <button class="chat-trigger" data-action="toggleChat" aria-controls="chatBox" aria-expanded="false">
     <span class="online-badge"></span>
@@ -1120,5 +1144,6 @@
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
 <noscript><div style="padding:16px;background:#fff1f2;color:#7f1d1d;text-align:center;font-family:system-ui">Bu saytın sifariş və məhsul funksiyaları üçün JavaScript aktiv olmalıdır.</div></noscript>
     <script type="module" src="js/app.js?v=133"></script>
+    <script type="module" src="js/reference-mobile-dock.js?v=1"></script>
 </body>
 </html>
