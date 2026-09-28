@@ -318,7 +318,7 @@ export function initCatalog() {
             titleEl.innerHTML = `🎁 Seçilmiş Hədiyyələr <button data-action="clearFilters" style="margin-left:12px;font-size:13px;padding:6px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);cursor:pointer;color:var(--ink);">Bütün məhsullar</button>`;
         } else {
             list = list.filter(p => (!s.activeCat || p.cat === s.activeCat) && ctx.matchesSearch(p,q));
-            titleEl.textContent = "Məhsul və Xidmətlərimiz";
+            titleEl.textContent = "Seçilmiş Məhsullar";
         }
         if (sort === "low") list.sort((a,b) => a.price-b.price);
         if (sort === "high") list.sort((a,b) => b.price-a.price);
@@ -346,7 +346,7 @@ export function initCatalog() {
             const info=document.createElement("div"); info.className="info";
             const h3=document.createElement("h3"); h3.textContent=p.name; info.appendChild(h3);
             const categoryRow=document.createElement("div"); categoryRow.className="product-category-row";
-            const small=document.createElement("small"); small.className="product-category"; small.textContent=p.cat; categoryRow.appendChild(small);
+            const small=document.createElement("small"); small.className="product-category"; small.textContent=p.desc || p.cat; categoryRow.appendChild(small);
             if (p.customizable) { const customPill=document.createElement("span"); customPill.className="custom-pill"; customPill.textContent="✨ Fərdi"; categoryRow.appendChild(customPill); }
             info.appendChild(categoryRow);
             const meta=document.createElement("div"); meta.className="product-meta";

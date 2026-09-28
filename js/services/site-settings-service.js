@@ -1,22 +1,22 @@
 import { sb } from '../config.js';
 import { safeHttpUrl } from '../security.js';
 export const DEFAULT_HOMEPAGE_CONTENT = {
-  announcement:'🚚 Gəncə daxili çatdırılma · Fərdi sifarişlər qəbul edilir · WhatsApp ilə rahat sifariş',
+  announcement:'✓ Fərdi dizayn　✦ Lazer kəsim　✓ Premium keyfiyyət　⌁ Tez çatdırılma',
   navHome:'Ana səhifə', navShop:'Mağaza', navCategories:'Kateqoriyalar⌄', navAbout:'Haqqımızda', navReviews:'Rəylər', navContact:'Əlaqə',
   mobileNavFaq:'Suallar', mobileNavProducts:'Məhsullar', mobileNavContact:'Əlaqə', mobileNavSearch:'⌕ Axtar', mobileNavFavorites:'♡ Sevimlilər', mobileNavProfile:'♙ Profil',
-  heroEyebrow:'DÜŞÜNÜLMÜŞ HƏDİYYƏLƏR', heroTitleLine1:'Hər anı', heroTitleEm:'xüsusi et.',
-  heroSubtitle:'Sevdiklərin üçün mənalı, zövqlü və fərdi hədiyyələr. Sənin üçün hazırlanır, gözəl təqdim olunur.',
-  heroPrimaryCta:'İNDİ KƏŞF ET', heroSecondaryCta:'KATEQORİYALARA BAX',
-  heroBenefits:['Fərdi dizayn','Keyfiyyətli hazırlanma','WhatsApp sifarişi'],
+  heroEyebrow:'FƏRDİ HƏDİYYƏLƏR', heroTitleLine1:'Xüsusi anlar üçün', heroTitleEm:'xüsusi hədiyyələr',
+  heroSubtitle:'Sevdiklərinizi təəccübləndirin. Adınıza xüsusi hazırlanmış, yüksək keyfiyyətli və unikal hədiyyələr.',
+  heroPrimaryCta:'Mağazanı kəşf et', heroSecondaryCta:'Fərdi dizayn yarat',
+  heroBenefits:['Fərdi dizayn','Premium materiallar','WhatsApp sifarişi'],
   serviceItems:[
-    {title:'Sürətli hazırlanma',subtitle:'Sifarişdən sonra operativ proses'},
-    {title:'Fərdi hədiyyələr',subtitle:'İstədiyin mətn və dizayn'},
-    {title:'Etibarlı sifariş',subtitle:'Detallar WhatsApp-da dəqiqləşir'},
-    {title:'Müştəri dəstəyi',subtitle:'Sualın olduqda yanındayıq'}
+    {title:'Fərdi Dizayn',subtitle:'Tam öz zövqünüzlə yaradın'},
+    {title:'Yüksək Keyfiyyət',subtitle:'Premium materiallar'},
+    {title:'Tez Çatdırılma',subtitle:'1-3 iş günü ərzində'},
+    {title:'Təhlükəsiz Ödəniş',subtitle:'100% etibarlı ödəniş'}
   ],
-  categorySectionKicker:'F1 STUDIO', categorySectionTitle:'Kateqoriyalar',
-  shopSectionKicker:'SEÇİLMİŞLƏR', shopSectionTitle:'Ən çox seçilənlər', shopViewAll:'Hamısına bax →',
-  productSearchPlaceholder:'Xidmət və ya məhsul axtar (məs: Lipa nömrə)...',
+  categorySectionKicker:'', categorySectionTitle:'Populyar Kateqoriyalar',
+  shopSectionKicker:'', shopSectionTitle:'Seçilmiş Məhsullar', shopViewAll:'Hamısına bax →',
+  productSearchPlaceholder:'Məhsul axtarın...',
   productSortDefault:'Sıralama (Standart)', productSortLow:'Ucuzdan bahaya', productSortHigh:'Bahadan ucuza',
   promoPersonalKicker:'FƏRDİ HƏDİYYƏLƏR', promoPersonalTitle:'Hədiyyəni daha', promoPersonalHighlight:'xüsusi et.',
   promoPersonalDescription:'İstədiyin ad, yazı və dizaynı əlavə et.', promoPersonalButton:'FƏRDİLƏŞDİR',
@@ -38,10 +38,10 @@ export const DEFAULT_HOMEPAGE_CONTENT = {
   aboutMapButton:'📍 Dəqiq yeri Google Maps-də aç',
   aboutWhatsappNote:'💬 WhatsApp sifarişi checkout zamanı avtomatik açılır.',
   footerDescription:'Fərdi hədiyyələr, çap, lazer kəsim və avto aksessuarlar. Dizaynını hazırla, sifarişini WhatsApp-da tamamla.',
-  footerStatus:'Fərdi sifarişlər qəbul edilir', footerLinksTitle:'Keçidlər', footerHome:'Ana səhifə', footerProducts:'Məhsul və xidmətlər', footerFaq:'Suallar', footerContact:'Əlaqə & Ünvan',
+  footerStatus:'Fərdi sifarişlər qəbul edilir', footerLinksTitle:'Haqqımızda', footerHome:'Haqqımızda', footerProducts:'Rəylər', footerFaq:'FAQ', footerContact:'Əlaqə',
   footerStoreTitle:'Mağaza', footerAllProducts:'Bütün məhsullar', footerNewProducts:'Yeni məhsullar', footerPopularProducts:'Ən çox seçilənlər', footerCategories:'Kateqoriyalar',
   footerHelpTitle:'Kömək', footerFaqLink:'FAQ', footerOrderRule:'Sifariş qaydası', footerDelivery:'Çatdırılma', footerContactLink:'Əlaqə',
-  footerOrderTitle:'Sifariş', footerOrderText:'WhatsApp sifarişi checkout-dan açılır',
+  footerOrderTitle:'Əlaqə', footerOrderText:'WhatsApp sifarişi checkout-dan açılır',
   footerCopyright:'© 2026 F1 Studio'
 };
 
