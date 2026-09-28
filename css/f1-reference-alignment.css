@@ -478,3 +478,11 @@ html[data-theme="dark"] .f1-mobile-dock .is-active { color:#ed6560 !important; }
   .hero-giftique *, .f1-mobile-dock *, .product { transition-duration:.01ms !important; animation-duration:.01ms !important; }
 }
 
+
+/* Keep primary CTAs on the reference red in dark theme as well. */
+html[data-theme="dark"] .hero-actions .btn, html[data-theme="dark"] .promo-card .btn, html[data-theme="dark"] .newsletter-form .btn {
+  background:var(--f1-red) !important;
+  border-color:var(--f1-red) !important;
+  color:#fff !important;
+}
+
