@@ -111,8 +111,8 @@ header .nav nav a:hover { background: #f1f1ef !important; color: #111316 !import
   align-items: stretch !important;
   width: min(var(--f1-content-width), calc(100% - 48px)) !important;
   max-width: var(--f1-content-width) !important;
-  min-height: 350px !important;
-  height: clamp(320px, 30vw, 390px) !important;
+  min-height: 300px !important;
+  height: clamp(300px, 25vw, 360px) !important;
   margin: 22px auto 0 !important;
   padding: 0 !important;
   overflow: hidden !important;
@@ -491,8 +491,8 @@ html[data-theme="dark"] .hero-actions .btn, html[data-theme="dark"] .promo-card 
 /* Reference proportions at the narrow desktop width shown in the supplied mockup. */
 @media (min-width: 901px) and (max-width: 1100px) {
   .hero-giftique {
-    height: 300px !important;
-    min-height: 300px !important;
+    height: 270px !important;
+    min-height: 270px !important;
     margin-top: 16px !important;
   }
   .hero-giftique .hero-copy { padding-inline: 24px !important; }
