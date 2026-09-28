@@ -28,7 +28,7 @@ header .nav nav a:hover{background:#f5f5f4!important;color:#111!important}
 .icon-action span,.cart-icon span{top:0!important;right:0!important;min-width:14px!important;height:14px!important;border:1px solid #fff!important;background:var(--f1-ref-red)!important;color:#fff!important;font-size:8px!important}
 .theme-toggle-btn{font-size:20px!important}
 .mobile-menu-btn{display:none!important}
-.admin-btn{display:grid!important;place-items:center!important;width:32px!important;min-height:32px!important;padding:0!important;overflow:hidden!important;border:1px solid #e4e5e7!important;border-radius:50%!important;background:#fff!important;color:transparent!important;font-size:0!important}
+ .admin-btn{place-items:center!important;width:32px!important;min-height:32px!important;padding:0!important;overflow:hidden!important;border:1px solid #e4e5e7!important;border-radius:50%!important;background:#fff!important;color:transparent!important;font-size:0!important}
 .admin-btn::before{content:"⚙";color:#24272b;font-size:14px}
 .admin-notif-badge{position:absolute!important;font-size:8px!important}
 .mobile-nav{z-index:55!important}
@@ -157,7 +157,6 @@ html[data-theme="dark"] .chat-trigger{background:#1b1e21!important;border-color:
   .brand-logo{flex-basis:130px!important;min-width:130px!important}
   header .nav nav a{padding-inline:7px!important;font-size:9px!important}
   .icon-action[aria-label="Axtar"]{width:150px!important;min-width:150px!important}
-  .admin-btn{display:none!important}
   .hero-giftique{width:calc(100% - 36px)!important;height:270px!important;min-height:270px!important}
   .hero-giftique .hero-copy{padding-inline:27px!important}
   .hero-giftique h1{font-size:clamp(28px,3.2vw,36px)!important}
@@ -183,7 +182,7 @@ html[data-theme="dark"] .chat-trigger{background:#1b1e21!important;border-color:
   .icon-action[aria-label="Sevimlilər"]{position:absolute!important;top:10px!important;right:89px!important;width:31px!important;height:32px!important}
   .cart-icon{position:absolute!important;top:10px!important;right:51px!important;width:31px!important;height:32px!important}
   .icon-action[aria-label="Giriş / Profil"]{position:absolute!important;top:10px!important;right:11px!important;width:31px!important;height:32px!important}
-  .theme-toggle-btn,.admin-btn{display:none!important}
+  .theme-toggle-btn{display:none!important}
   .mobile-nav{position:absolute!important;top:100%!important;left:10px!important;right:10px!important;z-index:65!important;border:1px solid #e5e7e9!important;border-radius:12px!important;background:#fff!important}
   .hero-giftique{display:block!important;width:calc(100% - 24px)!important;height:290px!important;min-height:290px!important;margin:8px 12px 0!important;border-radius:12px!important}
   .hero-giftique .hero-art{position:absolute!important;inset:0!important;width:100%!important;height:100%!important}
