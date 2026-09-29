@@ -2,6 +2,7 @@ import { safeHttpUrl, safeResourceUrl } from './security.js';
 import { persist, escapeHTML, money, normalizeText, showToast } from './ui.js';
 import { state as s, ctx } from './state.js';
 export function initCatalog() {
+    s.showAllProducts = s.showAllProducts === true;
     const synonymMap = {
         "lipa":[1,2], "nömrə":[1,2], "nomre":[1,2], "alışqan":[3], "domino":[4], "taxta":[4,5,6,12],
         "lazer":[4,5,6,12], "masaüstü":[6], "saat":[7,8], "qol saatı":[8], "şəkil":[9], "3x4":[9],
@@ -10,7 +11,7 @@ export function initCatalog() {
     function getProduct(id){ return s.products.find(p => p.id === Number(id)); }
     function renderCatalogSkeleton() {
         const grid = document.getElementById("grid");
-        if (!grid || s.products.length) return;
+        if (!grid) return;
         grid.classList.add("catalog-skeleton-grid");
         grid.innerHTML = Array.from({length: 6}, () => `
             <article class="product product-skeleton" aria-hidden="true">
@@ -41,7 +42,7 @@ export function initCatalog() {
             status.setAttribute("aria-busy","true");
             status.innerHTML='<span class="status-spinner" aria-hidden="true"></span><span><b>Kataloq yenilənir…</b><small>Aktual məhsul və stok məlumatları yoxlanılır.</small></span>';
         }
-        if (!s.products.length) renderCatalogSkeleton();
+        if (!s.serverCatalogReady) renderCatalogSkeleton();
         try {
             const data = await ctx.api("/api/products");
             if(Array.isArray(data.products) && data.products.length){
@@ -58,7 +59,7 @@ export function initCatalog() {
                     status.setAttribute("aria-busy","false");
                     status.innerHTML='<span class="status-icon" aria-hidden="true">!</span><span><b>Kataloq hazırda əlçatan deyil.</b><small>Bu ekrandakı ilkin məhsullar yalnız önbaxış üçündür; sifariş üçün aktual kataloqu yükləyin.</small></span><button type="button" class="status-retry" data-action="loadServerProducts">↻ Yenidən yoxla</button>';
                 }
-                if (!s.products.length) ctx.render();
+                ctx.render();
             }
         } catch (e) {
             s.serverCatalogReady=false;
@@ -68,7 +69,7 @@ export function initCatalog() {
                 status.setAttribute("aria-busy","false");
                 status.innerHTML='<span class="status-icon" aria-hidden="true">!</span><span><b>Kataloq serverdən yüklənmədi.</b><small>Bağlantını yoxlayıb yenidən cəhd edə bilərsiniz.</small></span><button type="button" class="status-retry" data-action="loadServerProducts">↻ Yenidən yoxla</button>';
             }
-            if(!s.products.length) ctx.render();
+            ctx.render();
             if(!s.catalogLoadErrorShown){s.catalogLoadErrorShown=true;console.error("F1 catalog load error",e);}
         }
     }
@@ -181,7 +182,45 @@ export function initCatalog() {
         persist("f1Favs", s.favs); ctx.render();
     }
     function updateFavCount() { document.getElementById("favCount").textContent = s.favs.length; }
+    let searchOpener = null;
+    function focusProductSearch() {
+        const panel=document.getElementById("catalogSearchPanel");
+        const input=document.getElementById("search");
+        if(panel){
+            searchOpener=document.activeElement;
+            panel.hidden=false;
+            panel.setAttribute("aria-hidden","false");
+            document.body.classList.add("catalog-search-open");
+            requestAnimationFrame(()=>input?.focus({preventScroll:true}));
+        }else if(input){
+            input.focus({preventScroll:true});
+            document.getElementById("products")?.scrollIntoView({behavior:"smooth",block:"start"});
+        }
+    }
+    function closeProductSearch() {
+        const panel=document.getElementById("catalogSearchPanel");
+        if(!panel || panel.hidden) return;
+        panel.hidden=true;
+        panel.setAttribute("aria-hidden","true");
+        document.body.classList.remove("catalog-search-open");
+        if(searchOpener?.isConnected) searchOpener.focus({preventScroll:true});
+        searchOpener=null;
+    }
+    function submitProductSearch() {
+        s.showAllProducts=true;
+        closeProductSearch();
+        ctx.render();
+        document.getElementById("products")?.scrollIntoView({behavior:"smooth",block:"start"});
+    }
+    function showAllProducts() {
+        s.showAllProducts=true;
+        s.viewingFavs=false; s.smartFilterActive=false; s.activeCat=""; s.activeTag="";
+        document.getElementById("search").value="";
+        ctx.render();
+        document.getElementById("products")?.scrollIntoView({behavior:"smooth",block:"start"});
+    }
     function showFavorites() {
+        s.showAllProducts=true;
         s.viewingFavs = true; s.smartFilterActive = false; s.activeCat = ""; s.activeTag = "";
         document.getElementById("search").value = "";
         ctx.render(); document.getElementById("products").scrollIntoView({ behavior:"smooth", block:"start" });
@@ -191,15 +230,15 @@ export function initCatalog() {
         ctx.render(); document.getElementById("products").scrollIntoView({ behavior:"smooth", block:"start" });
     }
     function clearFilters() {
-        s.smartFilterActive = false; s.viewingFavs = false; s.activeCat = ""; s.activeTag = "";
+        s.smartFilterActive = false; s.viewingFavs = false; s.activeCat = ""; s.activeTag = ""; s.showAllProducts=false;
         ["smartPrice","smartPerson","smartType","search"].forEach(id => {
             const input = document.getElementById(id);
             if (input) input.value = "";
         });
         ctx.render();
     }
-    function filterByTag(tag) { s.activeTag = tag; s.activeCat = ""; s.viewingFavs = false; s.smartFilterActive = false; document.getElementById("search").value=""; ctx.render(); document.getElementById("products").scrollIntoView({behavior:"smooth", block:"start"}); }
-    function filterCat(cat) { s.activeCat = cat; s.activeTag = ""; s.viewingFavs=false; s.smartFilterActive=false; document.getElementById("search").value=""; ctx.render(); document.getElementById("products").scrollIntoView({behavior:"smooth", block:"start"}); }
+    function filterByTag(tag) { s.showAllProducts=true; s.activeTag = tag; s.activeCat = ""; s.viewingFavs = false; s.smartFilterActive = false; document.getElementById("search").value=""; ctx.render(); document.getElementById("products").scrollIntoView({behavior:"smooth", block:"start"}); }
+    function filterCat(cat) { s.showAllProducts=true; s.activeCat = cat; s.activeTag = ""; s.viewingFavs=false; s.smartFilterActive=false; document.getElementById("search").value=""; ctx.render(); document.getElementById("products").scrollIntoView({behavior:"smooth", block:"start"}); }
     function matchesSearch(p,q) {
         if (!q) return true;
         const hay = normalizeText([p.name,p.desc,p.cat,p.material,...Object.keys(synonymMap).filter(k => synonymMap[k].includes(p.id))].join(" "));
@@ -320,6 +359,12 @@ export function initCatalog() {
             list = list.filter(p => (!s.activeCat || p.cat === s.activeCat) && ctx.matchesSearch(p,q));
             titleEl.textContent = "Seçilmiş Məhsullar";
         }
+        if (!s.showAllProducts && !s.viewingFavs && !s.smartFilterActive && !s.activeTag && !s.activeCat && !q.trim()) {
+            list = list.filter(p => {
+                const sources = [...(Array.isArray(p.images) ? p.images : []), p.image];
+                return sources.some(source => !!safeResourceUrl(source, {allowData:false, allowBlob:false, allowRelative:true}));
+            }).slice(0, 5);
+        }
         if (sort === "low") list.sort((a,b) => a.price-b.price);
         if (sort === "high") list.sort((a,b) => b.price-a.price);
         updateCategoryCounts();
@@ -330,6 +375,11 @@ export function initCatalog() {
         clearCatalogSkeleton();
         if (!list.length) {
             const hasFilters = s.viewingFavs || s.smartFilterActive || s.activeTag || s.activeCat || document.getElementById("search").value.trim();
+            if (!hasFilters && !s.serverCatalogReady && !s.catalogLoadErrorShown) {
+                grid.classList.add("catalog-skeleton-grid");
+                grid.innerHTML = Array.from({length: 5}, () => '<article class="product product-skeleton" aria-hidden="true"><div class="pic skeleton-block"></div><div class="info"><div class="skeleton-line skeleton-title"></div><div class="skeleton-line skeleton-meta"></div><div class="skeleton-line skeleton-price"></div></div></article>').join("");
+                return;
+            }
             grid.innerHTML = `<div class="catalog-empty-state"><div class="empty-icon" aria-hidden="true">${hasFilters ? "⌕" : "◌"}</div><div><b>${hasFilters ? "Uyğun məhsul tapılmadı" : "Hazırda məhsul görünmür"}</b><span>${hasFilters ? "Axtarış və filtr meyarlarını dəyişib yenidən yoxlaya bilərsən." : "Kataloq yenilənəndən sonra məhsullar burada görünəcək."}</span></div>${hasFilters ? '<button type="button" class="empty-action" data-action="clearFilters">Filtrləri təmizlə</button>' : '<button type="button" class="empty-action" data-action="loadServerProducts">↻ Kataloqu yenilə</button>'}</div>`;
             return;
         }
@@ -364,9 +414,6 @@ export function initCatalog() {
             const price=document.createElement("div"); price.className="price"; price.textContent=money(p.price); info.appendChild(price);
             const outOfStock=p.stockQuantity!=null && Number(p.stockQuantity)<=0;
             const cardActions=document.createElement("div"); cardActions.className="product-card-actions";
-            if(p.customizable){
-                const customizeBtn=document.createElement("button"); customizeBtn.className="product-customize-btn"; customizeBtn.type="button"; customizeBtn.textContent="Fərdiləşdir"; customizeBtn.setAttribute("aria-label",`${p.name} məhsulunu fərdiləşdir`); customizeBtn.onclick=e=>{e.stopPropagation();ctx.openCustomization(p.id)}; cardActions.appendChild(customizeBtn);
-            }
             const addBtn=document.createElement("button"); addBtn.className="add product-add-btn"; addBtn.type="button"; addBtn.disabled=outOfStock; addBtn.style.opacity=outOfStock?".55":"1"; addBtn.style.cursor=outOfStock?"not-allowed":"pointer"; addBtn.textContent=outOfStock?"Stokda yoxdur":"🛒 Səbətə at"; addBtn.setAttribute("aria-label",outOfStock?`${p.name}: stokda yoxdur`:`${p.name} səbətə əlavə et`); addBtn.onclick=e=>{e.stopPropagation();if(outOfStock)return;ctx.add(p.id,{skipCustomization:true})}; cardActions.appendChild(addBtn); info.appendChild(cardActions);
             article.appendChild(info); grid.appendChild(article);
         });
@@ -385,6 +432,9 @@ export function initCatalog() {
     }
     function saveCart(){ persist("f1Cart",s.cart); ctx.updateCount(); }
     function updateCount(){ document.getElementById("count").textContent=s.cart.reduce((sum,i)=>sum+Math.max(0,Number(i.qty)||0),0); }
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape") closeProductSearch();
+    });
     Object.assign(ctx, {
     getProduct,
     loadServerProducts,
@@ -401,6 +451,10 @@ export function initCatalog() {
     filterCat,
     matchesSearch,
     render,
+    focusProductSearch,
+    closeProductSearch,
+    submitProductSearch,
+    showAllProducts,
     renderCategories,
     updateCategoryCounts,
     drawGrid,
