@@ -33,7 +33,9 @@ body.f1-home>header .icon-action[aria-label="Axtar"] svg{order:2;width:15px!impo
 body.f1-home>header .icon-action span,body.f1-home>header .cart-icon span{top:0!important;right:-1px!important;min-width:13px!important;height:13px!important;border:1px solid #fff!important;border-radius:50%!important;background:var(--f1-ref-red)!important;color:#fff!important;font-size:8px!important}
 body.f1-home>header .theme-toggle-btn{font-size:16px!important}
 body.f1-home>header .mobile-menu-btn{display:none!important}
-body.f1-home>header .admin-btn{width:32px!important;min-width:32px!important;min-height:32px!important;padding:0!important;border-radius:50%!important}
+body.f1-home>header .admin-btn{position:relative!important;width:32px!important;min-width:32px!important;min-height:32px!important;padding:0!important;border-radius:50%!important}
+body.f1-home>header .admin-notif-badge{position:absolute!important;top:0!important;right:0!important;display:grid!important;place-items:center!important;min-width:13px!important;height:13px!important;border:1px solid #fff!important;border-radius:50%!important;background:var(--f1-ref-red)!important;color:#fff!important;font-size:8px!important;line-height:1!important}
+body.f1-home>header .admin-notif-badge.hidden{display:none!important}
 body.f1-home>header .mobile-nav{z-index:65!important}
 
 /* Full-width main flow. The gift photo is a real half-hero region, not a thumbnail. */
