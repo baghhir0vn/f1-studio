@@ -63,6 +63,7 @@
     <link rel="stylesheet" href="css/f1-reference-refresh.css?v=1">
     <link rel="stylesheet" href="css/f1-reference-alignment.css?v=1">
     <link rel="stylesheet" href="css/f1-reference-capture.css?v=19">
+    <link rel="stylesheet" href="css/category-page.css?v=1">
 </head>
 <body class="f1-home">
 <div class="announcement-bar" id="announcementBar" aria-label="F1 Studio xidmət üstünlükləri">
@@ -112,6 +113,83 @@
 </div>
 
 <main id="home">
+
+<section id="categoryPageView" class="category-page-view" hidden aria-labelledby="categoryPageTitle">
+  <nav class="category-page-breadcrumbs" aria-label="Səhifə yolu">
+    <button type="button" data-action="closeCategoryPage">Ana səhifə</button><span aria-hidden="true">›</span>
+    <span>Kateqoriyalar</span><span aria-hidden="true">›</span><span id="categoryPageBreadcrumbCurrent" aria-current="page"></span>
+  </nav>
+  <section class="category-page-hero" aria-labelledby="categoryPageTitle">
+    <div class="category-page-hero-image" id="categoryPageHeroImage" aria-hidden="true"></div>
+    <div class="category-page-hero-copy">
+      <h1 id="categoryPageTitle">Kateqoriyalar</h1>
+      <p id="categoryPageDescription"></p>
+      <div class="category-page-perks">
+        <div class="category-page-perk"><span class="category-page-perk-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m12 3 2.4 1.5 2.8-.1.9 2.7 2.2 1.7-.9 2.7.9 2.7-2.2 1.7-.9 2.7-2.8-.1L12 20l-2.4-1.5-2.8.1-.9-2.7-2.2-1.7.9-2.7-.9-2.7 2.2-1.7.9-2.7 2.8.1z"/><path d="m9 12 2 2 4-4"/></svg></span><span><b>Yüksək keyfiyyət</b><small>Premium material</small></span></div>
+        <div class="category-page-perk"><span class="category-page-perk-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m4 16 9-9 4 4-9 9H4zM14 6l2-2 4 4-2 2"/></svg></span><span><b>Fərdiləşdirilə bilən</b><small>Ad, tarix, yazı və s.</small></span></div>
+        <div class="category-page-perk"><span class="category-page-perk-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 7h11v10H3zM14 10h4l3 3v4h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg></span><span><b>Sürətli hazırlanma</b><small>1–3 iş günü ərzində</small></span></div>
+        <div class="category-page-perk"><span class="category-page-perk-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 7v14M12 7H7.5a2.5 2.5 0 1 1 2.5-2.5C10 6 12 7 12 7Zm0 0h4.5A2.5 2.5 0 1 0 14 4.5C14 6 12 7 12 7Z"/></svg></span><span><b>Hədiyyə qablaşdırma</b><small>Checkout-da əlavə seçim</small></span></div>
+      </div>
+    </div>
+  </section>
+  <div class="category-page-layout">
+    <aside class="category-page-filters" id="categoryPageFilters" aria-label="Məhsul filtrləri">
+      <button type="button" class="category-page-filter-toggle" id="categoryPageFilterToggle" data-action="toggleCategoryPageFilters" aria-expanded="false">Filterlər <span>Kateqoriya, qiymət, material, rəng</span></button>
+      <div class="category-page-filter-content">
+        <section class="category-filter-group">
+          <h2 class="category-filter-heading">Kateqoriyalar <small>Hamısı</small></h2>
+          <div class="category-page-category-list" id="categoryPageCategoryList"></div>
+        </section>
+        <section class="category-filter-group">
+          <h2 class="category-filter-heading">Qiymət aralığı <small>₼</small></h2>
+          <div class="category-price-controls">
+            <div class="category-range-stack" aria-label="Qiymət aralığını seç">
+              <input id="categoryMinRange" type="range" min="0" max="100" value="0" step="1" data-category-filter="minRange" data-input-action="updateCategoryFilter" data-input-args='[{"$":"this"}]' aria-label="Minimum qiymət">
+              <input id="categoryMaxRange" type="range" min="0" max="100" value="100" step="1" data-category-filter="maxRange" data-input-action="updateCategoryFilter" data-input-args='[{"$":"this"}]' aria-label="Maksimum qiymət">
+            </div>
+            <div class="category-price-values">
+              <label class="category-price-value"><span>₼</span><input id="categoryMinPriceInput" type="number" min="0" max="100" step="1" value="0" data-category-filter="minPrice" data-input-action="updateCategoryFilter" data-input-args='[{"$":"this"}]' aria-label="Minimum qiymət"></label>
+              <label class="category-price-value"><span>₼</span><input id="categoryMaxPriceInput" type="number" min="0" max="100" step="1" value="100" data-category-filter="maxPrice" data-input-action="updateCategoryFilter" data-input-args='[{"$":"this"}]' aria-label="Maksimum qiymət"></label>
+            </div>
+            <div class="category-price-live" aria-live="polite"><span id="categoryMinPriceLabel">₼ 0</span><span>—</span><span id="categoryMaxPriceLabel">₼ 100</span></div>
+          </div>
+        </section>
+        <section class="category-filter-group">
+          <h2 class="category-filter-heading">Material</h2>
+          <div class="category-page-facet-list" id="categoryPageMaterials"></div>
+        </section>
+        <section class="category-filter-group">
+          <h2 class="category-filter-heading">Rəng</h2>
+          <div class="category-page-facet-list" id="categoryPageColors"></div>
+        </section>
+        <button type="button" class="category-page-reset" data-action="clearCategoryPageFilters">Filtrləri təmizlə</button>
+      </div>
+    </aside>
+    <section class="category-page-results" aria-labelledby="categoryPageResultsTitle">
+      <div class="category-page-results-toolbar">
+        <h2 class="category-page-results-title"><span id="categoryPageResultsTitle"></span><small id="categoryPageResultCount" aria-live="polite"></small></h2>
+        <div class="category-page-results-actions">
+          <div class="category-page-layout-toggle" aria-label="Məhsul görünüşü">
+            <button type="button" id="categoryPageGridLayout" data-action="setCategoryPageLayout" data-action-args='["grid"]' aria-label="Grid görünüşü" aria-pressed="true"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="2" y="2" width="4.5" height="4.5" rx="1"/><rect x="9.5" y="2" width="4.5" height="4.5" rx="1"/><rect x="2" y="9.5" width="4.5" height="4.5" rx="1"/><rect x="9.5" y="9.5" width="4.5" height="4.5" rx="1"/></svg></button>
+            <button type="button" id="categoryPageListLayout" data-action="setCategoryPageLayout" data-action-args='["list"]' aria-label="Siyahı görünüşü" aria-pressed="false"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M6 3h8M6 8h8M6 13h8"/><circle cx="2.5" cy="3" r=".6"/><circle cx="2.5" cy="8" r=".6"/><circle cx="2.5" cy="13" r=".6"/></svg></button>
+          </div>
+          <select class="category-page-sort" id="categoryPageSort" data-category-filter="sort" data-change-action="updateCategoryFilter" data-change-args='[{"$":"this"}]' aria-label="Məhsulları sırala">
+            <option value="newest">Ən yeni</option><option value="low">Ən ucuz</option><option value="high">Ən bahalı</option>
+          </select>
+        </div>
+      </div>
+      <div class="products category-page-products" id="categoryPageProducts" data-layout="grid"></div>
+      <nav class="category-page-pagination" id="categoryPagePagination" aria-label="Məhsul səhifələri" hidden></nav>
+    </section>
+  </div>
+  <section class="category-page-benefits" aria-label="F1 Studio xidmətləri">
+    <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 19 6v5c0 4.2-2.9 7.7-7 10-4.1-2.3-7-5.8-7-10V6l7-3Z"/><path d="m9 12 2 2 4-4"/></svg><b>100% Təhlükəsiz ödəniş</b><small>Visa, Mastercard, Birbank</small></div>
+    <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v10H3zM14 10h4l3 3v4h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg><b>Sürətli çatdırılma</b><small>1–3 iş günü ərzində</small></div>
+    <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 7v14"/></svg><b>Fərdiləşdirilə bilən hədiyyələr</b><small>Tam sizə özəl</small></div>
+    <div><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 11a8 8 0 0 1 16 0v5a2 2 0 0 1-2 2h-2v-6h4M4 12h4v6H6a2 2 0 0 1-2-2z"/><path d="M9 21h6"/></svg><b>Müştəri dəstəyi</b><small>Hər zaman yanınızdayıq</small></div>
+  </section>
+</section>
+
 <section class="hero hero-giftique reveal">
     <div class="hero-copy">
         <div class="hero-eyebrow"><span></span> <span id="heroEyebrowText">FƏRDİ HƏDİYYƏLƏR</span></div>
@@ -1159,7 +1237,7 @@
 
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
 <noscript><div style="padding:16px;background:#fff1f2;color:#7f1d1d;text-align:center;font-family:system-ui">Bu saytın sifariş və məhsul funksiyaları üçün JavaScript aktiv olmalıdır.</div></noscript>
-    <script type="module" src="js/app.js?v=134"></script>
+    <script type="module" src="js/app.js?v=135"></script>
     <script type="module" src="js/reference-mobile-dock.js?v=1"></script>
 </body>
 </html>
