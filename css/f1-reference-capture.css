@@ -304,7 +304,7 @@ html[data-theme="dark"] body.f1-home #catalogSearchPanel .catalog-search-close,h
   body.f1-home #home .hero-giftique .hero-copy{padding:34px clamp(34px,4.5vw,68px)!important}
   body.f1-home #home .hero-giftique .hero-eyebrow{margin-bottom:15px!important;padding:5px 10px!important;font-size:9px!important}
   body.f1-home #home .hero-giftique h1{
-    max-width:560px!important;margin-bottom:15px!important;font-size:clamp(48px,4.5vw,70px)!important;line-height:1.04!important
+    max-width:560px!important;margin-bottom:15px!important;font-size:clamp(42px,3.4vw,58px)!important;line-height:1.04!important
   }
   body.f1-home #home .hero-giftique p{
     max-width:490px!important;margin-bottom:21px!important;font-size:14px!important;line-height:1.55!important
