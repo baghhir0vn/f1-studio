@@ -332,7 +332,7 @@ html[data-theme="dark"] body.f1-home #catalogSearchPanel .catalog-search-close,h
   body.f1-home #home>.category-showcase .shop-heading h2{font-size:24px!important}
   body.f1-home #home .categories{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:14px!important}
   body.f1-home #home .category-card{
-    grid-template-columns:64px minmax(0,1fr)!important;min-height:94px!important;padding:12px 14px!important;border-radius:11px!important
+    grid-template-columns:64px minmax(0,1fr)!important;min-height:94px!important;max-width:280px!important;padding:12px 14px!important;border-radius:11px!important
   }
   body.f1-home #home .category-photo{width:56px!important;height:56px!important;border-radius:8px!important}
   body.f1-home #home .category-card b{font-size:12px!important}
