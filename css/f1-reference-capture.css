@@ -338,7 +338,8 @@ html[data-theme="dark"] body.f1-home #catalogSearchPanel .catalog-search-close,h
   body.f1-home #home .category-card b{font-size:13px!important}
   body.f1-home #home .category-card small{font-size:11.5px!important}
   body.f1-home #home .products{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:20px!important}
-  body.f1-home #home .product .pic{aspect-ratio:1.1/1!important;border-radius:10px!important}
+  body.f1-home #home .product .pic{aspect-ratio:1/1!important;border-radius:10px!important}
+  body.f1-home #home .product .pic img{transform:scale(.95)!important}
   body.f1-home #home .product .badge{top:10px!important;left:10px!important;padding:5px 8px!important;font-size:9px!important}
   body.f1-home #home .product .fav-btn{top:10px!important;right:10px!important;width:32px!important;height:32px!important;font-size:20px!important}
   body.f1-home #home .product .info{gap:4px!important;padding-top:10px!important}
