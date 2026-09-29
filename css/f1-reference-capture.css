@@ -167,7 +167,7 @@ body.f1-home #catalogSearchPanel .toolbar-sort select{width:100%!important;paddi
   body.f1-home>header .brand-logo{position:absolute!important;top:7px!important;left:50%!important;z-index:2!important;display:flex!important;flex:0 0 auto!important;min-width:110px!important;width:110px!important;transform:translateX(-50%)!important;justify-content:center!important;text-align:center!important}
   body.f1-home>header .brand-main{font-size:17px!important}
   body.f1-home>header .brand-tagline{font-size:7px!important}
-  body.f1-home>header .actions{display:flex!important;align-items:center!important;gap:0!important;width:auto!important;margin-left:auto!important}
+  body.f1-home>header .actions{position:static!important;display:flex!important;align-items:center!important;gap:0!important;width:auto!important;margin-left:auto!important}
   body.f1-home>header .mobile-menu-btn{position:absolute!important;top:12px!important;left:9px!important;display:grid!important;place-items:center!important;width:32px!important;height:32px!important;border:0!important;border-radius:7px!important;background:transparent!important;color:#22262a!important;font-size:18px!important}
   body.f1-home>header .icon-action[aria-label="Axtar"]{display:none!important}
   body.f1-home>header .icon-action[aria-label="Sevimlilər"]{position:absolute!important;top:11px!important;right:91px!important;width:30px!important;height:32px!important}
@@ -248,6 +248,9 @@ html[data-theme="dark"] body.f1-home{background:#111315!important;color:#eceef0!
 html[data-theme="dark"] body.f1-home>header,html[data-theme="dark"] body.f1-home>header .nav{background:#17191c!important;border-color:#2a2d31!important}
 html[data-theme="dark"] body.f1-home>header .brand-main,html[data-theme="dark"] body.f1-home>header .nav nav a,html[data-theme="dark"] body.f1-home>header .icon-action,html[data-theme="dark"] body.f1-home>header .cart-icon,html[data-theme="dark"] body.f1-home>header .theme-toggle-btn{color:#f1f2f3!important}
 html[data-theme="dark"] body.f1-home>header .brand-tagline{color:#b7bbc0!important}
+html[data-theme="dark"] body.f1-home>header .mobile-menu-btn{color:#f1f2f3!important}
+html[data-theme="dark"] body.f1-home .mobile-search-trigger{border-color:#3c4045!important;background:#23262a!important;color:#c4c8cd!important}
+html[data-theme="dark"] body.f1-home .mobile-search-trigger svg{stroke:#eceef0!important}
 html[data-theme="dark"] body.f1-home #home .service-strip{background:#17191c!important;border-color:#2b2e32!important}
 html[data-theme="dark"] body.f1-home #home .service-strip>div{border-color:#2b2e32!important}
 html[data-theme="dark"] body.f1-home #home .service-strip b,html[data-theme="dark"] body.f1-home #home .shop-heading h2{color:#f1f2f3!important}
