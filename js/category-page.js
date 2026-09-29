@@ -382,7 +382,7 @@ export function initCategoryPage() {
         clearCategoryPageFilters: clearCategoryFilters,
         updateCategoryFilter,
         toggleCategoryPageFilters: toggleFilters,
-        setCategoryPage,
+        setCategoryPage: setPage,
         setCategoryPageLayout: setLayout
     });
 }
