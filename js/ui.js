@@ -115,9 +115,10 @@ export async function subscribeNewsletter(event) {
     }
 }
 export function initTheme() {
-    const saved = localStorage.getItem("f1Theme") || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-    document.documentElement.setAttribute("data-theme", saved);
-    updateThemeIcon(saved);
+    const saved = localStorage.getItem("f1Theme");
+    const theme = saved === "dark" || saved === "light" ? saved : "light";
+    document.documentElement.setAttribute("data-theme", theme);
+    updateThemeIcon(theme);
 }
 export function toggleTheme() {
     const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
