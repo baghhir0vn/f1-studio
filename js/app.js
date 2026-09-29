@@ -1,10 +1,10 @@
 import { createApi } from './api.js';
 import { state, ctx } from './state.js';
-import { initTheme, initUiGlobalEvents, toggleTheme, toggleMobileMenu, closeMobileMenu, subscribeNewsletter } from './ui.js';
+import { initTheme, initUiGlobalEvents, toggleTheme, toggleMobileMenu, closeMobileMenu, subscribeNewsletter } from './ui.js?v=134';
 import { openDialog, closeDialog, initModalManager } from './modal.js';
 import { initSiteSettings } from './site-settings.js';
 import { initHomepageContent } from './homepage-content.js';
-import { initCatalog } from './catalog.js?v=133';
+import { initCatalog } from './catalog.js?v=134';
 import { initAuth } from './auth.js';
 import { initCustomization } from './customization.js';
 import { initDesignStudio } from './design-studio.js';
