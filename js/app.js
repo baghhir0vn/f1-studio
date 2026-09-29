@@ -4,7 +4,8 @@ import { initTheme, initUiGlobalEvents, toggleTheme, toggleMobileMenu, closeMobi
 import { openDialog, closeDialog, initModalManager } from './modal.js';
 import { initSiteSettings } from './site-settings.js';
 import { initHomepageContent } from './homepage-content.js';
-import { initCatalog } from './catalog.js?v=134';
+import { initCatalog } from './catalog.js?v=135';
+import { initCategoryPage } from './category-page.js';
 import { initAuth } from './auth.js';
 import { initCustomization } from './customization.js';
 import { initDesignStudio } from './design-studio.js';
@@ -21,6 +22,7 @@ initModalManager();
 initSiteSettings();
 initHomepageContent();
 initCatalog();
+initCategoryPage();
 initAuth();
 initCustomization();
 initDesignStudio();
