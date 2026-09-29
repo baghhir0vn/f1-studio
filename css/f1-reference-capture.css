@@ -312,7 +312,7 @@ html[data-theme="dark"] body.f1-home #catalogSearchPanel .catalog-search-close,h
   body.f1-home #home .hero-actions{gap:10px!important}
   body.f1-home #home .hero-actions .btn,
   body.f1-home #home .hero-secondary{min-height:42px!important;padding:0 18px!important;font-size:11px!important}
-  body.f1-home #home .hero-giftique .hero-art img{object-position:center right!important}
+  body.f1-home #home .hero-giftique .hero-art img{object-position:center right!important;max-height:none!important}
 
   body.f1-home #home .service-strip{width:92%!important;padding:11px 8px!important}
   body.f1-home #home .service-strip>div{
