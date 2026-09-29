@@ -268,3 +268,96 @@ html[data-theme="dark"] body.f1-home .chat-trigger{background:#1b1e21!important;
 html[data-theme="dark"] body.f1-home #catalogSearchPanel .catalog-search-dialog{background:#1b1e21!important;border-color:#35393d!important}
 html[data-theme="dark"] body.f1-home #catalogSearchPanel .catalog-search-head h2{color:#f1f2f3!important}
 html[data-theme="dark"] body.f1-home #catalogSearchPanel .catalog-search-close,html[data-theme="dark"] body.f1-home #catalogSearchPanel .toolbar-search-control,html[data-theme="dark"] body.f1-home #catalogSearchPanel .toolbar-sort select{background:#23262a!important;border-color:#3c4045!important;color:#eceef0!important}
+
+
+/* Desktop blueprint sizing: the reference screenshot is a 625px-wide full-page
+   composition. Scale its proportions up at desktop widths without touching
+   mobile/tablet layouts or the live catalogue/event logic. */
+@media (min-width:1101px){
+  body.f1-home #announcementBar{
+    height:34px!important;min-height:34px!important;gap:clamp(28px,3.8vw,54px)!important;
+    font-size:11px!important
+  }
+  body.f1-home>header .nav{
+    min-height:78px!important;padding:8px clamp(28px,3.8vw,56px)!important;gap:22px!important
+  }
+  body.f1-home>header .brand-logo{flex-basis:220px!important;min-width:220px!important}
+  body.f1-home>header .brand-main{font-size:28px!important}
+  body.f1-home>header .brand-tagline{font-size:11px!important}
+  body.f1-home>header .nav nav{gap:3px!important}
+  body.f1-home>header .nav nav a{padding:10px 8px!important;font-size:12px!important}
+  body.f1-home>header .actions{gap:6px!important}
+  body.f1-home>header .icon-action,
+  body.f1-home>header .cart-icon,
+  body.f1-home>header .theme-toggle-btn{width:38px!important;height:40px!important;min-width:38px!important}
+  body.f1-home>header .icon-action svg,
+  body.f1-home>header .cart-icon svg{width:21px!important;height:21px!important}
+  body.f1-home>header .icon-action[aria-label="Axtar"]{
+    width:170px!important;min-width:154px!important;height:38px!important;padding:0 11px!important
+  }
+  body.f1-home>header .icon-action[aria-label="Axtar"]::after{font-size:11px!important}
+  body.f1-home>header .admin-btn{width:auto!important;min-width:0!important;min-height:38px!important;padding:0 12px!important;border-radius:999px!important}
+
+  body.f1-home #home .hero-giftique{
+    width:92%!important;height:clamp(380px,30.5vw,470px)!important;min-height:380px!important
+  }
+  body.f1-home #home .hero-giftique .hero-copy{padding:34px clamp(34px,4.5vw,68px)!important}
+  body.f1-home #home .hero-giftique .hero-eyebrow{margin-bottom:15px!important;padding:5px 10px!important;font-size:9px!important}
+  body.f1-home #home .hero-giftique h1{
+    max-width:560px!important;margin-bottom:15px!important;font-size:clamp(48px,4.5vw,70px)!important;line-height:1.04!important
+  }
+  body.f1-home #home .hero-giftique p{
+    max-width:490px!important;margin-bottom:21px!important;font-size:14px!important;line-height:1.55!important
+  }
+  body.f1-home #home .hero-actions{gap:10px!important}
+  body.f1-home #home .hero-actions .btn,
+  body.f1-home #home .hero-secondary{min-height:42px!important;padding:0 18px!important;font-size:11px!important}
+  body.f1-home #home .hero-giftique .hero-art img{object-position:center right!important}
+
+  body.f1-home #home .service-strip{width:92%!important;padding:11px 8px!important}
+  body.f1-home #home .service-strip>div{
+    grid-template-columns:42px minmax(0,1fr)!important;column-gap:10px!important;min-height:74px!important;padding:10px 16px!important
+  }
+  body.f1-home #home .service-strip .service-icon{width:34px!important;height:34px!important}
+  body.f1-home #home .service-strip .service-icon svg{width:26px!important;height:26px!important}
+  body.f1-home #home .service-strip b{font-size:13px!important}
+  body.f1-home #home .service-strip small{font-size:10px!important}
+
+  body.f1-home #home>.section{width:92%!important;margin:34px auto 0!important}
+  body.f1-home #home>.category-showcase{margin-top:28px!important}
+  body.f1-home #home .shop-heading{margin-bottom:15px!important}
+  body.f1-home #home .shop-heading h2,
+  body.f1-home #home>.section>h2{font-size:22px!important}
+  body.f1-home #home .view-all{font-size:10px!important}
+  body.f1-home #home .categories{grid-template-columns:repeat(6,minmax(0,1fr))!important;gap:12px!important}
+  body.f1-home #home .category-card{
+    grid-template-columns:56px minmax(0,1fr)!important;min-height:82px!important;padding:10px 12px!important;border-radius:11px!important
+  }
+  body.f1-home #home .category-photo{width:50px!important;height:50px!important;border-radius:8px!important}
+  body.f1-home #home .category-card b{font-size:11px!important}
+  body.f1-home #home .category-card small{font-size:10px!important}
+  body.f1-home #home .products{grid-template-columns:repeat(5,minmax(0,1fr))!important;gap:20px!important}
+  body.f1-home #home .product .pic{border-radius:10px!important}
+  body.f1-home #home .product .badge{top:10px!important;left:10px!important;padding:5px 8px!important;font-size:9px!important}
+  body.f1-home #home .product .fav-btn{top:10px!important;right:10px!important;width:32px!important;height:32px!important;font-size:20px!important}
+  body.f1-home #home .product .info{gap:4px!important;padding-top:10px!important}
+  body.f1-home #home .product .info h3{font-size:14px!important;line-height:1.35!important}
+  body.f1-home #home .product .product-category{font-size:10px!important}
+  body.f1-home #home .product .price{font-size:17px!important}
+  body.f1-home #home .product-card-actions{gap:8px!important;margin-top:7px!important}
+  body.f1-home #home .product-card-actions .add.product-add-btn{
+    flex-basis:40px!important;width:40px!important;min-width:40px!important;height:40px!important;min-height:40px!important
+  }
+  body.f1-home #home .product-card-actions .add.product-add-btn:before{width:20px!important;height:20px!important}
+
+  body.f1-home>footer.site-footer{margin-top:50px!important;padding:46px 0 14px!important}
+  body.f1-home>footer.site-footer .footer-shell,
+  body.f1-home>footer.site-footer .footer-bottom{width:92%!important}
+  body.f1-home>footer.site-footer .footer-shell{gap:36px!important}
+  body.f1-home>footer.site-footer .footer-logo{font-size:24px!important}
+  body.f1-home>footer.site-footer .footer-brand p,
+  body.f1-home>footer.site-footer .footer-column a,
+  body.f1-home>footer.site-footer .footer-column span{font-size:11px!important}
+  body.f1-home>footer.site-footer .footer-label{font-size:13px!important}
+  body.f1-home>footer.site-footer .footer-bottom{font-size:9px!important}
+}
