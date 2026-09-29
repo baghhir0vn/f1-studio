@@ -62,10 +62,15 @@
     <link rel="stylesheet" href="css/order-delivery-info.css?v=1">
     <link rel="stylesheet" href="css/f1-reference-refresh.css?v=1">
     <link rel="stylesheet" href="css/f1-reference-alignment.css?v=1">
-    <link rel="stylesheet" href="css/f1-reference-capture.css?v=1">
+    <link rel="stylesheet" href="css/f1-reference-capture.css?v=3">
 </head>
-<body>
-<div class="announcement-bar" id="announcementBar">✓ Fərdi dizayn　✦ Lazer kəsim　✓ Premium keyfiyyət　⌁ Tez çatdırılma</div>
+<body class="f1-home">
+<div class="announcement-bar" id="announcementBar" aria-label="F1 Studio xidmət üstünlükləri">
+  <span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3 8 3 3 7-7"/></svg>Fərdi dizayn</span>
+  <span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 12 12 3M5 3h7v7M3 6v7h7"/></svg>Lazer kəsim</span>
+  <span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3 8 3 3 7-7"/></svg>Premium keyfiyyət</span>
+  <span><svg viewBox="0 0 18 16" aria-hidden="true"><path d="M1 4h10v8H1zM11 7h3l3 3v2h-6z"/><circle cx="5" cy="13" r="1.5"/><circle cx="14" cy="13" r="1.5"/></svg>Tez çatdırılma</span>
+</div>
 <header>
     <div class="nav">
         <a href="#home" class="logo brand-logo" aria-label="F1 Hədiyyələr — F1 Studio"><img class="brand-logo-image" src="f1-logo.png?v=128" alt="F1 Hədiyyələr" width="64" height="64" decoding="async"><span class="brand-name"><span class="brand-main">F1 <b>STUDIO</b></span><span class="brand-tagline">Fərdi hədiyyələr</span></span></a>
@@ -99,6 +104,12 @@
         <button type="button" id="mobileAdminBtn" data-actions='[[&quot;closeMobileMenu&quot;, []], [&quot;openAdmin&quot;, []]]' style="display:none">⚙️ Admin</button>
     </div>
 </header>
+<div class="mobile-search-trigger-wrap">
+  <button type="button" class="mobile-search-trigger" data-action="focusProductSearch" aria-label="Məhsul axtarışı">
+    <span>Məhsul axtarın...</span>
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 5 5"></path></svg>
+  </button>
+</div>
 
 <main id="home">
 <section class="hero hero-giftique reveal">
@@ -130,17 +141,21 @@
 
 <section class="section reveal" id="products">
     <div class="shop-heading"><div><div class="section-kicker" id="shopSectionKicker">SEÇİLMİŞLƏR</div><h2 id="sectionTitle">Seçilmiş Məhsullar</h2></div><a href="#products" class="view-all" id="shopViewAll" data-action="showAllProducts">Hamısına bax →</a></div>
-    <div class="toolbar" role="search" aria-label="Məhsul və xidmət axtarışı">
-        <label class="toolbar-search"><span class="toolbar-field-label">Məhsul və xidmət axtarışı</span><span class="toolbar-search-control"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 5 5"></path></svg><input id="search" type="search" data-input-action="render" aria-label="Məhsul və xidmət axtarışı" placeholder="Məhsul, xidmət və ya kateqoriya axtar..."></span></label>
-        <label class="toolbar-sort"><span class="toolbar-field-label">Sıralama</span><select id="sort" data-change-action="render" aria-label="Məhsulları sırala">
-            <option value="default" id="sortDefaultLabel">Sıralama (Standart)</option>
-            <option value="low" id="sortLowLabel">Ucuzdan bahaya</option>
-            <option value="high" id="sortHighLabel">Bahadan ucuza</option>
-        </select></label>
-    </div>
+    
     <div id="catalogStatus" class="notice" style="display:none;margin:0 0 18px 0;" role="status" aria-live="polite"></div>
     <div class="products" id="grid"></div>
+
 </section>
+<div class="catalog-search-panel" id="catalogSearchPanel" hidden aria-hidden="true">
+  <button type="button" class="catalog-search-backdrop" data-action="closeProductSearch" aria-label="Axtarışı bağla"></button>
+  <section class="catalog-search-dialog" role="dialog" aria-modal="true" aria-labelledby="catalogSearchTitle">
+    <div class="catalog-search-head"><h2 id="catalogSearchTitle">Məhsul axtarışı</h2><button type="button" class="catalog-search-close" data-action="closeProductSearch" aria-label="Axtarışı bağla">×</button></div>
+    <div class="toolbar" role="search" aria-label="Məhsul və xidmət axtarışı">
+      <label class="toolbar-search"><span class="toolbar-field-label">Məhsul və xidmət axtarışı</span><span class="toolbar-search-control"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 5 5"></path></svg><input id="search" type="search" data-input-action="render" data-enter-action="submitProductSearch" aria-label="Məhsul və xidmət axtarışı" placeholder="Məhsul axtarın..."></span></label>
+      <label class="toolbar-sort"><span class="toolbar-field-label">Sıralama</span><select id="sort" data-change-action="render" aria-label="Məhsulları sırala"><option value="default" id="sortDefaultLabel">Sıralama (Standart)</option><option value="low" id="sortLowLabel">Ucuzdan bahaya</option><option value="high" id="sortHighLabel">Bahadan ucuza</option></select></label>
+    </div>
+  </section>
+</div>
 
 <section class="section reveal gift-promos">
   <div class="promo-card promo-personal"><div><span id="promoPersonalKicker">FƏRDİ HƏDİYYƏLƏR</span><h3><span id="promoPersonalTitle">Hədiyyəni daha</span><br><em id="promoPersonalHighlight">xüsusi et.</em></h3><p id="promoPersonalDescription">İstədiyin ad, yazı və dizaynı əlavə et.</p><a href="#products" class="btn" data-action="focusProductSearch" id="promoPersonalButton">FƏRDİLƏŞDİR</a></div><div class="promo-art promo-gift"></div></div>
@@ -1144,7 +1159,7 @@
 
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
 <noscript><div style="padding:16px;background:#fff1f2;color:#7f1d1d;text-align:center;font-family:system-ui">Bu saytın sifariş və məhsul funksiyaları üçün JavaScript aktiv olmalıdır.</div></noscript>
-    <script type="module" src="js/app.js?v=133"></script>
+    <script type="module" src="js/app.js?v=134"></script>
     <script type="module" src="js/reference-mobile-dock.js?v=1"></script>
 </body>
 </html>
