@@ -207,12 +207,14 @@ export function initCatalog() {
         searchOpener=null;
     }
     function submitProductSearch() {
+        ctx.closeCategoryPage?.(false);
         s.showAllProducts=true;
         closeProductSearch();
         ctx.render();
         document.getElementById("products")?.scrollIntoView({behavior:"smooth",block:"start"});
     }
     function showAllProducts() {
+        ctx.closeCategoryPage?.(false);
         s.showAllProducts=true;
         s.viewingFavs=false; s.smartFilterActive=false; s.activeCat=""; s.activeTag="";
         document.getElementById("search").value="";
@@ -220,16 +222,19 @@ export function initCatalog() {
         document.getElementById("products")?.scrollIntoView({behavior:"smooth",block:"start"});
     }
     function showFavorites() {
+        ctx.closeCategoryPage?.(false);
         s.showAllProducts=true;
         s.viewingFavs = true; s.smartFilterActive = false; s.activeCat = ""; s.activeTag = "";
         document.getElementById("search").value = "";
         ctx.render(); document.getElementById("products").scrollIntoView({ behavior:"smooth", block:"start" });
     }
     function applySmartFilter() {
+        ctx.closeCategoryPage?.(false);
         s.smartFilterActive = true; s.viewingFavs = false; s.activeCat = ""; s.activeTag = "";
         ctx.render(); document.getElementById("products").scrollIntoView({ behavior:"smooth", block:"start" });
     }
     function clearFilters() {
+        if (ctx.categoryPageIsOpen?.()) { ctx.clearCategoryPageFilters?.(); return; }
         s.smartFilterActive = false; s.viewingFavs = false; s.activeCat = ""; s.activeTag = ""; s.showAllProducts=false;
         ["smartPrice","smartPerson","smartType","search"].forEach(id => {
             const input = document.getElementById(id);
@@ -237,8 +242,8 @@ export function initCatalog() {
         });
         ctx.render();
     }
-    function filterByTag(tag) { s.showAllProducts=true; s.activeTag = tag; s.activeCat = ""; s.viewingFavs = false; s.smartFilterActive = false; document.getElementById("search").value=""; ctx.render(); document.getElementById("products").scrollIntoView({behavior:"smooth", block:"start"}); }
-    function filterCat(cat) { s.showAllProducts=true; s.activeCat = cat; s.activeTag = ""; s.viewingFavs=false; s.smartFilterActive=false; document.getElementById("search").value=""; ctx.render(); document.getElementById("products").scrollIntoView({behavior:"smooth", block:"start"}); }
+    function filterByTag(tag) { ctx.closeCategoryPage?.(false); s.showAllProducts=true; s.activeTag = tag; s.activeCat = ""; s.viewingFavs = false; s.smartFilterActive = false; document.getElementById("search").value=""; ctx.render(); document.getElementById("products").scrollIntoView({behavior:"smooth", block:"start"}); }
+    function filterCat(cat) { s.showAllProducts=true; s.activeCat = cat || ""; s.activeTag = ""; s.viewingFavs=false; s.smartFilterActive=false; document.getElementById("search").value=""; ctx.openCategoryPage?.(cat || ""); ctx.render(); document.getElementById("categoryPageView")?.scrollIntoView({behavior:"smooth", block:"start"}); }
     function matchesSearch(p,q) {
         if (!q) return true;
         const hay = normalizeText([p.name,p.desc,p.cat,p.material,...Object.keys(synonymMap).filter(k => synonymMap[k].includes(p.id))].join(" "));
@@ -368,10 +373,10 @@ export function initCatalog() {
         if (sort === "low") list.sort((a,b) => a.price-b.price);
         if (sort === "high") list.sort((a,b) => b.price-a.price);
         updateCategoryCounts();
-        ctx.drawGrid(list); ctx.updateFavCount(); ctx.renderReviews();
+        ctx.drawGrid(list); ctx.updateFavCount(); ctx.renderReviews(); ctx.categoryPageRefresh?.();
     }
-    function drawGrid(list) {
-        const grid = document.getElementById("grid");
+    function drawGrid(list, grid = document.getElementById("grid")) {
+        if (!grid) return;
         clearCatalogSkeleton();
         if (!list.length) {
             const hasFilters = s.viewingFavs || s.smartFilterActive || s.activeTag || s.activeCat || document.getElementById("search").value.trim();
