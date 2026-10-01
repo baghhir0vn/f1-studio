@@ -96,6 +96,31 @@ export function initSiteSettings() {
             const instagramUrl=safeHttpUrl(data.instagram_url); if(instagramUrl){const a=document.createElement("a");a.href=instagramUrl;a.target="_blank";a.rel="noopener noreferrer";a.textContent="Instagram";a.style.cssText="color:var(--ink);text-decoration:none;border:1px solid var(--line);padding:6px 10px;border-radius:999px";socials.appendChild(a);}
             const tiktokUrl=safeHttpUrl(data.tiktok_url); if(tiktokUrl){const a=document.createElement("a");a.href=tiktokUrl;a.target="_blank";a.rel="noopener noreferrer";a.textContent="TikTok";a.style.cssText="color:var(--ink);text-decoration:none;border:1px solid var(--line);padding:6px 10px;border-radius:999px";socials.appendChild(a);}
         }
+        const aboutSocials=document.getElementById("aboutSocialLinks");
+        if(aboutSocials){
+            aboutSocials.replaceChildren();
+            const waDigits=toWhatsAppDigits(data.whatsapp_number||CONFIG.whatsappNumber||"");
+            const links=[
+                ["Instagram",safeHttpUrl(data.instagram_url),'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></svg>'],
+                ["TikTok",safeHttpUrl(data.tiktok_url),'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4v10.5a4.5 4.5 0 1 1-4-4.47"/><path d="M14 4c.7 3.2 2.7 5 6 5"/></svg>'],
+                ["WhatsApp",waDigits?("https://wa.me/"+waDigits):"",'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.2-4.6A8.5 8.5 0 1 1 20.5 11.5Z"/><path d="M8.5 8.3c.3-.6.6-.6 1-.6h.4l1 2.3-.8.8c.7 1.3 1.5 2.1 2.8 2.7l.8-.8 2.2 1c.1.4 0 .8-.2 1.1-.4.5-1 .8-1.7.7-2.5-.4-5.7-3.3-6.3-5.7-.2-.6.1-1.2.8-1.5Z"/></svg>']
+            ];
+            links.forEach(([label,url,icon])=>{
+                if(!url) return;
+                const link=document.createElement("a");
+                link.className="about-social-link";
+                link.href=url;
+                link.target="_blank";
+                link.rel="noopener noreferrer";
+                link.setAttribute("aria-label",label);
+                link.innerHTML=icon;
+                const text=document.createElement("span");
+                text.textContent=label;
+                link.appendChild(text);
+                aboutSocials.appendChild(link);
+            });
+        }
+        ctx.updateAboutMetrics?.();
     }
     async function saveSiteSettings(){
         if(!ctx.isAdminUser()) return showToast("Admin girişiniz olmalıdır.");

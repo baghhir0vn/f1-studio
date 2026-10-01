@@ -1,0 +1,265 @@
+/* Reference-based About/contact page. All selectors stay inside the About route. */
+html[data-theme="light"] body.f1-about-route,
+html:not([data-theme="dark"]) body.f1-about-route{
+  --about-red:#f21c24;--about-ink:#15171b;--about-muted:#505762;--about-line:#eceef1;
+  --about-surface:#fff;--about-soft:#fff5f5;--about-shadow:0 8px 26px rgba(22,30,45,.055);
+  background:#fff!important;color:var(--about-ink)!important;
+}
+html[data-theme="dark"] body.f1-about-route{
+  --about-red:#ff6268;--about-ink:#f3f4f6;--about-muted:#b0b7c2;--about-line:#353a43;
+  --about-surface:#1b1d22;--about-soft:#292127;--about-shadow:0 8px 26px rgba(0,0,0,.18);
+  background:#14161a!important;color:var(--about-ink)!important;
+}
+body.f1-about-route #announcementBar,
+body.f1-about-route .mobile-search-trigger-wrap{display:none!important}
+body.f1-about-route>header{position:sticky!important;top:0!important;z-index:80!important;width:100%!important;background:var(--about-surface)!important;border-bottom:1px solid var(--about-line)!important;box-shadow:0 3px 14px rgba(20,24,30,.04)!important;backdrop-filter:none!important}
+body.f1-about-route>header .nav{width:100%!important;max-width:none!important;min-height:64px!important;margin:0!important;padding:8px 2.1vw!important;gap:18px!important}
+body.f1-about-route>header .brand-logo{flex:0 0 150px!important;min-width:150px!important;color:var(--about-ink)!important}
+body.f1-about-route>header .brand-logo-image{display:none!important}
+body.f1-about-route>header .brand-main{font-family:Inter,Arial,sans-serif!important;font-size:22px!important;font-weight:850!important;letter-spacing:-.045em!important;color:var(--about-ink)!important}
+body.f1-about-route>header .brand-f1{color:var(--about-red)!important}
+body.f1-about-route>header .brand-tagline{display:none!important}
+body.f1-about-route>header #mainPrimaryNav{display:none!important}
+body.f1-about-route>header .about-route-main-nav{display:flex!important;flex:1 1 auto!important;align-items:center!important;justify-content:center!important;gap:clamp(10px,2.2vw,34px)!important;min-width:0!important;padding:0!important;border:0!important;background:transparent!important;box-shadow:none!important}
+body.f1-about-route>header .about-route-main-nav a{position:relative!important;display:flex!important;align-items:center!important;min-height:48px!important;padding:0 2px!important;border-radius:0!important;background:transparent!important;color:var(--about-ink)!important;font-size:12px!important;font-weight:550!important;text-decoration:none!important;white-space:nowrap!important}
+body.f1-about-route>header .about-route-main-nav a:hover{color:var(--about-red)!important;background:transparent!important}
+body.f1-about-route>header .about-route-main-nav a[aria-current="page"]{color:var(--about-red)!important;font-weight:700!important}
+body.f1-about-route>header .about-route-main-nav a[aria-current="page"]::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--about-red)}
+body.f1-about-route>header .actions{gap:7px!important}
+body.f1-about-route>header .icon-action,
+body.f1-about-route>header .cart-icon,
+body.f1-about-route>header .theme-toggle-btn{width:36px!important;height:38px!important;min-width:36px!important;border:0!important;border-radius:50%!important;background:transparent!important;color:var(--about-ink)!important;box-shadow:none!important}
+body.f1-about-route>header .icon-action svg,
+body.f1-about-route>header .cart-icon svg{width:20px!important;height:20px!important;stroke:currentColor!important;stroke-width:1.65!important}
+body.f1-about-route>header .icon-action[aria-label="Axtar"]{display:grid!important;justify-content:center!important;width:36px!important;min-width:36px!important;padding:0!important;border:0!important;background:transparent!important}
+body.f1-about-route>header .icon-action[aria-label="Axtar"]::after{display:none!important}
+body.f1-about-route>header .icon-action span,
+body.f1-about-route>header .cart-icon span{background:var(--about-red)!important;color:#fff!important}
+body.f1-about-route>header .theme-toggle-btn{font-size:0!important;filter:grayscale(1)}
+body.f1-about-route>header .admin-btn{display:none!important}
+body.f1-about-route>header .mobile-nav{border-color:var(--about-line)!important;background:var(--about-surface)!important}
+body.f1-about-route main#home{display:block!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important}
+body.f1-about-route main#home>:not(#aboutPageView){display:none!important}
+body.f1-about-route main#home>#aboutPageView{display:block!important;width:100%!important;max-width:none!important;margin:0!important;padding:0 1.8vw 20px!important;background:var(--about-surface)!important;color:var(--about-ink)!important}
+body.f1-about-route footer.site-footer{display:none!important}
+body.f1-about-route .f1-mobile-dock{display:none!important}
+body.f1-about-route .about-mobile-dock{display:none!important}
+body.f1-about-route .about-page-tabs{position:sticky;top:64px;z-index:45;display:flex;align-items:stretch;justify-content:space-between;gap:12px;width:100%;min-height:58px;padding:0 1.7vw;border-bottom:1px solid var(--about-line);background:var(--about-surface)}
+body.f1-about-route .about-page-tabs a{position:relative;display:flex;align-items:center;justify-content:center;gap:10px;min-width:0;padding:0 2.5vw;color:var(--about-ink);font-size:13px;font-weight:550;text-decoration:none;white-space:nowrap}
+body.f1-about-route .about-page-tabs a svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+body.f1-about-route .about-page-tabs a[aria-current="page"]{color:var(--about-red);font-weight:700}
+body.f1-about-route .about-page-tabs a[aria-current="page"]::after{content:"";position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--about-red)}
+body.f1-about-route .about-page-view,
+body.f1-about-route .about-page-view *{box-sizing:border-box}
+body.f1-about-route .about-intro-section{scroll-margin-top:126px;padding:27px 1.2vw 6px}
+body.f1-about-route .about-intro-top{display:grid;grid-template-columns:minmax(260px,.72fr) minmax(560px,1.5fr);align-items:start;gap:28px;min-height:105px}
+body.f1-about-route .about-intro-copy{max-width:350px}
+body.f1-about-route .about-intro-copy h1{position:relative;margin:0 0 18px;color:var(--about-ink);font:750 26px/1.2 Inter,Arial,sans-serif;letter-spacing:-.035em}
+body.f1-about-route .about-intro-copy h1::after,
+body.f1-about-route .about-section-heading h2::after,
+body.f1-about-route .about-contact-information h2::after,
+body.f1-about-route .about-contact-form-card h2::after{content:"";position:absolute;left:0;bottom:-7px;width:30px;height:3px;border-radius:2px;background:var(--about-red)}
+body.f1-about-route .about-intro-copy p{margin:0;color:var(--about-ink);font-size:14px;line-height:1.5}
+body.f1-about-route .about-statistics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:center;min-height:55px;margin-top:2px}
+body.f1-about-route .about-stat{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-width:0;padding:3px 10px;text-align:center}
+body.f1-about-route .about-stat+.about-stat{border-left:1px solid var(--about-line)}
+body.f1-about-route .about-stat strong{color:var(--about-red);font-size:22px;font-weight:750;line-height:1.1}
+body.f1-about-route .about-stat span{color:var(--about-muted);font-size:10px;line-height:1.3}
+body.f1-about-route .about-mobile-benefits{display:none}
+body.f1-about-route .about-showcase{display:block;width:100%;height:auto;aspect-ratio:1120/265;overflow:hidden;margin:3px 0 6px;background:#fff}
+body.f1-about-route .about-showcase img{display:block;width:100%;height:100%;object-fit:cover;object-position:center center}
+body.f1-about-route .about-page-accordion{scroll-margin-top:130px;margin:8px 0 0;border:0;border-radius:0;background:transparent}
+body.f1-about-route .about-page-accordion>.about-accordion-summary{display:none}
+body.f1-about-route .about-page-section-body{display:block}
+body.f1-about-route .about-contact-grid{display:grid;grid-template-columns:minmax(205px,.58fr) minmax(300px,1fr) minmax(300px,1fr);gap:16px;align-items:stretch;padding:0 0 4px}
+body.f1-about-route .about-contact-information,
+body.f1-about-route .about-map-card,
+body.f1-about-route .about-contact-form-card{min-width:0;min-height:242px;padding:14px 13px;border:1px solid var(--about-line);border-radius:14px;background:var(--about-surface);box-shadow:var(--about-shadow)}
+body.f1-about-route .about-contact-information h2,
+body.f1-about-route .about-contact-form-card h2,
+body.f1-about-route .about-section-heading h2{position:relative;margin:0 0 18px;color:var(--about-ink);font-size:19px;font-weight:750;line-height:1.2;letter-spacing:-.02em}
+body.f1-about-route .about-contact-row{display:grid;grid-template-columns:36px minmax(0,1fr);gap:9px;align-items:center;margin:12px 0}
+body.f1-about-route .about-contact-icon{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--about-soft);color:var(--about-red)}
+body.f1-about-route .about-contact-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+body.f1-about-route .about-contact-row b{display:block;margin-bottom:2px;color:var(--about-ink);font-size:11px;font-weight:700}
+body.f1-about-route .about-contact-row p{margin:0;color:var(--about-muted);font-size:10px;line-height:1.35;overflow-wrap:anywhere}
+body.f1-about-route .about-contact-row a{color:inherit;text-decoration:none}
+body.f1-about-route .about-contact-row a:hover{color:var(--about-red)}
+body.f1-about-route #aboutWhatsappNote{padding:0!important;background:transparent!important;color:var(--about-muted)!important;font-size:10px;font-weight:500!important}
+body.f1-about-route #aboutWhatsappNote a{color:var(--about-ink)!important;font-weight:600}
+body.f1-about-route .about-social-links{display:flex;flex-wrap:wrap;gap:6px;margin:13px 0 0}
+body.f1-about-route .about-social-link{display:inline-flex;align-items:center;gap:6px;min-height:28px;padding:4px 8px;border:1px solid var(--about-line);border-radius:7px;color:var(--about-ink);font-size:9px;font-weight:600;text-decoration:none}
+body.f1-about-route .about-social-link svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+body.f1-about-route .about-map-card{display:flex;flex-direction:column;gap:8px;padding:0;overflow:hidden}
+body.f1-about-route .about-map-card .map-container{flex:1;min-height:210px;margin:0;border:0;border-radius:13px;overflow:hidden}
+body.f1-about-route .about-map-card iframe{display:block;width:100%;height:100%;min-height:210px;border:0}
+body.f1-about-route .about-map-link{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+body.f1-about-route .about-contact-form-card{padding:14px 16px}
+body.f1-about-route .about-contact-form-card h2{margin-bottom:12px}
+body.f1-about-route .about-contact-form-card>p{margin:0 0 10px;color:var(--about-muted);font-size:10px;line-height:1.4}
+body.f1-about-route .about-contact-form{display:grid;gap:6px;margin:0}
+body.f1-about-route .about-form-field{position:relative;display:flex;align-items:center;gap:9px;min-height:31px;padding:0 10px;border:1px solid var(--about-line);border-radius:8px;background:var(--about-surface)}
+body.f1-about-route .about-form-field>svg{flex:0 0 14px;width:14px;height:14px;fill:none;stroke:var(--about-muted);stroke-width:1.55;stroke-linecap:round;stroke-linejoin:round}
+body.f1-about-route .about-form-field input,
+body.f1-about-route .about-form-field textarea{width:100%;min-width:0;min-height:29px;padding:4px 0;border:0!important;outline:0!important;background:transparent!important;color:var(--about-ink)!important;font:inherit;font-size:10px;box-shadow:none!important}
+body.f1-about-route .about-form-field textarea{min-height:38px;resize:vertical}
+body.f1-about-route .about-form-field:focus-within{border-color:var(--about-red);box-shadow:0 0 0 2px color-mix(in srgb,var(--about-red) 14%,transparent)}
+body.f1-about-route .about-message-field{align-items:flex-start;padding-top:3px}
+body.f1-about-route .about-message-field>svg{margin-top:7px}
+body.f1-about-route .about-submit-button{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:34px;margin:4px 0 0;border:0;border-radius:7px;background:var(--about-red);color:#fff;font-size:11px;font-weight:700;cursor:pointer;transition:background-color .18s ease,transform .18s ease}
+body.f1-about-route .about-submit-button svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+body.f1-about-route .about-submit-button:hover{background:#db1019;transform:translateY(-1px)}
+body.f1-about-route .about-submit-button:disabled{opacity:.7;cursor:wait;transform:none}
+body.f1-about-route .about-form-status{min-height:0;margin:0;color:var(--about-muted);font-size:10px;line-height:1.35}
+body.f1-about-route .about-form-status:not(:empty){min-height:16px}
+body.f1-about-route .about-section-heading{margin:0 0 15px}
+body.f1-about-route .about-section-heading h2{display:inline-block;margin-bottom:8px}
+body.f1-about-route .about-section-heading p{margin:0;color:var(--about-muted);font-size:11px;line-height:1.4}
+body.f1-about-route .about-delivery-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+body.f1-about-route .about-delivery-card{display:flex;align-items:center;gap:13px;min-height:80px;padding:12px;border:1px solid var(--about-line);border-radius:11px;background:var(--about-surface);box-shadow:var(--about-shadow)}
+body.f1-about-route .about-delivery-icon,
+body.f1-about-route .about-trust-icon{display:grid;place-items:center;flex:0 0 34px;width:34px;height:34px;color:var(--about-ink)}
+body.f1-about-route .about-delivery-icon svg,
+body.f1-about-route .about-trust-icon svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+body.f1-about-route .about-delivery-card h3{margin:0 0 4px;color:var(--about-ink);font-size:12px;font-weight:700;line-height:1.25}
+body.f1-about-route .about-delivery-card p{margin:0;color:var(--about-muted);font-size:10px;line-height:1.3}
+body.f1-about-route .about-delivery-data{margin:9px 0 0;color:var(--about-muted);font-size:10px;line-height:1.35}
+body.f1-about-route .about-order-rules{display:none}
+body.f1-about-route.f1-about-order-rules .about-order-rules{display:block;margin-top:12px;padding:12px;border:1px solid var(--about-line);border-radius:10px;background:var(--about-surface)}
+body.f1-about-route .about-order-rules summary{cursor:pointer;font-size:12px;font-weight:700}
+body.f1-about-route .about-order-rules ol{margin:10px 0 0;padding-left:20px}
+body.f1-about-route .about-order-rules li{padding:0 0 8px;color:var(--about-ink);font-size:11px;line-height:1.45}
+body.f1-about-route .about-order-rules p{margin:2px 0 0;color:var(--about-muted)}
+body.f1-about-route .faq-container{display:grid;gap:7px}
+body.f1-about-route .faq-item{border:1px solid var(--about-line)!important;border-radius:8px!important;background:var(--about-surface)!important;box-shadow:none!important}
+body.f1-about-route .faq-item summary{position:relative;padding:9px 34px 9px 12px;color:var(--about-ink);font-size:11px;font-weight:600;list-style:none;cursor:pointer}
+body.f1-about-route .faq-item summary::-webkit-details-marker{display:none}
+body.f1-about-route .faq-item summary::after{content:"⌄";position:absolute;right:12px;top:6px;color:var(--about-ink);font-size:18px;transition:transform .18s ease}
+body.f1-about-route .faq-item[open] summary::after{transform:rotate(180deg)}
+body.f1-about-route .faq-item>p{margin:0;padding:0 12px 12px;color:var(--about-muted);font-size:11px;line-height:1.5}
+body.f1-about-route .about-trust-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));align-items:center;margin:12px 0 2px;padding:11px 6px;border:1px solid var(--about-line);border-radius:12px;background:var(--about-surface);box-shadow:var(--about-shadow)}
+body.f1-about-route .about-trust-strip article{display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px;align-items:center;min-width:0;padding:4px 14px;border-right:1px solid var(--about-line)}
+body.f1-about-route .about-trust-strip article:last-child{border-right:0}
+body.f1-about-route .about-trust-strip b{display:block;color:var(--about-ink);font-size:10px;font-weight:700;line-height:1.25}
+body.f1-about-route .about-trust-strip small{display:block;margin-top:3px;color:var(--about-muted);font-size:9px;line-height:1.3}
+body.f1-about-route .about-route-active{scroll-margin-top:130px}
+body.f1-about-route .about-page-view [id]{scroll-margin-top:130px}
+body.f1-about-route .about-page-view .about-page-accordion>.about-accordion-summary:focus-visible,
+body.f1-about-route .about-page-view a:focus-visible,
+body.f1-about-route .about-page-view button:focus-visible,
+body.f1-about-route .about-page-view input:focus-visible,
+body.f1-about-route .about-page-view textarea:focus-visible{outline:2px solid color-mix(in srgb,var(--about-red) 50%,transparent);outline-offset:2px}
+@media(max-width:980px) and (min-width:701px){
+ body.f1-about-route>header .nav{gap:8px!important;padding-inline:16px!important}
+ body.f1-about-route>header .brand-logo{flex-basis:130px!important;min-width:130px!important}
+ body.f1-about-route>header .about-route-main-nav{gap:clamp(7px,1.15vw,14px)!important}
+ body.f1-about-route>header .about-route-main-nav a{font-size:10px!important}
+ body.f1-about-route>header .actions{gap:0!important}
+ body.f1-about-route>header .icon-action,body.f1-about-route>header .cart-icon,body.f1-about-route>header .theme-toggle-btn{width:31px!important;min-width:31px!important}
+ body.f1-about-route .about-contact-grid{grid-template-columns:minmax(175px,.55fr) minmax(250px,1fr) minmax(250px,1fr);gap:10px}
+ body.f1-about-route .about-intro-top{grid-template-columns:minmax(230px,.72fr) minmax(440px,1.5fr);gap:18px}
+}
+@media(max-width:700px){
+ body.f1-about-route>header .nav{min-height:58px!important;padding:5px 12px!important;gap:8px!important}
+ body.f1-about-route>header .brand-logo{flex:0 0 auto!important;min-width:0!important;margin-right:auto!important}
+ body.f1-about-route>header .brand-main{font-size:19px!important}
+ body.f1-about-route>header .about-route-main-nav{display:none!important}
+ body.f1-about-route>header .mobile-menu-btn{display:inline-grid!important;place-items:center!important;flex:0 0 30px!important;width:30px!important;min-width:30px!important;height:34px!important;margin:0!important;padding:0!important;border:0!important;background:transparent!important;color:var(--about-ink)!important;font-size:0!important}
+ body.f1-about-route>header .mobile-menu-btn::before{content:"";width:18px;height:13px;border-top:1.7px solid currentColor;border-bottom:1.7px solid currentColor;position:relative}
+ body.f1-about-route>header .mobile-menu-btn::after{content:"";position:absolute;width:18px;height:1.7px;background:currentColor}
+ body.f1-about-route>header .actions{gap:1px!important;margin-left:4px!important}
+ body.f1-about-route>header .actions .icon-action[aria-label="Giriş / Profil"],
+ body.f1-about-route>header .actions .theme-toggle-btn,
+ body.f1-about-route>header .admin-btn{display:none!important}
+ body.f1-about-route>header .icon-action,body.f1-about-route>header .cart-icon{width:32px!important;min-width:32px!important;height:34px!important}
+ body.f1-about-route>header .icon-action svg,body.f1-about-route>header .cart-icon svg{width:18px!important;height:18px!important}
+ body.f1-about-route main#home>#aboutPageView{padding:0 12px 84px!important}
+ body.f1-about-route .about-page-tabs{top:58px;justify-content:space-between;gap:0;min-height:47px;padding:0 4px;overflow-x:auto;scrollbar-width:none}
+ body.f1-about-route .about-page-tabs::-webkit-scrollbar{display:none}
+ body.f1-about-route .about-page-tabs a{flex:1 0 auto;gap:5px;padding:0 7px;font-size:10px}
+ body.f1-about-route .about-page-tabs a svg{width:15px;height:15px}
+ body.f1-about-route .about-intro-section{padding:14px 0 0}
+ body.f1-about-route .about-intro-top{display:block;min-height:0}
+ body.f1-about-route .about-intro-copy{max-width:none;padding:17px 18px 14px;border:1px solid var(--about-line);border-radius:14px;background:var(--about-surface);box-shadow:var(--about-shadow)}
+ body.f1-about-route .about-intro-copy h1{margin-bottom:16px;font-size:22px}
+ body.f1-about-route .about-intro-copy p{font-size:12px;line-height:1.55}
+ body.f1-about-route .about-mobile-benefits{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:3px;margin-top:16px}
+ body.f1-about-route .about-mobile-benefits>div{display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0;text-align:center}
+ body.f1-about-route .about-icon-circle{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:#fff0f0;color:var(--about-red)}
+ body.f1-about-route .about-icon-circle svg{width:23px;height:23px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+ body.f1-about-route .about-mobile-benefits b{color:var(--about-ink);font-size:9px;font-weight:600;line-height:1.25}
+ body.f1-about-route .about-statistics{grid-template-columns:repeat(4,minmax(0,1fr));min-height:68px;margin-top:9px;padding:8px 3px;border:1px solid var(--about-line);border-radius:12px;background:var(--about-surface);box-shadow:var(--about-shadow)}
+ body.f1-about-route .about-stat{gap:4px;padding:3px 2px}
+ body.f1-about-route .about-stat strong{font-size:16px}
+ body.f1-about-route .about-stat span{font-size:8px}
+ body.f1-about-route .about-showcase{aspect-ratio:343/128;margin:9px 0 0;border:1px solid var(--about-line);border-radius:14px;background:var(--about-surface);box-shadow:var(--about-shadow)}
+ body.f1-about-route .about-showcase img{object-fit:cover}
+ body.f1-about-route .about-page-accordion{scroll-margin-top:108px;margin:9px 0 0;border:1px solid var(--about-line);border-radius:13px;background:var(--about-surface);box-shadow:var(--about-shadow);overflow:hidden}
+ body.f1-about-route .about-page-accordion>.about-accordion-summary{display:flex;align-items:center;gap:11px;min-height:48px;padding:7px 14px;color:var(--about-ink);font-size:13px;font-weight:700;list-style:none;cursor:pointer}
+ body.f1-about-route .about-page-accordion>.about-accordion-summary::-webkit-details-marker{display:none}
+ body.f1-about-route .about-summary-icon{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;color:var(--about-ink)}
+ body.f1-about-route .about-summary-icon svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+ body.f1-about-route .about-page-accordion>.about-accordion-summary i{width:8px;height:8px;margin-left:auto;border-top:1.5px solid currentColor;border-right:1.5px solid currentColor;transform:rotate(45deg);transition:transform .18s ease}
+ body.f1-about-route .about-page-accordion[open]>.about-accordion-summary i{transform:rotate(135deg)}
+ body.f1-about-route .about-page-section-body{padding:0 12px 12px}
+ body.f1-about-route .about-contact-grid{grid-template-columns:1fr;gap:10px;padding-top:4px}
+ body.f1-about-route .about-contact-information,
+ body.f1-about-route .about-map-card,
+ body.f1-about-route .about-contact-form-card{min-height:0;padding:13px;border:1px solid var(--about-line);border-radius:11px;box-shadow:none}
+ body.f1-about-route .about-contact-information h2,
+ body.f1-about-route .about-contact-form-card h2,
+ body.f1-about-route .about-section-heading h2{font-size:17px}
+ body.f1-about-route .about-contact-row{grid-template-columns:34px minmax(0,1fr);margin:10px 0}
+ body.f1-about-route .about-contact-row b{font-size:11px}
+ body.f1-about-route .about-contact-row p{font-size:10px}
+ body.f1-about-route .about-map-card{min-height:190px}
+ body.f1-about-route .about-map-card .map-container,
+ body.f1-about-route .about-map-card iframe{min-height:180px}
+ body.f1-about-route .about-contact-form-card{padding:14px}
+ body.f1-about-route .about-contact-form-card>p{font-size:11px}
+ body.f1-about-route .about-form-field{min-height:40px;padding-inline:10px}
+ body.f1-about-route .about-form-field input,body.f1-about-route .about-form-field textarea{min-height:36px;font-size:12px}
+ body.f1-about-route .about-message-field textarea{min-height:78px}
+ body.f1-about-route .about-submit-button{min-height:43px;font-size:12px}
+ body.f1-about-route .about-delivery-grid{grid-template-columns:1fr;gap:8px}
+ body.f1-about-route .about-delivery-card{min-height:64px;padding:9px}
+ body.f1-about-route .about-delivery-card h3{font-size:11px}
+ body.f1-about-route .about-delivery-card p{font-size:10px}
+ body.f1-about-route .about-section-heading{margin:5px 0 12px}
+ body.f1-about-route .about-delivery-data{font-size:10px}
+ body.f1-about-route .about-trust-strip{display:none}
+ body.f1-about-route #faq .about-page-section-body{padding-top:2px}
+ body.f1-about-route .faq-container{gap:6px}
+ body.f1-about-route .faq-item summary{font-size:10px}
+ body.f1-about-route .faq-item>p{font-size:10px}
+ body.f1-about-route .about-mobile-dock{position:fixed;right:0;bottom:0;left:0;z-index:90;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));min-height:66px;padding:7px max(8px,env(safe-area-inset-right)) calc(7px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));border-top:1px solid var(--about-line);background:var(--about-surface);box-shadow:0 -5px 20px rgba(20,24,30,.07)}
+ body.f1-about-route .about-mobile-dock>*{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:0;padding:0;border:0;background:transparent;color:var(--about-ink);font-size:8px;font-weight:550;text-decoration:none}
+ body.f1-about-route .about-mobile-dock svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
+ body.f1-about-route .about-mobile-dock button{cursor:pointer}
+ body.f1-about-route .chat-trigger{bottom:78px!important;right:12px!important;min-height:39px!important;padding:4px 12px!important;border:1px solid var(--about-line)!important;border-radius:24px!important;background:var(--about-surface)!important;color:var(--about-ink)!important;box-shadow:0 4px 16px rgba(20,24,30,.1)!important}
+ body.f1-about-route .chat-box{bottom:126px!important;right:10px!important;left:10px!important;width:auto!important;max-width:none!important}
+}
+@media(min-width:701px){
+ body.f1-about-route .about-mobile-benefits{display:none}
+}
+@media(prefers-reduced-motion:no-preference){
+ body.f1-about-route .about-intro-section,
+ body.f1-about-route .about-contact-accordion,
+ body.f1-about-route .about-delivery-accordion,
+ body.f1-about-route .about-faq-accordion,
+ body.f1-about-route .about-trust-strip{animation:about-page-arrive .42s cubic-bezier(.2,.7,.25,1) both}
+ body.f1-about-route .about-contact-accordion{animation-delay:.035s}
+ body.f1-about-route .about-delivery-accordion{animation-delay:.07s}
+ body.f1-about-route .about-faq-accordion{animation-delay:.105s}
+ @keyframes about-page-arrive{from{opacity:.7;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
+}
+@media(max-width:360px){
+ body.f1-about-route>header .nav{padding-inline:8px!important;gap:5px!important}
+ body.f1-about-route>header .brand-main{font-size:17px!important}
+ body.f1-about-route>header .actions{gap:0!important}
+ body.f1-about-route>header .icon-action,body.f1-about-route>header .cart-icon{width:29px!important;min-width:29px!important}
+ body.f1-about-route .about-page-tabs a{gap:3px;padding-inline:5px;font-size:9px}
+ body.f1-about-route .about-page-tabs a svg{width:14px;height:14px}
+ body.f1-about-route .about-stat strong{font-size:14px}
+ body.f1-about-route .about-stat span{font-size:7px}
+}

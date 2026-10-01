@@ -2,9 +2,9 @@ import { createApi } from './api.js';
 import { state, ctx } from './state.js';
 import { initTheme, initUiGlobalEvents, toggleTheme, toggleMobileMenu, closeMobileMenu, subscribeNewsletter } from './ui.js?v=134';
 import { openDialog, closeDialog, initModalManager } from './modal.js';
-import { initSiteSettings } from './site-settings.js';
+import { initSiteSettings } from './site-settings.js?v=2';
 import { initHomepageContent } from './homepage-content.js';
-import { initCatalog } from './catalog.js?v=135';
+import { initCatalog } from './catalog.js?v=136';
 import { initCategoryPage } from './category-page.js';
 import { initAuth } from './auth.js';
 import { initCustomization } from './customization.js';
@@ -17,6 +17,7 @@ import { initReviews } from './reviews.js';
 import { initEvents } from './events.js';
 import { makeClientId } from './security.js';
 import { initMotion } from './motion.js';
+import { initAboutPage } from './about-page.js?v=1';
 Object.assign(ctx, { openDialog, closeDialog, makeClientId, toggleTheme, toggleMobileMenu, closeMobileMenu, subscribeNewsletter });
 initModalManager();
 initSiteSettings();
@@ -36,6 +37,7 @@ ctx.api = createApi({
     loadAdminDashboard: () => ctx.loadAdminDashboard()
 });
 initEvents();
+initAboutPage();
 window.addEventListener('load', () => {
     initTheme();
     ctx.normalizeCartLines?.();

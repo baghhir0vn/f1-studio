@@ -64,6 +64,7 @@
     <link rel="stylesheet" href="css/f1-reference-alignment.css?v=1">
     <link rel="stylesheet" href="css/f1-reference-capture.css?v=19">
     <link rel="stylesheet" href="css/category-page.css?v=1">
+    <link rel="stylesheet" href="css/about-page.css?v=1">
 </head>
 <body class="f1-home">
 <div class="announcement-bar" id="announcementBar" aria-label="F1 Studio xidmət üstünlükləri">
@@ -74,14 +75,23 @@
 </div>
 <header>
     <div class="nav">
-        <a href="#home" class="logo brand-logo" aria-label="F1 Hədiyyələr — F1 Studio"><img class="brand-logo-image" src="f1-logo.png?v=128" alt="F1 Hədiyyələr" width="64" height="64" decoding="async"><span class="brand-name"><span class="brand-main">F1 <b>STUDIO</b></span><span class="brand-tagline">Fərdi hədiyyələr</span></span></a>
-        <nav>
+        <a href="#home" class="logo brand-logo" aria-label="F1 Hədiyyələr — F1 Studio"><img class="brand-logo-image" src="f1-logo.png?v=128" alt="F1 Hədiyyələr" width="64" height="64" decoding="async"><span class="brand-name"><span class="brand-main"><span class="brand-f1">F1</span> <b>STUDIO</b></span><span class="brand-tagline">Fərdi hədiyyələr</span></span></a>
+        <nav id="mainPrimaryNav">
             <a href="#home" id="navHome">Ana səhifə</a>
             <a href="#products" id="navShop">Mağaza</a>
             <a href="#categories" id="navCategories">Kateqoriyalar⌄</a>
             <a href="#about" id="navAbout">Haqqımızda</a>
             <a href="#reviews" id="navReviews">Rəylər</a>
             <a href="#about" id="navContact">Əlaqə</a>
+        </nav>
+        <nav class="about-route-main-nav" id="aboutRouteMainNav" aria-label="Əsas naviqasiya">
+            <a href="#products">Kataloq</a>
+            <a href="#categories">Hədiyyələr</a>
+            <a href="#products">Fərdiləşdir</a>
+            <a href="#newsletterTitle">Yeniliklər</a>
+            <a href="#promoOfferTitle">Endirimlər</a>
+            <a href="#about" aria-current="page">Haqqımızda</a>
+            <a href="#about-contact">Əlaqə</a>
         </nav>
         <div class="actions">
             <button class="icon-action" type="button" data-action="focusProductSearch" aria-label="Axtar" title="Axtar"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 5 5"></path></svg></button>
@@ -268,81 +278,153 @@
     </div>
 </section>
 
-<section class="section reveal" id="faq">
-    <h2 id="faqSectionTitle">Tez-tez Verilən Suallar ❓</h2>
-    <div class="faq-container">
-        <details class="faq-item">
-            <summary id="faqQuestion1">Sifariş necə verilir?</summary>
-            <p id="faqAnswer1">Məhsulu səbətə əlavə edin, ad və telefon məlumatlarını doldurun, çatdırılmanı seçin. Sonra sifariş xülasəsi WhatsApp-a açılır və son detalları operatorla dəqiqləşdirirsiniz.</p>
-        </details>
-        <details class="faq-item">
-            <summary id="faqQuestion2">Çatdırılma xidməti varmı və neçəyədir?</summary>
-            <p id="faqAnswer2"><span id="deliveryFaqText">Bəli. Gəncə daxili ünvanlara çatdırılma 3.00 ₼, digər bölgələrə poçtla göndəriş isə 5.00 ₼ təşkil edir. Mağazadan götürmə isə tamamilə ödənişsizdir.</span></p>
-        </details>
-        <details class="faq-item">
-            <summary id="faqQuestion3">Ödənişi hansı yollarla edə bilərəm?</summary>
-            <p id="faqAnswer3">Ödəniş və sifariş detalları WhatsApp üzərindən operatorla razılaşdırılır. Bu saytda kartla onlayn ödəniş sistemi istifadə olunmur.</p>
-        </details>
-        <details class="faq-item">
-            <summary id="faqQuestion4">Öz istədiyim dizaynda nəsə hazırlada bilərəm?</summary>
-            <p id="faqAnswer4">Əlbəttə! Lazer kəsim, taxta işləmələri və ya fərdi çaplar üçün öz ideya və ya dizaynlarınızı bizə WhatsApp-da göndərə bilərsiniz, istəyinizə uyğun şəkildə hazırlayarıq.</p>
-        </details>
-    </div>
-</section>
 
-<section class="section order-delivery-section" aria-labelledby="orderDeliveryTitle">
-    <div class="order-delivery-heading">
-        <span>KÖMƏK MƏRKƏZİ</span>
-        <h2 id="orderDeliveryTitle">Sifariş və çatdırılma</h2>
-        <p>Sifarişini rahat tamamla — əsas addımlar və çatdırılma seçimləri burada.</p>
-    </div>
-    <div class="order-delivery-grid">
-        <article class="order-delivery-card" id="order-rules" aria-labelledby="orderRulesTitle">
-            <div class="order-delivery-icon" aria-hidden="true">🛍️</div>
-            <h3 id="orderRulesTitle">Sifariş qaydası</h3>
-            <ol class="order-delivery-steps">
-                <li><span class="order-step-number" aria-hidden="true">01</span><div><b>Məhsulu seç</b><p>Kataloqdan məhsulunu tap. Fərdi dizayn istəyirsənsə, məhsul səhifəsində fərdiləşdirmə seçimlərini tamamla.</p></div></li>
-                <li><span class="order-step-number" aria-hidden="true">02</span><div><b>Səbəti və məlumatları doldur</b><p>Məhsulları səbətə əlavə et, adını və telefon nömrəni yaz, sonra çatdırılma üsulunu seç. Ünvanla çatdırılma üçün ünvanı da daxil et.</p></div></li>
-                <li><span class="order-step-number" aria-hidden="true">03</span><div><b>WhatsApp-da dəqiqləşdir</b><p>“WhatsApp ilə Sifariş Et” düyməsi sifariş xülasısını açır. Məhsul və fərdi dizayn detallarını operatorla təsdiqlə.</p></div></li>
-                <li><span class="order-step-number" aria-hidden="true">04</span><div><b>Sifarişi tamamla</b><p>Yekun qiymət, hazırlanma vaxtı və ödəniş üsulu sifarişin xüsusiyyətlərinə uyğun WhatsApp-da razılaşdırılır. Saytda kartla onlayn ödəniş yoxdur.</p></div></li>
-            </ol>
-        </article>
-        <article class="order-delivery-card" id="delivery-info" aria-labelledby="deliveryInfoTitle">
-            <div class="order-delivery-icon" aria-hidden="true">🚚</div>
-            <h3 id="deliveryInfoTitle">Çatdırılma</h3>
-            <div class="order-delivery-options">
-                <div class="order-delivery-option"><span aria-hidden="true">📍</span><div><b>Gəncə daxilində</b><p>Checkout-da ünvanla çatdırılmanı seç və çatdırılma ünvanını qeyd et.</p></div></div>
-                <div class="order-delivery-option"><span aria-hidden="true">📦</span><div><b>Rayonlara göndəriş</b><p>Rayonlara sifarişlər poçt vasitəsilə göndərilir. Ünvan və göndəriş detallarını operatorla dəqiqləşdir.</p></div></div>
-                <div class="order-delivery-option"><span aria-hidden="true">🏬</span><div><b>Mağazadan götürmə</b><p>Götürmə ünvanı: Gəncə şəhəri, 4 nömrəli poçtun yanı. Gəlmə vaxtını əvvəlcədən razılaşdır.</p></div></div>
-            </div>
-            <div class="order-delivery-note"><span aria-hidden="true">ℹ️</span><p>Çatdırılma haqqı checkout-da seçdiyin üsula uyğun göstərilir və sifariş cəminə əlavə olunur. Təhvil vaxtı və son detallar WhatsApp-da təsdiqlənir.</p></div>
-        </article>
-    </div>
-</section>
+<div id="aboutPageView" class="about-page-view" aria-hidden="true">
+  <nav class="about-page-tabs" aria-label="Haqqımızda bölmələri">
+    <a href="#about" data-about-tab="about" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Haqqımızda</span></a>
+    <a href="#about-contact" data-about-tab="about-contact"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72l.45 2.95a2 2 0 0 1-.57 1.68L7.7 9.64a16 16 0 0 0 6 6l1.29-1.29a2 2 0 0 1 1.68-.57l2.95.45a2 2 0 0 1 1.72 2z"/></svg><span>Əlaqə</span></a>
+    <a href="#delivery-info" data-about-tab="delivery-info"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v10H3zM14 10h4l3 3v4h-7z"/><circle cx="7.5" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg><span>Çatdırılma</span></a>
+    <a href="#faq" data-about-tab="faq"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 1 1 4.2 1.8c-1.2 1-1.8 1.3-1.8 2.7M12 17h.01"/></svg><span>FAQ</span></a>
+  </nav>
 
-<section class="section reveal" id="about">
-    <h2 id="aboutSectionTitle">Bizimlə Əlaqə & Ünvan</h2>
-    <div class="about-grid">
-        <div class="about-card">
-            <h3>📍 Ünvan və İş Saatları</h3>
-            <p id="siteAddressText"><b id="siteAddressCity">Gəncə şəhəri, 4 nömrəli poçtun yanı.</b></p>
-            <p><b id="aboutHoursLabel">İş saatları:</b><br><span id="siteWeekdayHoursText">I - V günlər: 09:00 - 19:00</span><br><span id="siteWeekendHoursText">VI - VII günlər: 10:00 - 19:00</span></p>
-            
-            <div class="contact-links">
-                <div id="aboutWhatsappNote" style="padding:12px 16px; background:var(--bg); border-radius:12px; color:var(--ink); font-weight:600;" aria-live="polite">💬 WhatsApp nömrəsi yüklənir...</div>
-            </div>
+  <section class="about-intro-section" id="about" aria-labelledby="aboutSectionTitle">
+    <div class="about-intro-top">
+      <div class="about-intro-copy">
+        <h1 id="aboutSectionTitle">Haqqımızda</h1>
+        <p>F1 Studio fərdiləşdirilə bilən hədiyyə məhsullarınızı sevdikləriniz üçün daha xüsusi etmək məqsədilə yarandı. Keyfiyyət, yaradıcılıq və müştəri məmnuniyyəti bizim üçün ən önəmlisidir.</p>
+        <div class="about-mobile-benefits" aria-label="F1 Studio üstünlükləri">
+          <div><span class="about-icon-circle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.1 1.2 2.4-.1.8 2.3 1.9 1.5-.8 2.3.8 2.3-1.9 1.5-.8 2.3-2.4-.1L12 18l-2.1-1.2-2.4.1-.8-2.3-1.9-1.5.8-2.3-.8-2.3 1.9-1.5.8-2.3 2.4.1z"/><path d="m9.5 10.5 1.7 1.7 3.5-3.6"/></svg></span><b>Yüksək<br>keyfiyyət</b></div>
+          <div><span class="about-icon-circle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 7v5c0 5 3.4 8 8 9 4.6-1 8-4 8-9V7z"/><path d="m9 12 2 2 4-4"/></svg></span><b>Fərdiləşdirilə<br>bilən</b></div>
+          <div><span class="about-icon-circle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 7v13M12 7H8a2 2 0 1 1 2-2c0 1.1 2 2 2 2Zm0 0h4a2 2 0 1 0-2-2c0 1.1-2 2-2 2Z"/></svg></span><b>Etibarlı<br>sifariş</b></div>
+          <div><span class="about-icon-circle"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13v-2a8 8 0 0 1 16 0v2"/><path d="M4 13H3a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h3v-7H4zm16 0h1a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-3v-7h2zm-4 8c-.7 1-2 1-4 1"/></svg></span><b>Müştəri<br>dəstəyi</b></div>
         </div>
-        <div class="about-card" style="padding: 20px;">
-            <h3 id="aboutMapTitle" style="margin-top:0;">Xəritədə tapın</h3>
-            <p id="aboutMapDescription" style="color:var(--muted);font-size:13px;line-height:1.5;margin:0 0 12px;">📍 F1 Studio — 4 nömrəli poçtun yanı, Gəncə</p>
-            <div class="map-container">
-                <iframe title="F1 Studio — 4 nömrəli poçt xəritəsi" src="https://www.google.com/maps?q=4%20n%C3%B6mr%C9%99li%20po%C3%A7t%2C%20G%C9%99nc%C9%99%2C%20Azerbaijan&output=embed" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
-            </div>
-            <a href="https://maps.app.goo.gl/Mr1ev8VThejiKrxn8" target="_blank" rel="noopener noreferrer" class="btn" id="aboutMapButton" style="margin-top:12px;display:inline-block;">📍 Dəqiq yeri Google Maps-də aç</a>
-        </div>
+      </div>
+      <div class="about-statistics" aria-label="F1 Studio üzrə mövcud məlumatlar">
+        <div class="about-stat"><strong data-about-stat="products">—</strong><span>Fərqli məhsul</span></div>
+        <div class="about-stat"><strong data-about-stat="categories">—</strong><span>Kateqoriya</span></div>
+        <div class="about-stat"><strong data-about-stat="delivery">3</strong><span>Çatdırılma seçimi</span></div>
+        <div class="about-stat"><strong data-about-stat="channels">—</strong><span>Əlaqə kanalı</span></div>
+      </div>
     </div>
-</section>
-<!-- V84 promo imagery sources: Pexels free-to-use photos; see https://www.pexels.com/photo/presents-on-a-beige-background-5485173/ and https://www.pexels.com/photo/green-gift-box-with-peach-ribbon-5486845/ -->
+    <picture class="about-showcase">
+      <source media="(max-width: 680px)" srcset="assets/reference/about-showcase-mobile.jpg">
+      <img src="assets/reference/about-showcase-desktop.jpg" alt="F1 Studio-nun taxta hədiyyə, ürək formalı foto lampa, hədiyyə qutusu, termos, brelok və foto çərçivəsindən ibarət vitrin kompozisiyası" decoding="async" fetchpriority="high">
+    </picture>
+  </section>
+
+  <details class="about-page-accordion about-contact-accordion" id="about-contact" open>
+    <summary class="about-accordion-summary"><span class="about-summary-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72l.45 2.95a2 2 0 0 1-.57 1.68L7.7 9.64a16 16 0 0 0 6 6l1.29-1.29a2 2 0 0 1 1.68-.57l2.95.45a2 2 0 0 1 1.72 2z"/></svg></span><span>Əlaqə</span><i aria-hidden="true"></i></summary>
+    <div class="about-page-section-body">
+      <div class="about-contact-grid">
+        <section class="about-contact-information" aria-labelledby="aboutContactTitle">
+          <h2 id="aboutContactTitle">Əlaqə</h2>
+          <div class="about-contact-row">
+            <span class="about-contact-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+            <div><b>Ünvan</b><p id="siteAddressText"><span id="siteAddressCity">Gəncə şəhəri, 4 nömrəli poçtun yanı</span></p></div>
+          </div>
+          <div class="about-contact-row">
+            <span class="about-contact-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72l.45 2.95a2 2 0 0 1-.57 1.68L7.7 9.64a16 16 0 0 0 6 6l1.29-1.29a2 2 0 0 1 1.68-.57l2.95.45a2 2 0 0 1 1.72 2z"/></svg></span>
+            <div><b>Telefon / WhatsApp</b><p id="aboutWhatsappNote" aria-live="polite">WhatsApp nömrəsi yüklənir...</p></div>
+          </div>
+          <div class="about-contact-row">
+            <span class="about-contact-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg></span>
+            <div><b>E-poçt</b><p><a href="mailto:info@f1studio.az">info@f1studio.az</a></p></div>
+          </div>
+          <div class="about-contact-row">
+            <span class="about-contact-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+            <div><b id="aboutHoursLabel">İş saatları</b><p><span id="siteWeekdayHoursText">I - V günlər: 09:00 - 19:00</span><br><span id="siteWeekendHoursText">VI - VII günlər: 10:00 - 19:00</span></p></div>
+          </div>
+          <div id="aboutSocialLinks" class="about-social-links" aria-label="Sosial şəbəkələr"></div>
+        </section>
+        <section class="about-map-card" aria-label="F1 Studio ünvanının xəritəsi">
+          <span id="aboutMapTitle" class="about-sr-only">Xəritədə tapın</span><span id="aboutMapDescription" class="about-sr-only">F1 Studio — 4 nömrəli poçtun yanı, Gəncə</span>
+          <div class="map-container">
+            <iframe title="F1 Studio — 4 nömrəli poçt xəritəsi" src="https://www.google.com/maps?q=4%20n%C3%B6mr%C9%99li%20po%C3%A7t%2C%20G%C9%99nc%C9%99%2C%20Azerbaijan&output=embed" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+          </div>
+          <a href="https://maps.app.goo.gl/Mr1ev8VThejiKrxn8" target="_blank" rel="noopener noreferrer" class="about-map-link" id="aboutMapButton">Xəritədə aç&nbsp; <span aria-hidden="true">↗</span></a>
+        </section>
+        <section class="about-contact-form-card" aria-labelledby="aboutFormTitle">
+          <h2 id="aboutFormTitle">Bizimlə əlaqə saxlayın</h2>
+          <p>Suallarınız var? Bizə yazın, ən qısa zamanda sizə geri dönüş edəcəyik.</p>
+          <form id="aboutContactForm" class="about-contact-form" novalidate>
+            <label class="about-form-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.4"/><path d="M5 21c.7-4 3-6 7-6s6.3 2 7 6"/></svg><input name="name" autocomplete="name" maxlength="100" placeholder="Adınız" aria-label="Adınız" required></label>
+            <label class="about-form-field"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg><input name="email" type="email" autocomplete="email" maxlength="254" placeholder="E-poçt ünvanınız" aria-label="E-poçt ünvanınız" required></label>
+            <label class="about-form-field"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8h8M8 12h8M8 16h4"/></svg><input name="subject" maxlength="160" placeholder="Mövzu" aria-label="Mövzu" required></label>
+            <label class="about-form-field about-message-field"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H5l-3 2v-9.5a7.5 7.5 0 0 1 7.5-7.5h3a7.5 7.5 0 0 1 7.5 7.5Z"/></svg><textarea name="message" maxlength="2000" placeholder="Mesajınız" aria-label="Mesajınız" required></textarea></label>
+            <button class="about-submit-button" type="submit">Göndər <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+            <p class="about-form-status" id="aboutFormStatus" role="status" aria-live="polite" aria-atomic="true"></p>
+          </form>
+        </section>
+      </div>
+    </div>
+  </details>
+
+  <details class="about-page-accordion about-delivery-accordion" id="delivery-info" open>
+    <summary class="about-accordion-summary"><span class="about-summary-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v10H3zM14 10h4l3 3v4h-7z"/><circle cx="7.5" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg></span><span>Çatdırılma</span><i aria-hidden="true"></i></summary>
+    <div class="about-page-section-body">
+      <div class="about-section-heading">
+        <h2 id="deliveryInfoTitle">Çatdırılma</h2>
+        <p>Sifarişlərinizi ən qısa zamanda və təhlükəsiz şəkildə ünvanınıza çatdırırıq.</p>
+      </div>
+      <div class="about-delivery-grid">
+        <article class="about-delivery-card">
+          <span class="about-delivery-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v10H3zM14 10h4l3 3v4h-7z"/><circle cx="7.5" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg></span>
+          <div><h3>Gəncə daxili çatdırılma</h3><p>1–3 iş günü ərzində</p></div>
+        </article>
+        <article class="about-delivery-card">
+          <span class="about-delivery-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 3 7.5 12 12l9-4.5L12 3Z"/><path d="M3 12l9 4.5 9-4.5M3 16.5 12 21l9-4.5M12 12v9"/></svg></span>
+          <div><h3>Bütün Azərbaycan üzrə</h3><p>2–5 iş günü ərzində</p></div>
+        </article>
+        <article class="about-delivery-card">
+          <span class="about-delivery-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 7v5c0 5 3.4 8 8 9 4.6-1 8-4 8-9V7z"/><path d="m9 12 2 2 4-4"/></svg></span>
+          <div><h3>Təhlükəsiz qablaşdırma</h3><p>Məhsullarınız zədəsiz çatdırılır</p></div>
+        </article>
+      </div>
+      
+      <details class="about-order-rules" id="order-rules">
+        <summary>Sifariş qaydası</summary>
+        <ol>
+          <li><b>Məhsulu seç</b><p>Kataloqdan məhsulunu tap. Fərdi dizayn istəyirsənsə, məhsul səhifəsində fərdiləşdirmə seçimlərini tamamla.</p></li>
+          <li><b>Səbəti və məlumatları doldur</b><p>Məhsulları səbətə əlavə et, adını və telefon nömrəni yaz, sonra çatdırılma üsulunu seç. Ünvanla çatdırılma üçün ünvanı da daxil et.</p></li>
+          <li><b>WhatsApp-da dəqiqləşdir</b><p>“WhatsApp ilə Sifariş Et” düyməsi sifariş xülasısını açır. Məhsul və fərdi dizayn detallarını operatorla təsdiqlə.</p></li>
+          <li><b>Sifarişi tamamla</b><p>Yekun qiymət, hazırlanma vaxtı və ödəniş üsulu sifarişin xüsusiyyətlərinə uyğun WhatsApp-da razılaşdırılır. Saytda kartla onlayn ödəniş yoxdur.</p></li>
+        </ol>
+      </details>
+    </div>
+  </details>
+
+  <details class="about-page-accordion about-faq-accordion" id="faq" open>
+    <summary class="about-accordion-summary"><span class="about-summary-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.6 9a2.5 2.5 0 1 1 4.2 1.8c-1.2 1-1.8 1.3-1.8 2.7M12 17h.01"/></svg></span><span>FAQ</span><i aria-hidden="true"></i></summary>
+    <div class="about-page-section-body">
+      <div class="about-section-heading"><h2 id="faqSectionTitle">FAQ</h2></div>
+      <div class="faq-container">
+        <details class="faq-item">
+          <summary id="faqQuestion1">Sifariş necə verilir?</summary>
+          <p id="faqAnswer1">Məhsulu səbətə əlavə edin, ad və telefon məlumatlarını doldurun, çatdırılmanı seçin. Sonra sifariş xülasəsi WhatsApp-a açılır və son detalları operatorla dəqiqləşdirirsiniz.</p>
+        </details>
+        <details class="faq-item">
+          <summary id="faqQuestion2">Çatdırılma xidməti varmı və neçəyədir?</summary>
+          <p id="faqAnswer2"><span id="deliveryFaqText">Bəli. Gəncə daxili ünvanlara çatdırılma 3.00 ₼, digər bölgələrə poçtla göndəriş isə 5.00 ₼ təşkil edir. Mağazadan götürmə isə tamamilə ödənişsizdir.</span></p>
+        </details>
+        <details class="faq-item">
+          <summary id="faqQuestion3">Ödənişi hansı yollarla edə bilərəm?</summary>
+          <p id="faqAnswer3">Ödəniş və sifariş detalları WhatsApp üzərindən operatorla razılaşdırılır. Bu saytda kartla onlayn ödəniş sistemi istifadə olunmur.</p>
+        </details>
+        <details class="faq-item">
+          <summary id="faqQuestion4">Öz istədiyim dizaynda nəsə hazırlada bilərəm?</summary>
+          <p id="faqAnswer4">Əlbəttə! Lazer kəsim, taxta işləmələri və ya fərdi çaplar üçün öz ideya və ya dizaynlarınızı bizə WhatsApp-da göndərə bilərsiniz, istəyinizə uyğun şəkildə hazırlayarıq.</p>
+        </details>
+      </div>
+    </div>
+  </details>
+
+  <section class="about-trust-strip" aria-label="F1 Studio üstünlükləri">
+    <article><span class="about-trust-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 4 7v5c0 5 3.4 8 8 9 4.6-1 8-4 8-9V7z"/><path d="m9 12 2 2 4-4"/></svg></span><div><b>Təhlükəsiz sifariş</b><small>Sifariş WhatsApp-da təsdiqlənir</small></div></article>
+    <article><span class="about-trust-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h11v10H3zM14 10h4l3 3v4h-7z"/><circle cx="7.5" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg></span><div><b>Sürətli çatdırılma</b><small>1–3 iş günü ərzində</small></div></article>
+    <article><span class="about-trust-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 7v13M12 7H8a2 2 0 1 1 2-2c0 1.1 2 2 2 2Zm0 0h4a2 2 0 1 0-2-2c0 1.1-2 2-2 2Z"/></svg></span><div><b>Fərdiləşdirilə bilən hədiyyələr</b><small>Tam sizə özəl</small></div></article>
+    <article><span class="about-trust-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13v-2a8 8 0 0 1 16 0v2"/><path d="M4 13H3a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h3v-7H4zm16 0h1a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-3v-7h2zm-4 8c-.7 1-2 1-4 1"/></svg></span><div><b>Müştəri dəstəyi</b><small>Hər zaman yanınızdayıq</small></div></article>
+  </section>
+</div>
 </main>
 
 <footer class="site-footer">
@@ -390,6 +472,15 @@
     </div>
 </footer>
 
+
+<nav class="about-mobile-dock" aria-label="Mobil naviqasiya">
+  <a href="#home" aria-label="Əsas səhifə"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/></svg><span>Əsas səhifə</span></a>
+  <a href="#categories" aria-label="Kataloq"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Kataloq</span></a>
+  <button type="button" data-action="focusProductSearch" aria-label="Axtarış"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 5 5"/></svg><span>Axtarış</span></button>
+  <button type="button" data-action="openCart" aria-label="Səbət"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l1.6 10.2a2 2 0 0 0 2 1.8h7.9a2 2 0 0 0 1.9-1.5L20 8H6"/><circle cx="9" cy="19" r="1"/><circle cx="17" cy="19" r="1"/></svg><span>Səbət</span></button>
+  <button type="button" data-action="openLogin" aria-label="Profil"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.8-3.5 3-5.3 6.5-5.3s5.7 1.8 6.5 5.3"/></svg><span>Profil</span></button>
+</nav>
+
 <nav class="f1-mobile-dock" aria-label="Mobil naviqasiya">
   <a href="#home" data-nav-target="home" aria-label="Ana səhifə">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"></path></svg>
@@ -416,7 +507,7 @@
 <button class="chat-trigger" data-action="toggleChat" aria-controls="chatBox" aria-expanded="false">
     <span class="online-badge"></span>
     <span class="chat-trigger-avatar"><img src="robot-icon.svg" alt="" aria-hidden="true" referrerpolicy="no-referrer"></span>
-    <span>F1 Asistent</span>
+    <span>F1 Assistant</span>
 </button>
 
 <div class="chat-box" id="chatBox" role="dialog" aria-modal="false" aria-labelledby="chatTitle" aria-describedby="chatStatus" aria-hidden="true">
@@ -1237,7 +1328,7 @@
 
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
 <noscript><div style="padding:16px;background:#fff1f2;color:#7f1d1d;text-align:center;font-family:system-ui">Bu saytın sifariş və məhsul funksiyaları üçün JavaScript aktiv olmalıdır.</div></noscript>
-    <script type="module" src="js/app.js?v=135"></script>
+    <script type="module" src="js/app.js?v=136"></script>
     <script type="module" src="js/reference-mobile-dock.js?v=1"></script>
 </body>
 </html>

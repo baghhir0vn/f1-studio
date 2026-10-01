@@ -51,6 +51,7 @@ export function initCatalog() {
                 if(status){status.style.display="none";status.setAttribute("aria-busy","false");status.innerHTML="";status.className="notice catalog-status";}
                 ctx.updateProductStructuredData(s.products);
                 ctx.render();
+                ctx.updateAboutMetrics?.();
             }else{
                 s.serverCatalogReady=false;
                 if(status){
