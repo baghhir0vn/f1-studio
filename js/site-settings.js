@@ -61,21 +61,22 @@ export function initSiteSettings() {
     }
     function applySiteSettingsToPage(data){
         ctx.updateLocalBusinessStructuredData(data);
-        const contactNote=document.getElementById("aboutWhatsappNote");
+        const contactNote=document.getElementById("aboutWhatsappNumber");
         if(contactNote){
             contactNote.style.setProperty("color","var(--ink)","important");
             const displayNumber=String(data.whatsapp_number||CONFIG.whatsappNumber||"").trim();
             const waDigits=toWhatsAppDigits(displayNumber);
             contactNote.textContent="";
             if(waDigits){
-                contactNote.append("💬 WhatsApp: ");
+                
                 const link=document.createElement("a");
                 link.href=`https://wa.me/${waDigits}`;
                 link.target="_blank";
                 link.rel="noopener noreferrer";
-                link.textContent=displayNumber;
-                link.setAttribute("aria-label",`WhatsApp-da ${displayNumber} nömrəsinə yaz`);
-                link.style.cssText="color:inherit;text-decoration:underline;text-underline-offset:3px";
+                const displayText=waDigits.startsWith("994")&&waDigits.length===12?`+994 ${waDigits.slice(3,5)} ${waDigits.slice(5,8)} ${waDigits.slice(8,10)} ${waDigits.slice(10,12)}`:displayNumber;
+                link.textContent=displayText;
+                link.setAttribute("aria-label",`WhatsApp-da ${displayText} nömrəsinə yaz`);
+                link.style.cssText="color:inherit;text-decoration:none";
                 contactNote.appendChild(link);
             }else{
                 contactNote.textContent="💬 WhatsApp nömrəsi mövcud deyil.";

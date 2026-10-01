@@ -35,7 +35,9 @@ body.f1-about-route>header .icon-action[aria-label="Axtar"]{display:grid!importa
 body.f1-about-route>header .icon-action[aria-label="Axtar"]::after{display:none!important}
 body.f1-about-route>header .icon-action span,
 body.f1-about-route>header .cart-icon span{background:var(--about-red)!important;color:#fff!important}
-body.f1-about-route>header .theme-toggle-btn{font-size:0!important;filter:grayscale(1)}
+body.f1-about-route>header .theme-toggle-btn{position:relative!important;display:grid!important;place-items:center!important;font-size:0!important;filter:none!important}
+body.f1-about-route>header .theme-toggle-btn::before{content:"";display:block;width:15px;height:15px;border-radius:50%;background:currentColor;box-shadow:4px -3px 0 0 var(--about-surface);transform:translate(2px,1px)}
+html[data-theme="dark"] body.f1-about-route>header .theme-toggle-btn::before{width:12px;height:12px;background:transparent;border:1.6px solid currentColor;box-shadow:0 -7px 0 -5.8px currentColor,0 7px 0 -5.8px currentColor,7px 0 0 -5.8px currentColor,-7px 0 0 -5.8px currentColor,5px 5px 0 -5.8px currentColor,-5px -5px 0 -5.8px currentColor,5px -5px 0 -5.8px currentColor,-5px 5px 0 -5.8px currentColor;transform:none}
 body.f1-about-route>header .admin-btn{display:none!important}
 body.f1-about-route>header .mobile-nav{border-color:var(--about-line)!important;background:var(--about-surface)!important}
 body.f1-about-route main#home{display:block!important;width:100%!important;max-width:none!important;margin:0!important;padding:0!important}
@@ -232,7 +234,7 @@ body.f1-about-route .about-page-view textarea:focus-visible{outline:2px solid co
  body.f1-about-route .faq-container{gap:6px}
  body.f1-about-route .faq-item summary{font-size:10px}
  body.f1-about-route .faq-item>p{font-size:10px}
- body.f1-about-route .about-mobile-dock{position:fixed;right:0;bottom:0;left:0;z-index:90;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));min-height:66px;padding:7px max(8px,env(safe-area-inset-right)) calc(7px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));border-top:1px solid var(--about-line);background:var(--about-surface);box-shadow:0 -5px 20px rgba(20,24,30,.07)}
+ body.f1-about-route .about-mobile-dock{position:fixed;right:0;bottom:0;left:0;z-index:90;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));min-height:66px;padding:7px max(8px,env(safe-area-inset-right)) calc(7px + env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));border-top:1px solid var(--about-line);background:var(--about-surface);box-shadow:0 -5px 20px rgba(20,24,30,.07)}
  body.f1-about-route .about-mobile-dock>*{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:0;padding:0;border:0;background:transparent;color:var(--about-ink);font-size:8px;font-weight:550;text-decoration:none}
  body.f1-about-route .about-mobile-dock svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
  body.f1-about-route .about-mobile-dock button{cursor:pointer}
