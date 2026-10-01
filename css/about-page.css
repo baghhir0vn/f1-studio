@@ -93,6 +93,11 @@ body.f1-about-route .about-social-links{display:flex;flex-wrap:wrap;gap:6px;marg
 body.f1-about-route .about-social-link{display:inline-flex;align-items:center;gap:6px;min-height:28px;padding:4px 8px;border:1px solid var(--about-line);border-radius:7px;color:var(--about-ink);font-size:9px;font-weight:600;text-decoration:none}
 body.f1-about-route .about-social-link svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 body.f1-about-route .about-map-card{display:flex;flex-direction:column;gap:8px;padding:0;overflow:hidden}
+body.f1-about-route .about-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
+body.f1-about-route .about-map-title{margin:13px 13px 0;color:var(--about-ink);font-size:12px;font-weight:700;line-height:1.2}
+body.f1-about-route .about-map-location{display:flex;align-items:center;gap:7px;margin:0 13px;color:var(--about-muted);font-size:10px;line-height:1.35}
+body.f1-about-route .about-map-location svg{flex:0 0 16px;width:16px;height:16px;fill:none;stroke:var(--about-red);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
 body.f1-about-route .about-map-card .map-container{flex:1;min-height:210px;margin:0;border:0;border-radius:13px;overflow:hidden}
 body.f1-about-route .about-map-card iframe{display:block;width:100%;height:100%;min-height:210px;border:0}
 body.f1-about-route .about-map-link{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
@@ -238,7 +243,7 @@ body.f1-about-route .about-page-view textarea:focus-visible{outline:2px solid co
  body.f1-about-route .about-mobile-dock>*{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:0;padding:0;border:0;background:transparent;color:var(--about-ink);font-size:8px;font-weight:550;text-decoration:none}
  body.f1-about-route .about-mobile-dock svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}
  body.f1-about-route .about-mobile-dock button{cursor:pointer}
- body.f1-about-route .chat-trigger{bottom:78px!important;right:12px!important;min-height:39px!important;padding:4px 12px!important;border:1px solid var(--about-line)!important;border-radius:24px!important;background:var(--about-surface)!important;color:var(--about-ink)!important;box-shadow:0 4px 16px rgba(20,24,30,.1)!important}
+ body.f1-about-route .chat-trigger{bottom:78px!important;right:12px!important;width:auto!important;min-width:132px!important;height:40px!important;min-height:40px!important;display:flex!important;align-items:center!important;gap:6px!important;white-space:nowrap!important;font-size:10px!important;padding:4px 12px!important;border:1px solid var(--about-line)!important;border-radius:24px!important;background:var(--about-surface)!important;color:var(--about-ink)!important;box-shadow:0 4px 16px rgba(20,24,30,.1)!important}
  body.f1-about-route .chat-box{bottom:126px!important;right:10px!important;left:10px!important;width:auto!important;max-width:none!important}
 }
 @media(min-width:701px){

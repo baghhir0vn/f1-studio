@@ -64,7 +64,7 @@
     <link rel="stylesheet" href="css/f1-reference-alignment.css?v=1">
     <link rel="stylesheet" href="css/f1-reference-capture.css?v=19">
     <link rel="stylesheet" href="css/category-page.css?v=1">
-    <link rel="stylesheet" href="css/about-page.css?v=2">
+    <link rel="stylesheet" href="css/about-page.css?v=3">
 </head>
 <body class="f1-home">
 <div class="announcement-bar" id="announcementBar" aria-label="F1 Studio xidmət üstünlükləri">
@@ -337,9 +337,11 @@
           <div id="aboutSocialLinks" class="about-social-links" aria-label="Sosial şəbəkələr"></div>
         </section>
         <section class="about-map-card" aria-label="F1 Studio ünvanının xəritəsi">
-          <span id="aboutMapTitle" class="about-sr-only">Xəritədə tapın</span><span id="aboutMapDescription" class="about-sr-only">F1 Studio — 4 nömrəli poçtun yanı, Gəncə</span>
+          <h2 class="about-map-title">Xəritədə tapın</h2>
+          <p class="about-map-location"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg><span id="aboutMapLocationText">F1 Studio — 4 nömrəli poçtun yanı, Gəncə</span></p>
+          <span id="aboutMapTitle" class="about-sr-only" aria-hidden="true">Xəritədə tapın</span><span id="aboutMapDescription" class="about-sr-only" aria-hidden="true">F1 Studio — 4 nömrəli poçtun yanı, Gəncə</span>
           <div class="map-container">
-            <iframe title="F1 Studio — 4 nömrəli poçt xəritəsi" src="https://www.google.com/maps?q=4%20n%C3%B6mr%C9%99li%20po%C3%A7t%2C%20G%C9%99nc%C9%99%2C%20Azerbaijan&output=embed" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+            <iframe title="F1 Studio — 4 nömrəli poçt xəritəsi" id="aboutMapFrame" src="https://www.google.com/maps?q=4%20n%C3%B6mr%C9%99li%20po%C3%A7t%2C%20G%C9%99nc%C9%99%2C%20Azerbaijan&output=embed" allowfullscreen="" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
           </div>
           <a href="https://maps.app.goo.gl/Mr1ev8VThejiKrxn8" target="_blank" rel="noopener noreferrer" class="about-map-link" id="aboutMapButton">Xəritədə aç&nbsp; <span aria-hidden="true">↗</span></a>
         </section>
@@ -1328,7 +1330,7 @@
 
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
 <noscript><div style="padding:16px;background:#fff1f2;color:#7f1d1d;text-align:center;font-family:system-ui">Bu saytın sifariş və məhsul funksiyaları üçün JavaScript aktiv olmalıdır.</div></noscript>
-    <script type="module" src="js/app.js?v=137"></script>
+    <script type="module" src="js/app.js?v=138"></script>
     <script type="module" src="js/reference-mobile-dock.js?v=1"></script>
 </body>
 </html>
