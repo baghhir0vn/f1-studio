@@ -1,4 +1,5 @@
 /* Reference-based About/contact page. All selectors stay inside the About route. */
+.about-mobile-dock{display:none!important}
 html[data-theme="light"] body.f1-about-route,
 html:not([data-theme="dark"]) body.f1-about-route{
   --about-red:#f21c24;--about-ink:#15171b;--about-muted:#505762;--about-line:#eceef1;
