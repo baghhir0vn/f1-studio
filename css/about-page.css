@@ -176,7 +176,7 @@ body.f1-about-route .about-page-view textarea:focus-visible{outline:2px solid co
  body.f1-about-route>header .mobile-menu-btn::before{content:"";width:18px;height:13px;border-top:1.7px solid currentColor;border-bottom:1.7px solid currentColor;position:relative}
  body.f1-about-route>header .mobile-menu-btn::after{content:"";position:absolute;width:18px;height:1.7px;background:currentColor}
  body.f1-about-route>header .actions{gap:1px!important;margin-left:4px!important}
- body.f1-about-route>header .actions .icon-action[aria-label="Giriş / Profil"],
+ body.f1-about-route>header .actions .icon-action[aria-label="Giriş / Profil"]{display:inline-grid!important}
  body.f1-about-route>header .actions .theme-toggle-btn,
  body.f1-about-route>header .admin-btn{display:none!important}
  body.f1-about-route>header .icon-action,body.f1-about-route>header .cart-icon{width:32px!important;min-width:32px!important;height:34px!important}
