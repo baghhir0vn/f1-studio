@@ -219,3 +219,48 @@ html[data-theme="dark"] .chat-trigger,html[data-theme="dark"] body.f1-home .chat
 @media(prefers-reduced-motion:reduce){
   #chatBox.chat-box,.chat-trigger,.chat-box .chat-quick-chips .chip,.chat-box .chat-category-card,.chat-box .chat-head-actions button,.chat-box .chat-composer>button{animation:none!important;transition:none!important}
 }
+
+
+/* Compact launcher, matching the earlier thin outline and avatar scale. */
+.chat-trigger,body.f1-home .chat-trigger,body.f1-about-route .chat-trigger{
+  right:16px!important;
+  bottom:20px!important;
+  width:auto!important;
+  min-width:132px!important;
+  height:44px!important;
+  min-height:44px!important;
+  padding:4px 12px 4px 5px!important;
+  gap:8px!important;
+  border:1px solid #e5e7e9!important;
+  border-radius:999px!important;
+  background:#fff!important;
+  color:#1d2024!important;
+  box-shadow:0 5px 18px rgba(10,14,20,.12)!important;
+  font-size:12px!important;
+}
+.chat-trigger-avatar,body.f1-home .chat-trigger-avatar,body.f1-about-route .chat-trigger-avatar{
+  width:26px!important;
+  height:26px!important;
+  flex-basis:26px!important;
+}
+html[data-theme="dark"] body.f1-home .chat-trigger{
+  border-width:1px!important;
+}
+@media(max-width:760px){
+  .chat-trigger,body.f1-home .chat-trigger,body.f1-about-route .chat-trigger{
+    right:12px!important;
+    bottom:calc(82px + env(safe-area-inset-bottom,0px))!important;
+    min-width:132px!important;
+    height:44px!important;
+    min-height:44px!important;
+    padding:4px 10px 4px 5px!important;
+    border-width:1px!important;
+    gap:7px!important;
+    font-size:12px!important;
+  }
+  .chat-trigger-avatar,body.f1-home .chat-trigger-avatar,body.f1-about-route .chat-trigger-avatar{
+    width:26px!important;
+    height:26px!important;
+    flex-basis:26px!important;
+  }
+}
