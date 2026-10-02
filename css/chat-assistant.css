@@ -270,7 +270,7 @@ html[data-theme="dark"] body.f1-home .chat-trigger{
 #chatBox.chat-box,body.f1-about-route #chatBox.chat-box{
   width:min(480px,calc(100vw - 32px))!important;
   height:min(620px,calc(100dvh - 120px))!important;
-  min-height:360px!important;
+  min-height:min(360px,calc(100dvh - 120px))!important;
   max-height:calc(100dvh - 120px)!important;
 }
 .chat-box .chat-header{
@@ -293,7 +293,7 @@ html[data-theme="dark"] body.f1-home .chat-trigger{
     inset:auto 10px calc(82px + env(safe-area-inset-bottom,0px)) 10px!important;
     width:auto!important;
     height:min(560px,calc(100dvh - 160px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))!important;
-    min-height:320px!important;
+    min-height:min(320px,calc(100dvh - 160px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))!important;
     max-height:calc(100dvh - 160px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important;
     border-radius:18px!important;
   }
