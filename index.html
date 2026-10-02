@@ -66,7 +66,7 @@
     <link rel="stylesheet" href="css/category-page.css?v=1">
     <link rel="stylesheet" href="css/about-page.css?v=10">
 <link rel="stylesheet" href="css/chat-assistant.css?v=6">
-<link rel="stylesheet" href="css/admin-dashboard-refresh.css?v=1">
+<link rel="stylesheet" href="css/admin-dashboard-refresh.css?v=2">
 </head>
 <body class="f1-home">
 <div class="announcement-bar" id="announcementBar" aria-label="F1 Studio xidmət üstünlükləri">
@@ -1138,6 +1138,13 @@
             <div class="admin-review-stat"><span>Rədd edilmiş</span><b id="adminReviewStatRejected">0</b></div>
             <div class="admin-review-stat"><span>Göstərilən</span><b id="adminReviewStatVisible">0</b></div>
           </div>
+          <div class="admin-review-chart-card">
+            <div class="admin-review-chart-head">
+              <div><h3 id="adminReviewChartTitle">Reytinq bölgüsü</h3><span>Yüklənmiş rəylər üzrə</span></div>
+              <div class="admin-review-chart-meta"><b id="adminReviewAverageRating">—</b><span>/ 5 · <i id="adminReviewChartTotal">0 rəy</i></span></div>
+            </div>
+            <div id="adminReviewRatingChart" class="admin-review-rating-chart" role="img" aria-labelledby="adminReviewChartTitle"></div>
+          </div>
           <div class="admin-note">Rəylər burada moderasiya olunur. Hesabla bağlı telefon/email məlumatı Supabase-də olan profil məlumatından oxunur. Rəy cədvəlində məhsul bağlantısı olmadığından ayrıca məhsul adı yalnız sonradan product əlaqəsi əlavə edilərsə göstərilə bilər.</div>
           <div id="adminReviewsList"></div>
         </div>
@@ -1145,7 +1152,7 @@
         <div class="admin-view" id="adminView-homepage">
           <div class="admin-note"><b>✏️ Ana səhifə mətnləri</b><br>Buradan ana səhifənin yazılarını dəyişə bilərsən. <b>Yalnız mətn dəyişir:</b> mövcud şrift, ölçü, rəng, qalınlıq, boşluqlar, ikonlar və yerləşmə qorunur. Banner mətnləri ayrıca <b>Bannerlar</b> bölməsindədir; ünvan və iş saatları isə <b>Ayarlar</b> bölməsindən idarə olunur.</div>
 
-          <div class="admin-settings-card"><h3>🧭 Naviqasiya</h3><div class="form">
+          <div class="admin-homepage-grid">\n          <div class="admin-settings-card"><h3>🧭 Naviqasiya</h3><div class="form">
             <input id="adminHomeNavHome" maxlength="60" placeholder="Ana səhifə">
             <input id="adminHomeNavShop" maxlength="60" placeholder="Mağaza">
             <input id="adminHomeNavCategories" maxlength="60" placeholder="Kateqoriyalar">
@@ -1210,7 +1217,7 @@
             <input id="adminHomeFooterOrderTitle" maxlength="60" placeholder="Sifariş başlığı"><textarea id="adminHomeFooterOrderText" maxlength="160" rows="2" placeholder="WhatsApp sifariş mətni"></textarea><input id="adminHomeFooterCopyright" maxlength="80" placeholder="Copyright">
           </div></div>
 
-          <div class="admin-note">ℹ️ Banner mətnləri bu bölmədən qəsdən idarə edilmir. Onların şrifti və dizaynı da qorunmaqla ayrıca <b>🖼 Bannerlar</b> bölməsindən dəyişdirilir.</div>
+          </div>\n          <div class="admin-note">ℹ️ Banner mətnləri bu bölmədən qəsdən idarə edilmir. Onların şrifti və dizaynı da qorunmaqla ayrıca <b>🖼 Bannerlar</b> bölməsindən dəyişdirilir.</div>
           <div class="admin-settings-actions admin-home-save-row">
             <button type="button" class="admin-primary" data-action="saveHomepageContent">💾 Ana səhifə mətnlərini yadda saxla</button>
             <button type="button" data-action="loadSiteSettings" data-action-args='[true]'>↻ Serverdən yenilə</button>
