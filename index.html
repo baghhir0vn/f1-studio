@@ -65,6 +65,7 @@
     <link rel="stylesheet" href="css/f1-reference-capture.css?v=19">
     <link rel="stylesheet" href="css/category-page.css?v=1">
     <link rel="stylesheet" href="css/about-page.css?v=6">
+<link rel="stylesheet" href="css/chat-assistant.css?v=1">
 </head>
 <body class="f1-home">
 <div class="announcement-bar" id="announcementBar" aria-label="F1 Studio xidmət üstünlükləri">
@@ -517,33 +518,52 @@
         <div class="chat-brand">
             <span class="chat-avatar" aria-hidden="true"><img src="robot-icon.svg" alt="" aria-hidden="true" referrerpolicy="no-referrer"></span>
             <div>
-                <h4 id="chatTitle">F1 Studio Asistenti</h4>
-                <small id="chatStatus"><span class="online-badge"></span> Kataloq üzrə onlayn</small>
+                <h4 id="chatTitle">F1 Assistant</h4>
+                <small id="chatStatus">Sizə necə kömək edə bilərəm?</small>
             </div>
         </div>
         <div class="chat-head-actions">
-            <button type="button" class="chat-clear" data-action="clearChat" aria-label="Söhbəti təmizlə" title="Söhbəti təmizlə">↺</button>
+            <button type="button" class="chat-clear" data-action="clearChat" aria-label="Söhbəti təmizlə" title="Söhbəti təmizlə">↻</button>
             <button type="button" class="chat-fullscreen-toggle" id="chatFullscreenBtn" data-action="toggleChatFullscreen" aria-label="Tam ekrana keçir" aria-pressed="false" title="Tam ekrana keçir">⛶</button>
             <button type="button" data-action="toggleChat" aria-label="Asistenti bağla">×</button>
         </div>
     </div>
     <div class="chat-body" id="chatBody" aria-live="polite" aria-atomic="false">
-        <div class="chat-msg bot">
-            <strong>Salam! 👋</strong><br>Mən F1 Studio-nun sayt asistentiəm. Hədiyyə seçimi, büdcə, məhsul detalları, dizayn və sifariş prosesi ilə kömək edə bilərəm.
-            <div class="chat-quick-chips">
+        <div class="chat-welcome">
+            <div class="chat-quick-heading">Tez seçimlər</div>
+            <div class="chat-quick-chips" aria-label="Tez seçimlər">
                 <button type="button" class="chip" data-action="sendQuickMsg" data-action-args='[&quot;30 AZN-ə sevgilim üçün hədiyyə nə var?&quot;]'>🎁 Hədiyyə seç</button>
-                <button type="button" class="chip" data-action="sendQuickMsg" data-action-args='[&quot;Fərdi dizayn necə edilir?&quot;]'>🎨 Fərdi dizayn</button>
+                <button type="button" class="chip" data-action="sendQuickMsg" data-action-args='[&quot;Məhsullara baxmaq istəyirəm&quot;]'>🛍️ Məhsullara bax</button>
+                <button type="button" class="chip" data-action="sendQuickMsg" data-action-args='[&quot;Fərdi dizayn necə edilir?&quot;]'>🎨 Fərdiləşdir</button>
+                <button type="button" class="chip" data-action="sendQuickMsg" data-action-args='[&quot;Səbətimdə nə var?&quot;]'>🛒 Səbətim</button>
                 <button type="button" class="chip" data-action="sendQuickMsg" data-action-args='[&quot;Çatdırılma neçəyədir?&quot;]'>🚚 Çatdırılma</button>
-                <button type="button" class="chip" data-action="sendQuickMsg" data-action-args='[&quot;Ödənişi necə edirəm?&quot;]'>💳 Ödəniş</button>
+                <button type="button" class="chip" data-action="sendQuickMsg" data-action-args='[&quot;Sifariş necə edilir?&quot;]'>💬 Sifariş necə edilir?</button>
+            </div>
+            <div class="chat-message-row bot">
+                <span class="chat-message-avatar" aria-hidden="true"><img src="robot-icon.svg" alt="" referrerpolicy="no-referrer"></span>
+                <div class="chat-msg bot">
+                    <span class="chat-msg-text">Salam! Hədiyyə seçimi, məhsullar, fərdi dizayn və sifariş prosesi ilə bağlı sizə kömək edə bilərəm. Kateqoriyalardan başlayaq?</span>
+                    <div class="chat-category-strip" aria-label="Hədiyyə kateqoriyaları">
+                        <button type="button" class="chat-category-card" data-action="sendQuickMsg" data-action-args='[&quot;Texnologiya hədiyyələri göstər&quot;]'><span class="chat-category-icon" aria-hidden="true">🎧</span><span>Texnologiya hədiyyələri</span></button>
+                        <button type="button" class="chat-category-card" data-action="sendQuickMsg" data-action-args='[&quot;Kişi aksesuarları göstər&quot;]'><span class="chat-category-icon" aria-hidden="true">🧴</span><span>Kişi aksesuarları</span></button>
+                        <button type="button" class="chat-category-card" data-action="sendQuickMsg" data-action-args='[&quot;Oyun və əyləncə hədiyyələri göstər&quot;]'><span class="chat-category-icon" aria-hidden="true">🎮</span><span>Oyun &amp; əyləncə</span></button>
+                        <button type="button" class="chat-category-card" data-action="sendQuickMsg" data-action-args='[&quot;Fərdiləşdirilən hədiyyələr göstər&quot;]'><span class="chat-category-icon" aria-hidden="true">🖼️</span><span>Fərdiləşdirilən hədiyyələr</span></button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <div class="chat-footer">
-        <input id="chatInput" maxlength="500" autocomplete="off" enterkeyhint="send" placeholder="Məs: 30 AZN-ə sevgilim üçün nə var?" data-enter-action="sendChatMsg" aria-label="Mesaj" aria-describedby="chatHint">
-        <button type="button" data-action="sendChatMsg" aria-label="Göndər">➤</button>
-        <small id="chatHint">Enter ilə göndər</small>
+        <div class="chat-composer">
+            <span class="chat-attachment-mark" aria-hidden="true">
+                <svg viewBox="0 0 24 24"><path d="m21 11.5-8.9 9a5 5 0 0 1-7.1-7.1l9.2-9.2a3.3 3.3 0 0 1 4.7 4.7l-9.2 9.2a1.7 1.7 0 0 1-2.4-2.4l8.6-8.6"></path></svg>
+            </span>
+            <input id="chatInput" maxlength="500" autocomplete="off" enterkeyhint="send" placeholder="Mesajınızı yazın..." data-enter-action="sendChatMsg" aria-label="Mesaj" aria-describedby="chatHint">
+            <button type="button" data-action="sendChatMsg" aria-label="Göndər">➤</button>
+        </div>
+        <small id="chatHint">F1 Assistant AI ilə dəstəklənir ✨</small>
     </div>
-</div>
+</div>>
 
 <!-- SƏBƏT MODALI -->
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="cartTitle" aria-describedby="cartSubtitle">
