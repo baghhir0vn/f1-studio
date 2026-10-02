@@ -21,9 +21,11 @@ export function initAdmin() {
             el.lastChild.textContent=text;
         }
         function updateAdminNotifBadge(){
-            const el=document.getElementById("adminNotifBadge"); if(!el)return;
-            el.textContent=String(s.adminUnreadOrders);
-            el.classList.toggle("hidden",s.adminUnreadOrders<=0);
+            ["adminNotifBadge","adminSidebarOrderBadge","adminTopNotifBadge"].forEach(id=>{
+                const el=document.getElementById(id); if(!el)return;
+                el.textContent=String(s.adminUnreadOrders);
+                el.classList.toggle("hidden",s.adminUnreadOrders<=0);
+            });
         }
         function playAdminNotificationSound(){
             try{
@@ -128,7 +130,15 @@ export function initAdmin() {
             if(adminMain && !adminMain.hasAttribute("tabindex")) adminMain.setAttribute("tabindex","0");
             lockAdminBackgroundScroll();
             ctx.openDialog("adminModal", ".admin-main");
-            document.getElementById("adminUserStatus").textContent=`Aktiv admin: ${s.authUser.name||s.authUser.email||"istifadəçi"}`;
+            const displayName=s.authUser.name||s.authUser.email||"istifadəçi";
+            const profileName=document.getElementById("adminUserStatus"); if(profileName)profileName.textContent=`Aktiv admin: ${displayName}`;
+            const avatar=document.getElementById("adminAvatarInitials");
+            if(avatar){const parts=String(s.authUser.name||"").trim().split(/\\s+/).filter(Boolean);avatar.textContent=(parts.length>1?parts[0][0]+parts[parts.length-1][0]:(parts[0]||s.authUser.email||"A").slice(0,2)).toLocaleUpperCase("az-AZ");}
+            const welcome=document.getElementById("adminWelcomeText"); if(welcome)welcome.textContent=`Xoş gəlmisiniz, ${(s.authUser.name||"").trim().split(/\\s+/)[0]||"Admin"}`;
+            const date=document.getElementById("adminCurrentDate");
+            if(date){const now=new Date();date.textContent=now.toLocaleDateString("az-AZ",{day:"numeric",month:"long",year:"numeric"});date.dateTime=now.toISOString();}
+            document.querySelector("#adminModal .admin-shell")?.classList.remove("admin-sidebar-open");
+            ctx.updateAdminNotifBadge();
             ctx.switchAdminView("dashboard");
             ctx.loadAdminDashboard();
             ctx.loadSiteSettings(true);
@@ -137,9 +147,23 @@ export function initAdmin() {
             ctx.closeDialog?.("adminModal");
             unlockAdminBackgroundScroll();
         }
+        function toggleAdminSidebar(){
+            const shell=document.querySelector("#adminModal .admin-shell");
+            if(!shell)return;
+            const button=document.getElementById("adminSidebarToggle");
+            const mobile=window.matchMedia("(max-width: 900px)").matches;
+            const className=mobile?"admin-sidebar-open":"admin-sidebar-collapsed";
+            const expanded=shell.classList.toggle(className);
+            button?.setAttribute("aria-expanded",String(expanded));
+        }
         function switchAdminView(view){
             document.querySelectorAll("[data-admin-view]").forEach(b=>b.classList.toggle("active",b.dataset.adminView===view));
             document.querySelectorAll(".admin-view").forEach(v=>v.classList.toggle("active",v.id===`adminView-${view}`));
+            const shell=document.querySelector("#adminModal .admin-shell");
+            if(window.matchMedia("(max-width: 900px)").matches){
+                shell?.classList.remove("admin-sidebar-open");
+                document.getElementById("adminSidebarToggle")?.setAttribute("aria-expanded","false");
+            }
             if(view==="products") ctx.loadAdminProducts();
             if(view==="orders") { s.adminUnreadOrders=0; ctx.updateAdminNotifBadge(); ctx.loadAdminOrders(); }
             if(view==="reviews") ctx.loadAdminReviews();
@@ -151,6 +175,9 @@ export function initAdmin() {
             return ctx.api(path, options);
         }
         async function loadAdminDashboard(){
+            const dashboard=document.getElementById("adminView-dashboard"),status=document.getElementById("adminApiStatus");
+            if(dashboard)dashboard.setAttribute("aria-busy","true");
+            if(status)status.textContent="Dashboard məlumatları yüklənir...";
             try{
                 const [p,o,r]=await Promise.all([
                     ctx.adminApi(ADMIN_API.products), ctx.adminApi(ADMIN_API.orders), ctx.adminApi(ADMIN_API.reviews)
@@ -160,15 +187,16 @@ export function initAdmin() {
                 const rs=Array.isArray(r.reviews)?r.reviews:[];
                 s.adminProducts=ps; s.adminOrders=os; s.adminReviews=rs;
                 ctx.renderAdminDashboardStats(ps,os,rs);
-                document.getElementById("adminApiStatus").textContent="✅ Supabase Admin bağlantısı işləkdir.";
+                if(status)status.textContent="Supabase admin bağlantısı işləkdir.";
             }catch(e){
-                document.getElementById("adminApiStatus").textContent=`⚠️ Admin API əlçatan deyil. Supabase cədvəlləri, RLS siyasətləri və ya admin icazəsi yoxlanmalıdır.`;
-                document.getElementById("adminStatProducts").textContent=s.products.length;
+                if(dashboard)dashboard.setAttribute("aria-busy","false");
+                if(status)status.textContent="Dashboard məlumatlarını yükləmək mümkün olmadı. Sessiyanı və bağlantını yoxlayın.";
+                console.error("Admin dashboard load failed:",e);
             }
         }
     Object.assign(ctx, {
         isAdminUser, setAdminRealtimeStatus, updateAdminNotifBadge, playAdminNotificationSound,
         stopAdminRealtime, startAdminRealtime, enableAdminDesktopNotifications, updateAdminButton,
-        openAdmin, closeAdmin, switchAdminView, adminApi
+        openAdmin, closeAdmin, switchAdminView, toggleAdminSidebar, adminApi
     });
 }
