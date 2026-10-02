@@ -311,7 +311,7 @@ const rows=[
 rows.forEach((cells,rowIndex)=>{
 const tr=document.createElement('tr');
 cells.forEach((cell,cellIndex)=>{
-const el=document.createElement('th');
+let el=document.createElement('th');
 if(rowIndex>0 && cellIndex>0) el=document.createElement('td');
 el.textContent=String(cell);
 if(rowIndex===0 && cellIndex>0) el.scope='col';
