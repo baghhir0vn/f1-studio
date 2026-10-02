@@ -79,7 +79,11 @@ function renderAdminReviews(){
         return normalizeText(searchable).includes(query);
     });
     if(!list.length){box.innerHTML='<div class="admin-empty">Rəy tapılmadı.</div>';return;}
-    box.innerHTML=list.map(r=>`<div class="admin-review-card"><div class="admin-review-head"><div><b>${escapeHTML(r.author||"Anonim")}</b><div class="admin-muted">${"★".repeat(reviewStars(r.stars))} · ${escapeHTML(r.createdAt||r.created_at||"")}</div></div><div class="admin-status">${escapeHTML(r.status||"pending")}</div></div><p style="margin:12px 0;line-height:1.6">${escapeHTML(r.text||"")}</p><div class="admin-actions"><button class="ok" data-action="setAdminReviewStatus" data-action-args='[${Number(r.id||0)},"approved"]'>✓ Təsdiqlə</button><button class="danger" data-action="setAdminReviewStatus" data-action-args='[${Number(r.id||0)},"rejected"]'>✕ Rədd et</button></div></div>`).join("");
+    box.innerHTML=list.map(r=>{
+        const status=String(r.status||"pending").toLowerCase();
+        const badgeClass=status==="approved"?"is-approved":status==="rejected"?"is-rejected":"is-pending";
+        return `<div class="admin-review-card"><div class="admin-review-head"><div><b>${escapeHTML(r.author||"Anonim")}</b><div class="admin-muted">${"★".repeat(reviewStars(r.stars))} · ${escapeHTML(r.createdAt||r.created_at||"")}</div></div><div class="admin-status ${badgeClass}">${escapeHTML(r.status||"pending")}</div></div><p style="margin:12px 0;line-height:1.6">${escapeHTML(r.text||"")}</p><div class="admin-actions"><button class="ok" data-action="setAdminReviewStatus" data-action-args='[${Number(r.id||0)},"approved"]'>✓ Təsdiqlə</button><button class="danger" data-action="setAdminReviewStatus" data-action-args='[${Number(r.id||0)},"rejected"]'>✕ Rədd et</button></div></div>`;
+    }).join("");
 }
 async function setAdminReviewStatus(id,status){
     if(!id)return showToast("Rəy ID-si tapılmadı.");
