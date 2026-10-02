@@ -327,7 +327,7 @@ body.f1-home #aboutPageView .about-faq-accordion .faq-container{
   body.f1-home #aboutPageView .about-faq-accordion{
     margin-inline:0!important;
   }
-}
-body.f1-home #aboutPageView .about-showcase{
-  aspect-ratio:1120/250;
+  body.f1-home #aboutPageView .about-showcase{
+    aspect-ratio:1120/250;
+  }
 }
