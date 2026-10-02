@@ -472,3 +472,18 @@ html[data-theme="dark"] .admin-modal .admin-secondary-stat b{color:#e4e9f1!impor
   .admin-modal .admin-nav button,.admin-modal .admin-quick-action,.admin-modal .admin-side{transition:none!important}
   .admin-modal .admin-dashboard[aria-busy="true"] .admin-kpi-value::after{animation:none!important}
 }
+@media(min-width:901px){
+  .admin-modal .admin-shell.admin-sidebar-collapsed{grid-template-columns:72px minmax(0,1fr)!important}
+  .admin-modal .admin-sidebar-collapsed .admin-side{padding-inline:8px!important}
+  .admin-modal .admin-sidebar-collapsed .admin-brand{margin-inline:0!important;font-size:0!important;text-align:center!important}
+  .admin-modal .admin-sidebar-collapsed .admin-brand::before{content:"F1";color:#ef262c;font-size:19px;font-weight:850}
+  .admin-modal .admin-sidebar-collapsed .admin-sub,
+  .admin-modal .admin-sidebar-collapsed .admin-profile-copy,
+  .admin-modal .admin-sidebar-collapsed .admin-nav-label,
+  .admin-modal .admin-sidebar-collapsed .admin-sidebar-logout{font-size:0!important}
+  .admin-modal .admin-sidebar-collapsed .admin-profile-card{justify-content:center;padding:8px 0!important}
+  .admin-modal .admin-sidebar-collapsed .admin-nav button{justify-content:center;padding:0!important}
+  .admin-modal .admin-sidebar-collapsed .admin-nav-badge{position:absolute;top:1px;right:2px;min-width:14px;height:14px;padding:0 3px;font-size:7px}
+  .admin-modal .admin-sidebar-collapsed .admin-sidebar-logout{display:grid;place-items:center;min-height:37px}
+  .admin-modal .admin-sidebar-collapsed .admin-sidebar-logout svg{width:18px;height:18px}
+}
