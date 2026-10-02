@@ -316,3 +316,18 @@ body.f1-home #aboutPageView .about-faq-accordion .faq-container{
     margin-inline:0!important;
   }
 }
+
+
+/* Match the About/contact page frame and showcase scale in the supplied reference. */
+@media(min-width:761px){
+  body.f1-home #aboutPageView{
+    padding-inline:clamp(20px,2.1vw,40px)!important;
+  }
+  body.f1-home #aboutPageView .about-delivery-accordion,
+  body.f1-home #aboutPageView .about-faq-accordion{
+    margin-inline:0!important;
+  }
+}
+body.f1-home #aboutPageView .about-showcase{
+  aspect-ratio:1120/250;
+}
