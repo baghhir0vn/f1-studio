@@ -294,3 +294,6 @@ html[data-theme="dark"] body.f1-home #aboutPageView {
   --about-soft:#292127;
   --about-shadow:0 8px 26px rgba(0,0,0,.18);
 }
+
+/* Homepage About view uses a normal-flow header; sticky section tabs should sit at the viewport edge. */
+body.f1-home #aboutPageView .about-page-tabs{top:0!important}
