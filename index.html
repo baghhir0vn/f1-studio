@@ -66,6 +66,7 @@
     <link rel="stylesheet" href="css/category-page.css?v=1">
     <link rel="stylesheet" href="css/about-page.css?v=10">
 <link rel="stylesheet" href="css/chat-assistant.css?v=6">
+<link rel="stylesheet" href="css/admin-dashboard-refresh.css?v=1">
 </head>
 <body class="f1-home">
 <div class="announcement-bar" id="announcementBar" aria-label="F1 Studio xidmət üstünlükləri">
@@ -938,68 +939,101 @@
 <div class="modal-center admin-modal" id="adminModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="adminModalTitle">
   <div class="dialog">
     <div class="admin-shell">
-      <aside class="admin-side">
-        <div class="admin-brand">F1 <span style="color:var(--accent)">STUDIO</span></div>
-        <div class="admin-sub">İdarəetmə paneli · V25</div>
-        <div class="admin-nav">
-          <button class="active" data-admin-view="dashboard" data-action="switchAdminView" data-action-args='[&quot;dashboard&quot;]'>📊 Panel</button>
-          <button data-admin-view="products" data-action="switchAdminView" data-action-args='[&quot;products&quot;]'>📦 Məhsullar</button>
-          <button data-admin-view="orders" data-action="switchAdminView" data-action-args='[&quot;orders&quot;]'>🧾 Sifarişlər</button>
-          <button data-admin-view="customers" data-action="switchAdminView" data-action-args='[&quot;customers&quot;]'>👥 Müştərilər</button>
-          <button data-admin-view="reviews" data-action="switchAdminView" data-action-args='[&quot;reviews&quot;]'>⭐ Rəylər</button><button data-admin-view="homepage" data-action="switchAdminView" data-action-args='[&quot;homepage&quot;]'>✏️ Ana səhifə</button><button data-admin-view="banners" data-action="switchAdminView" data-action-args='[&quot;banners&quot;]'>🖼 Bannerlar</button><button data-admin-view="content" data-action="switchAdminView" data-action-args='[&quot;content&quot;]'>🎨 Kateqoriya & Hero</button><button data-admin-view="settings" data-action="switchAdminView" data-action-args='[&quot;settings&quot;]'>⚙️ Ayarlar</button>
+      <aside class="admin-side" aria-label="Admin menyusu">
+        <div class="admin-brand"><span>F1</span> STUDIO</div>
+        <div class="admin-sub">Admin Panel</div>
+        <div class="admin-profile-card">
+          <div class="admin-avatar" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M5.4 20c.6-3.5 2.8-5.4 6.6-5.4s6 1.9 6.6 5.4"/></svg></div>
+          <div class="admin-profile-copy"><b id="adminUserStatus">Yüklənir...</b><span class="admin-profile-role">Admin</span><span class="admin-profile-online"><i></i> Online</span><div id="adminSessionStatus" class="admin-session-status">Admin sessiyası yoxlanılmayıb.</div></div>
         </div>
+        <nav class="admin-nav" aria-label="Admin bölmələri">
+          <button class="active" data-admin-view="dashboard" data-action="switchAdminView" data-action-args='[&quot;dashboard&quot;]'><span class="admin-nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1.5"/><rect x="13" y="3" width="8" height="5" rx="1.5"/><rect x="13" y="10" width="8" height="11" rx="1.5"/><rect x="3" y="13" width="8" height="8" rx="1.5"/></svg></span><span class="admin-nav-label">İdarə Paneli</span></button>
+          <button data-admin-view="orders" data-action="switchAdminView" data-action-args='[&quot;orders&quot;]'><span class="admin-nav-icon"><svg viewBox="0 0 24 24"><path d="M3 4h2l2.2 11.1a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 1.9-1.4L20 8H6"/><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/></svg></span><span class="admin-nav-label">Sifarişlər</span><span id="adminSidebarOrderBadge" class="admin-nav-badge hidden">0</span></button>
+          <button data-admin-view="products" data-action="switchAdminView" data-action-args='[&quot;products&quot;]'><span class="admin-nav-icon"><svg viewBox="0 0 24 24"><path d="m12 3 8 4.3v9.4L12 21l-8-4.3V7.3L12 3Z"/><path d="m4.3 7.5 7.7 4.2 7.7-4.2M12 21v-9.3"/></svg></span><span class="admin-nav-label">Məhsullar</span></button>
+          <button data-admin-view="content" data-action="switchAdminView" data-action-args='[&quot;content&quot;]'><span class="admin-nav-icon"><svg viewBox="0 0 24 24"><path d="M4 5.5h16v14H4zM8 3v5M16 3v5M4 10h16"/><path d="M8 14h3M8 17h7"/></svg></span><span class="admin-nav-label">Kateqoriyalar & Hero</span></button>
+          <button data-admin-view="homepage" data-action="switchAdminView" data-action-args='[&quot;homepage&quot;]'><span class="admin-nav-icon"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4z"/><path d="m6 16 4-4 3 3 2-2 3 3M9 9h.01"/></svg></span><span class="admin-nav-label">Ana Səhifə Məzmunu</span></button>
+          <button data-admin-view="banners" data-action="switchAdminView" data-action-args='[&quot;banners&quot;]'><span class="admin-nav-icon"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m5 16 5-5 3 3 2-2 4 4M8 9h.01"/></svg></span><span class="admin-nav-label">Bannerlər</span></button>
+          <button data-admin-view="customers" data-action="switchAdminView" data-action-args='[&quot;customers&quot;]'><span class="admin-nav-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3.5 20c.5-3.1 2.3-4.8 5.5-4.8s5 1.7 5.5 4.8M16 5.5a2.8 2.8 0 0 1 0 5.5M17 15.3c2.2.5 3.4 2 3.7 4.7"/></svg></span><span class="admin-nav-label">Müştərilər</span></button>
+          <button data-admin-view="reviews" data-action="switchAdminView" data-action-args='[&quot;reviews&quot;]'><span class="admin-nav-icon"><svg viewBox="0 0 24 24"><path d="m12 3 2.7 5.5 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9L12 3Z"/></svg></span><span class="admin-nav-label">Rəylər</span></button>
+          <button data-admin-view="settings" data-action="switchAdminView" data-action-args='[&quot;settings&quot;]'><span class="admin-nav-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.1 1.9-1.8 3.1-2.2-.5a8.4 8.4 0 0 1-1.8 1l-.6 2.2h-3.6L10 20.6a8.4 8.4 0 0 1-1.8-1l-2.2.5-1.8-3.1 1.1-1.9A8.2 8.2 0 0 1 5 13.1l-2-1.1V8.4l2-1.1a8.2 8.2 0 0 1 .3-2L4.2 3.4l1.8-3.1 2.2.5a8.4 8.4 0 0 1 1.8-1L10.6-2h3.6l.6 2.2a8.4 8.4 0 0 1 1.8 1l2.2-.5 1.8 3.1-1.1 1.9a8.2 8.2 0 0 1 .3 2l2 1.1V12l-2 1.1a8.2 8.2 0 0 1-.4 1.9Z" transform="translate(0 2) scale(.9)"/></svg></span><span class="admin-nav-label">Sistem Parametrləri</span></button>
+        </nav>
+        <button class="admin-sidebar-logout" type="button" data-action="logoutProfile"><svg viewBox="0 0 24 24"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7"/></svg>Çıxış et</button>
       </aside>
       <section class="admin-main">
         <div class="admin-top">
-          <div><h2 id="adminModalTitle">F1 Studio Admin</h2><div class="admin-muted" id="adminUserStatus">Yüklənir...</div><div id="adminSessionStatus" class="admin-session-status">Admin sessiyası yoxlanılmayıb.</div></div>
-          <button class="close" type="button" data-action="closeAdmin" aria-label="Admin panelini bağla">×</button>
+          <div class="admin-top-left">
+            <button class="admin-sidebar-toggle" id="adminSidebarToggle" type="button" data-action="toggleAdminSidebar" aria-label="Admin menyusunu aç" aria-expanded="false"><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+            <div><h2 id="adminModalTitle">İdarə Paneli</h2><div class="admin-welcome" id="adminWelcomeText">Xoş gəlmisiniz, Admin</div></div>
+          </div>
+          <div class="admin-top-actions">
+            <div class="admin-date-chip" aria-label="Bugünkü tarix"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg><time id="adminCurrentDate">—</time></div>
+            <button class="admin-top-notification" id="adminTopNotification" type="button" data-action="switchAdminView" data-action-args='[&quot;orders&quot;]' aria-label="Sifariş bildirişləri"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span id="adminTopNotifBadge" class="hidden">0</span></button>
+            <button class="close" type="button" data-action="closeAdmin" aria-label="Admin panelini bağla">×</button>
+          </div>
         </div>
 
-        <div class="admin-view active" id="adminView-dashboard">
+        <div class="admin-view active admin-dashboard" id="adminView-dashboard" aria-busy="true">
           <div class="admin-note">Bu panel yalnız Supabase-də <b>admin</b> rolu verilmiş hesaba açılır. Məlumatlar Supabase Database üzərində saxlanılır. Statistikalar son yüklənmiş sifariş məlumatlarına əsaslanır; məbləğlər ödəniş edilmiş məbləğ yox, sistemdə qeydə alınmış sifariş dəyəridir.</div>
           <div class="admin-realtime-row">
             <div id="adminRealtimeStatus" class="admin-realtime-status"><span class="admin-realtime-dot"></span>Canlı sifariş bildirişləri qoşulur...</div>
-            <button class="admin-panel-head" style="border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:9px;padding:8px 11px;cursor:pointer;font-size:12px;" data-action="enableAdminDesktopNotifications">🔔 Masaüstü bildirişlərini aktiv et</button>
+            <button class="admin-dashboard-notice" data-action="enableAdminDesktopNotifications"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg>Masaüstü bildirişlərini aktiv et</button>
           </div>
-          <div class="admin-stats admin-stats-wide">
-            <div class="admin-stat"><span>Məhsul sayı</span><b id="adminStatProducts">0</b></div>
-            <div class="admin-stat"><span>Sifariş sayı</span><b id="adminStatOrders">0</b></div>
-            <div class="admin-stat"><span>Bu gün sifariş</span><b id="adminStatTodayOrders">0</b></div>
-            <div class="admin-stat"><span>Gözləyən sifariş</span><b id="adminStatPending">0</b></div>
-            <div class="admin-stat"><span>Tamamlanan</span><b id="adminStatCompleted">0</b></div>
-            <div class="admin-stat"><span>Qeydə alınmış dövriyyə</span><b id="adminStatRevenue">0 ₼</b></div>
-            <div class="admin-stat"><span>Bu gün sifariş dəyəri</span><b id="adminStatTodayRevenue">0 ₼</b></div>
-            <div class="admin-stat"><span>Orta sifariş</span><b id="adminStatAverage">0 ₼</b></div>
-            <div class="admin-stat"><span>Gözləyən rəy</span><b id="adminStatReviews">0</b></div>
-          </div>
-          <div class="admin-dashboard-grid">
-            <div class="admin-panel-card">
+          <section class="admin-kpis" aria-label="Əsas göstəricilər">
+            <article class="admin-kpi"><span class="admin-kpi-icon"><svg viewBox="0 0 24 24"><path d="M3 4h2l2.2 11.1a2 2 0 0 0 2 1.6h7.2a2 2 0 0 0 1.9-1.4L20 8H6"/><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/></svg></span><div class="admin-kpi-copy"><span class="admin-kpi-label">Ümumi Sifarişlər</span><b class="admin-kpi-value" id="adminStatOrders">0</b><small class="admin-kpi-foot">Bütün qeydə alınmış sifarişlər</small></div></article>
+            <article class="admin-kpi"><span class="admin-kpi-icon green"><svg viewBox="0 0 24 24"><path d="M12 3v18M17 7.5c-.7-1-2-1.5-4.4-1.5-2.2 0-3.6 1-3.6 2.6 0 4.1 8.3 1.4 8.3 5.5 0 1.8-1.8 2.9-4.3 2.9-2 0-3.5-.5-4.5-1.5"/></svg></span><div class="admin-kpi-copy"><span class="admin-kpi-label">Ümumi Gəlir</span><b class="admin-kpi-value" id="adminStatRevenue">0 ₼</b><small class="admin-kpi-foot">Ləğv olunmuş sifarişlər çıxılmaqla</small></div></article>
+            <article class="admin-kpi"><span class="admin-kpi-icon blue"><svg viewBox="0 0 24 24"><path d="m12 3 8 4.3v9.4L12 21l-8-4.3V7.3L12 3Z"/><path d="m4.3 7.5 7.7 4.2 7.7-4.2M12 21v-9.3"/></svg></span><div class="admin-kpi-copy"><span class="admin-kpi-label">Məhsullar</span><b class="admin-kpi-value" id="adminStatProducts">0</b><small class="admin-kpi-foot">Admin kataloqunda</small></div></article>
+            <article class="admin-kpi"><span class="admin-kpi-icon violet"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.6-3.3 2.8-5.2 6.5-5.2s5.9 1.9 6.5 5.2"/></svg></span><div class="admin-kpi-copy"><span class="admin-kpi-label">Bu gün sifariş</span><b class="admin-kpi-value" id="adminStatTodayOrders">0</b><small class="admin-kpi-foot">Müştəri sayı deyil, sifariş sayı</small></div></article>
+          </section>
+          <section class="admin-secondary-stats" aria-label="Əlavə göstəricilər">
+            <div class="admin-secondary-stat"><span>Gözləyən sifarişlər</span><b id="adminStatPending">0</b></div>
+            <div class="admin-secondary-stat"><span>Tamamlanan sifarişlər</span><b id="adminStatCompleted">0</b></div>
+            <div class="admin-secondary-stat"><span>Bu gün sifariş dəyəri</span><b id="adminStatTodayRevenue">0 ₼</b></div>
+            <div class="admin-secondary-stat"><span>Orta sifariş məbləği</span><b id="adminStatAverage">0 ₼</b></div>
+            <div class="admin-secondary-stat"><span>Gözləyən rəylər</span><b id="adminStatReviews">0</b></div>
+          </section>
+          <section class="admin-dashboard-grid" aria-label="Satış analitikası">
+            <article class="admin-panel-card">
               <div class="admin-panel-head admin-dashboard-analytics-head">
-                <div><h3 id="adminSalesChartTitle">Son 7 gün</h3><div class="admin-muted">Sifariş sayı və sifariş dəyəri</div></div>
+                <div><h3 id="adminSalesChartTitle">Gəlir Statistikası</h3><div class="admin-muted">Sifarişlər üzrə qeydə alınmış gəlir</div></div>
                 <div class="admin-dashboard-actions">
-                  <select id="adminDashboardRange" data-change-action="setAdminDashboardRange" aria-label="Dashboard analitika dövrü">
-                    <option value="today">Bu gün</option>
-                    <option value="7" selected>Son 7 gün</option>
-                    <option value="30">Son 30 gün</option>
-                    <option value="all">Bütün dövr</option>
-                  </select>
+                  <select id="adminDashboardRange" data-change-action="setAdminDashboardRange" data-change-args='[{&quot;$&quot;:&quot;this&quot;}]' aria-label="Gəlir statistikası dövrü"><option value="today">Bu gün</option><option value="7" selected>Son 7 gün</option><option value="30">Son 30 gün</option><option value="all">Bütün dövr</option></select>
                   <button type="button" data-action="exportAdminDashboardCSV">CSV</button>
-                  <button type="button" data-action="loadAdminDashboard">↻ Yenilə</button>
+                  <button type="button" data-action="loadAdminDashboard" aria-label="Dashboard məlumatlarını yenilə">↻</button>
                 </div>
               </div>
               <div id="adminDashboardRangeSummary" class="admin-dashboard-range-summary"></div>
-              <div id="adminSalesChart" class="admin-sales-chart"></div>
-            </div>
-            <div class="admin-panel-card">
-              <div class="admin-panel-head"><div><h3>Ən çox sifariş edilənlər</h3><div class="admin-muted">Ləğv edilmiş sifarişlər nəzərə alınmır</div></div></div>
+              <div id="adminSalesChart" class="admin-sales-chart" aria-label="Günlər üzrə gəlir qrafiki"></div>
+            </article>
+            <article class="admin-panel-card">
+              <div class="admin-panel-head admin-dashboard-analytics-head">
+                <div><h3>Sifariş Statusları</h3><div class="admin-muted">Hazırkı sifarişlərin bölgüsü</div></div>
+                <div class="admin-dashboard-actions"><select id="adminStatusRange" data-change-action="setAdminDashboardRange" data-change-args='[{&quot;$&quot;:&quot;this&quot;}]' aria-label="Status qrafiki dövrü"><option value="today">Bu gün</option><option value="7" selected>Son 7 gün</option><option value="30">Son 30 gün</option><option value="all">Bütün dövr</option></select></div>
+              </div>
+              <div class="admin-status-chart-layout"><div id="adminStatusChart" class="admin-donut" role="img" aria-label="Sifariş statusları diaqramı"><div class="admin-donut-center"><b id="adminStatusTotal">0</b><span>Sifariş</span></div></div><div id="adminStatusLegend" class="admin-status-legend"></div></div>
+            </article>
+          </section>
+          <section class="admin-recent-products-grid" aria-label="Son sifarişlər və ən çox satılan məhsullar">
+            <article class="admin-recent-card">
+              <div class="admin-panel-head"><div><h3>Son Sifarişlər</h3><div class="admin-muted">Ən son 5 sifariş</div></div><button type="button" data-action="switchAdminView" data-action-args='[&quot;orders&quot;]'>Hamısına bax →</button></div>
+              <div class="admin-recent-orders"><table class="admin-table"><thead><tr><th>#</th><th>Müştəri</th><th>Məbləğ</th><th>Status</th><th>Tarix</th><th></th></tr></thead><tbody id="adminRecentOrders"></tbody></table></div>
+            </article>
+            <article class="admin-recent-card">
+              <div class="admin-panel-head"><div><h3>Ən Çox Satılan Məhsullar</h3><div class="admin-muted">Sifariş sətirlərindən hesablanır</div></div><button type="button" data-action="switchAdminView" data-action-args='[&quot;products&quot;]'>Hamısına bax →</button></div>
               <div id="adminTopProducts" class="admin-top-products"></div>
+            </article>
+          </section>
+          <section class="admin-quick-actions" aria-labelledby="adminQuickActionsTitle">
+            <div class="admin-panel-head"><h3 id="adminQuickActionsTitle">Tez Əməliyyatlar</h3></div>
+            <div class="admin-quick-grid">
+              <button class="admin-quick-action" type="button" data-actions='[[&quot;switchAdminView&quot;,[&quot;products&quot;]],[&quot;newAdminProduct&quot;,[]]]'><span class="admin-quick-icon"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/><rect x="3" y="3" width="18" height="18" rx="4"/></svg></span>Məhsul əlavə et</button>
+              <button class="admin-quick-action" type="button" data-action="switchAdminView" data-action-args='[&quot;orders&quot;]'><span class="admin-quick-icon blue"><svg viewBox="0 0 24 24"><path d="M4 4h16v16H4zM8 8h8M8 12h8M8 16h5"/></svg></span>Sifarişləri idarə et</button>
+              <button class="admin-quick-action" type="button" data-action="switchAdminView" data-action-args='[&quot;content&quot;]'><span class="admin-quick-icon green"><svg viewBox="0 0 24 24"><path d="M4 5h16v15H4zM8 3v4M16 3v4M4 10h16"/></svg></span>Kateqoriya & Hero</button>
+              <button class="admin-quick-action" type="button" data-action="switchAdminView" data-action-args='[&quot;banners&quot;]'><span class="admin-quick-icon violet"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m5 16 5-5 3 3 2-2 4 4"/></svg></span>Banner əlavə et</button>
+              <button class="admin-quick-action" type="button" data-action="switchAdminView" data-action-args='[&quot;homepage&quot;]'><span class="admin-quick-icon amber"><svg viewBox="0 0 24 24"><path d="M12 3v18M4 7h16M6 7l-3 6h6L6 7Zm12 0-3 6h6l-3-6ZM7 21h10"/></svg></span>Ana səhifə məzmunu</button>
+              <button class="admin-quick-action" type="button" data-action="switchAdminView" data-action-args='[&quot;customers&quot;]'><span class="admin-quick-icon blue"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3.5 20c.5-3.1 2.3-4.8 5.5-4.8s5 1.7 5.5 4.8M16 5.5a2.8 2.8 0 0 1 0 5.5M17 15.3c2.2.5 3.4 2 3.7 4.7"/></svg></span>Müştərilərə bax</button>
             </div>
-          </div>
-          <div class="admin-panel-card admin-recent-card">
-            <div class="admin-panel-head"><div><h3>Son sifarişlər</h3><div class="admin-muted">Ən son 5 sifariş</div></div><button data-action="switchAdminView" data-action-args='[&quot;orders&quot;]'>Hamısına bax →</button></div>
-            <div id="adminRecentOrders" class="admin-recent-orders"></div>
-          </div>
-          <div class="admin-status" id="adminApiStatus">Supabase bağlantısı yoxlanılır...</div>
+          </section>
+          <div class="admin-status" id="adminApiStatus" role="status" aria-live="polite">Supabase bağlantısı yoxlanılır...</div>
         </div>
 
         <div class="admin-view" id="adminView-products">
