@@ -264,3 +264,48 @@ html[data-theme="dark"] body.f1-home .chat-trigger{
     flex-basis:26px!important;
   }
 }
+
+
+/* Compact the open assistant without changing its messaging behavior. */
+#chatBox.chat-box,body.f1-about-route #chatBox.chat-box{
+  width:min(480px,calc(100vw - 32px))!important;
+  height:min(620px,calc(100dvh - 120px))!important;
+  min-height:360px!important;
+  max-height:calc(100dvh - 120px)!important;
+}
+.chat-box .chat-header{
+  flex-basis:64px!important;
+  min-height:64px!important;
+  padding:8px 14px 8px 16px!important;
+  border-radius:17px 17px 0 0!important;
+}
+.chat-box .chat-avatar{
+  width:38px!important;
+  height:38px!important;
+  flex-basis:38px!important;
+}
+.chat-box .chat-brand{gap:10px!important}
+.chat-box .chat-brand h4{font-size:15px!important}
+.chat-box .chat-brand small{font-size:10px!important}
+.chat-box .chat-body{padding:11px 13px!important}
+@media(max-width:760px){
+  #chatBox.chat-box,body.f1-about-route #chatBox.chat-box{
+    inset:auto 10px calc(82px + env(safe-area-inset-bottom,0px)) 10px!important;
+    width:auto!important;
+    height:min(560px,calc(100dvh - 160px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))!important;
+    min-height:320px!important;
+    max-height:calc(100dvh - 160px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important;
+    border-radius:18px!important;
+  }
+  .chat-box .chat-header{
+    flex-basis:58px!important;
+    min-height:58px!important;
+    padding:7px 10px 7px 12px!important;
+    border-radius:17px 17px 0 0!important;
+  }
+  .chat-box .chat-avatar{width:34px!important;height:34px!important;flex-basis:34px!important}
+  .chat-box .chat-brand{gap:8px!important}
+  .chat-box .chat-brand h4{font-size:14px!important}
+  .chat-box .chat-brand small{font-size:9px!important}
+  .chat-box .chat-body{padding:9px 10px!important}
+}
