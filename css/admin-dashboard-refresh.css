@@ -1035,6 +1035,9 @@ html[data-theme="dark"] .admin-modal #adminView-orders .admin-order-actions butt
 .admin-modal #adminView-reviews .admin-review-head b {color:#262d39;font-size:11px;font-weight:730}
 .admin-modal #adminView-reviews .admin-review-head .admin-muted {margin-top:4px;color:#929bab;font-size:8px}
 .admin-modal #adminView-reviews .admin-review-card>p {color:#4b5564;font-size:10px}
+.admin-modal #adminView-reviews .admin-review-card .admin-status.is-approved {color:#16825b;border-color:#cdebdc;background:#effaf4}
+.admin-modal #adminView-reviews .admin-review-card .admin-status.is-rejected {color:#c9363b;border-color:#f0d1d3;background:#fff5f5}
+.admin-modal #adminView-reviews .admin-review-card .admin-status.is-pending {color:#ad7600;border-color:#f2e3bc;background:#fffaf0}
 .admin-modal #adminView-reviews .admin-review-card .admin-status {
   display:inline-flex;
   align-items:center;
@@ -1047,7 +1050,6 @@ html[data-theme="dark"] .admin-modal #adminView-orders .admin-order-actions butt
   font-size:8px;
   font-weight:700;
 }
-.admin-modal #adminView-reviews .admin-review-card .admin-status:where(:contains("approved")) {color:#16825b}
 .admin-modal #adminView-reviews .admin-empty {
   padding:20px;
   border:1px dashed #dce1e9;
