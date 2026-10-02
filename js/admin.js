@@ -137,7 +137,7 @@ export function initAdmin() {
             const welcome=document.getElementById("adminWelcomeText"); if(welcome)welcome.textContent=`Xoş gəlmisiniz, ${(s.authUser.name||"").trim().split(/\\s+/)[0]||"Admin"}`;
             const date=document.getElementById("adminCurrentDate");
             if(date){const now=new Date();date.textContent=now.toLocaleDateString("az-AZ",{day:"numeric",month:"long",year:"numeric"});date.dateTime=now.toISOString();}
-            document.querySelector("#adminModal .admin-shell")?.classList.remove("admin-sidebar-open");
+            document.querySelector("#adminModal .admin-shell")?.classList.remove("admin-sidebar-open","admin-sidebar-collapsed");
             ctx.updateAdminNotifBadge();
             ctx.switchAdminView("dashboard");
             ctx.loadAdminDashboard();
@@ -153,7 +153,8 @@ export function initAdmin() {
             const button=document.getElementById("adminSidebarToggle");
             const mobile=window.matchMedia("(max-width: 900px)").matches;
             const className=mobile?"admin-sidebar-open":"admin-sidebar-collapsed";
-            const expanded=shell.classList.toggle(className);
+            const toggled=shell.classList.toggle(className);
+            const expanded=mobile?toggled:!toggled;
             button?.setAttribute("aria-expanded",String(expanded));
         }
         function switchAdminView(view){
