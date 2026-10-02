@@ -355,7 +355,7 @@
 .admin-modal .admin-quick-icon.violet{color:#8a4bed;background:#f5efff}
 .admin-modal .admin-quick-icon.amber{color:#db8a0b;background:#fff7e7}
 .admin-modal .admin-quick-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.admin-modal .admin-status{margin-top:10px!important;padding:9px 10px!important;border:1px solid #e8ebf1!important;border-radius:9px!important;color:#737d8d!important;background:#fff!important;font-size:8px!important;line-height:1.4!important}
+.admin-modal #adminView-dashboard .admin-status{margin-top:10px!important;padding:9px 10px!important;border:1px solid #e8ebf1!important;border-radius:9px!important;color:#737d8d!important;background:#fff!important;font-size:8px!important;line-height:1.4!important}
 .admin-modal .admin-dashboard[aria-busy="true"] .admin-kpi-value{color:transparent!important;position:relative;overflow:hidden}
 .admin-modal .admin-dashboard[aria-busy="true"] .admin-kpi-value::after{
   content:"";position:absolute;inset:2px 0;border-radius:5px;background:linear-gradient(90deg,#eef0f4,#fafbfc,#eef0f4);background-size:200% 100%;animation:admin-skeleton 1.5s ease-in-out infinite;
@@ -486,4 +486,158 @@ html[data-theme="dark"] .admin-modal .admin-secondary-stat b{color:#e4e9f1!impor
   .admin-modal .admin-sidebar-collapsed .admin-nav-badge{position:absolute;top:1px;right:2px;min-width:14px;height:14px;padding:0 3px;font-size:7px}
   .admin-modal .admin-sidebar-collapsed .admin-sidebar-logout{display:grid;place-items:center;min-height:37px}
   .admin-modal .admin-sidebar-collapsed .admin-sidebar-logout svg{width:18px;height:18px}
+}
+
+/* Orders view: restore clear card hierarchy without changing its data/actions. */
+.admin-modal #adminView-orders .admin-orders-toolbar{
+  display:grid!important;
+  grid-template-columns:minmax(260px,1fr) minmax(132px,156px) minmax(132px,156px) auto auto!important;
+  align-items:center!important;
+  gap:8px!important;
+  margin:0 0 12px!important;
+  padding:0!important;
+}
+.admin-modal #adminView-orders .admin-orders-toolbar input,
+.admin-modal #adminView-orders .admin-orders-toolbar select,
+.admin-modal #adminView-orders .admin-orders-toolbar button{
+  box-sizing:border-box!important;
+  width:100%!important;
+  min-width:0!important;
+  min-height:38px!important;
+  margin:0!important;
+  padding:0 11px!important;
+  border:1px solid #e3e7ee!important;
+  border-radius:10px!important;
+  color:#333b49!important;
+  background:#fff!important;
+  font:inherit!important;
+  font-size:10px!important;
+}
+.admin-modal #adminView-orders .admin-orders-toolbar input:focus,
+.admin-modal #adminView-orders .admin-orders-toolbar select:focus{
+  outline:2px solid rgba(232,37,45,.17)!important;border-color:#ef8c91!important;
+}
+.admin-modal #adminView-orders .admin-orders-toolbar button{
+  width:auto!important;padding-inline:14px!important;font-weight:700!important;white-space:nowrap!important;cursor:pointer!important;
+}
+.admin-modal #adminView-orders .admin-orders-toolbar button:hover{
+  border-color:#ef9da1!important;color:#d92129!important;
+}
+.admin-modal #adminView-orders .admin-note{margin-bottom:13px!important}
+.admin-modal #adminView-orders .admin-bulk-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
+  margin:0 0 12px;padding:10px 12px;border:1px solid #e8ebf1;border-radius:11px;background:#fff;
+}
+.admin-modal #adminView-orders .admin-bulk-bar[hidden]{display:none!important}
+.admin-modal #adminView-orders .admin-bulk-select-all,
+.admin-modal #adminView-orders .admin-bulk-count{color:#626c7c;font-size:9px;font-weight:650}
+.admin-modal #adminView-orders .admin-bulk-actions{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.admin-modal #adminView-orders .admin-bulk-actions select,
+.admin-modal #adminView-orders .admin-bulk-actions button{
+  min-height:32px;padding:0 10px;border:1px solid #e4e8ef;border-radius:8px;color:#4e5868;background:#fff;font:inherit;font-size:9px;font-weight:650;cursor:pointer;
+}
+.admin-modal #adminView-orders #adminOrdersList{display:grid;gap:12px}
+.admin-modal #adminView-orders .admin-order-card{
+  min-width:0;padding:15px;border:1px solid #e7eaf0;border-radius:14px;background:#fff;
+  box-shadow:0 4px 15px rgba(27,35,49,.035);
+}
+.admin-modal #adminView-orders .admin-order-head{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:14px;padding:0 0 12px;border-bottom:1px solid #edf0f4;
+}
+.admin-modal #adminView-orders .admin-order-code{display:block;color:#1d2430;font-size:13px;font-weight:780;line-height:1.3}
+.admin-modal #adminView-orders .admin-order-head .admin-muted{margin-top:4px;color:#838c9b;font-size:9px;line-height:1.45}
+.admin-modal #adminView-orders .admin-order-head .admin-status{
+  display:inline-flex!important;align-items:center!important;flex:0 0 auto!important;width:auto!important;min-height:24px!important;
+  margin:0!important;padding:0 9px!important;border:1px solid #e9eef7!important;border-radius:20px!important;
+  color:#426cae!important;background:#f0f5ff!important;font-size:8px!important;font-weight:720!important;line-height:1!important;
+}
+.admin-modal #adminView-orders .admin-order-info-grid{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px;
+}
+.admin-modal #adminView-orders .admin-order-info-grid>div{
+  display:flex;flex-direction:column;gap:5px;min-width:0;padding:9px 10px;border:1px solid #edf0f4;border-radius:9px;background:#fafbfc;
+}
+.admin-modal #adminView-orders .admin-order-info-grid>div>span{color:#8791a1;font-size:8px;font-weight:600;line-height:1.25}
+.admin-modal #adminView-orders .admin-order-info-grid>div>b{
+  color:#303744;font-size:9px;font-weight:680;line-height:1.35;overflow-wrap:anywhere;
+}
+.admin-modal #adminView-orders .admin-order-card>.admin-order-info-grid+div{margin-top:12px!important}
+.admin-modal #adminView-orders .admin-order-card>.admin-order-info-grid+div>.admin-muted{
+  margin:0 0 7px!important;color:#758092!important;font-size:9px!important;
+}
+.admin-modal #adminView-orders .admin-pill{
+  display:block;min-width:0;margin:0 0 6px;padding:9px 10px;border:1px solid #edf0f4;border-radius:9px;color:#343b48;background:#fff;font-size:9px;line-height:1.45;
+}
+.admin-modal #adminView-orders .admin-pill:last-child{margin-bottom:0}
+.admin-modal #adminView-orders .admin-pill>b{color:#252c38;font-size:10px;font-weight:720}
+.admin-modal #adminView-orders .admin-pill .admin-muted{color:#8590a0!important;font-size:8px!important;line-height:1.4}
+.admin-modal #adminView-orders .admin-pill a.admin-design-link{
+  display:inline-flex;align-items:center;min-height:27px;margin-top:2px;padding:0 9px;border:1px solid #e6eaf0;border-radius:7px;color:#51627e;background:#f8f9fb;font-size:8px;font-weight:650;text-decoration:none;
+}
+.admin-modal #adminView-orders .admin-order-actions{
+  display:flex!important;align-items:center!important;flex-wrap:wrap!important;gap:7px!important;margin-top:13px!important;padding-top:11px;border-top:1px solid #edf0f4;
+}
+.admin-modal #adminView-orders .admin-order-actions select,
+.admin-modal #adminView-orders .admin-order-actions button,
+.admin-modal #adminView-orders .admin-order-actions a{
+  box-sizing:border-box!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;
+  min-width:0!important;min-height:33px!important;margin:0!important;padding:0 11px!important;
+  border:1px solid #e2e6ed!important;border-radius:8px!important;color:#4a5362!important;background:#fff!important;
+  font:inherit!important;font-size:9px!important;font-weight:680!important;line-height:1.2!important;text-decoration:none!important;white-space:nowrap!important;cursor:pointer!important;
+}
+.admin-modal #adminView-orders .admin-order-actions select{max-width:190px}
+.admin-modal #adminView-orders .admin-order-actions button.admin-primary{
+  border-color:#536c4d!important;color:#fff!important;background:#536c4d!important;
+}
+.admin-modal #adminView-orders .admin-order-actions .admin-next-status{
+  border-color:#e5eaf2!important;color:#465773!important;background:#f7f9fc!important;
+}
+.admin-modal #adminView-orders .admin-order-actions .admin-whatsapp-link{
+  border-color:#cdebdc!important;color:#15845a!important;background:#f0fbf5!important;
+}
+.admin-modal #adminView-orders .admin-order-actions button.danger{
+  border-color:#f2d2d3!important;color:#c9353b!important;background:#fff8f8!important;
+}
+.admin-modal #adminView-orders .admin-order-actions button:hover,
+.admin-modal #adminView-orders .admin-order-actions a:hover{filter:brightness(.98);box-shadow:0 3px 9px rgba(30,38,52,.07)}
+html[data-theme="dark"] .admin-modal #adminView-orders .admin-order-card,
+html[data-theme="dark"] .admin-modal #adminView-orders .admin-bulk-bar{border-color:#303744!important;background:#1b202b!important;color:#e4e9f1!important}
+html[data-theme="dark"] .admin-modal #adminView-orders .admin-order-code,
+html[data-theme="dark"] .admin-modal #adminView-orders .admin-order-info-grid>div>b,
+html[data-theme="dark"] .admin-modal #adminView-orders .admin-pill,
+html[data-theme="dark"] .admin-modal #adminView-orders .admin-pill>b{color:#eef1f6!important}
+html[data-theme="dark"] .admin-modal #adminView-orders .admin-order-head,
+html[data-theme="dark"] .admin-modal #adminView-orders .admin-order-actions{border-color:#303744!important}
+html[data-theme="dark"] .admin-modal #adminView-orders .admin-order-info-grid>div,
+html[data-theme="dark"] .admin-modal #adminView-orders .admin-pill{border-color:#303744!important;background:#202633!important}
+html[data-theme="dark"] .admin-modal #adminView-orders .admin-order-actions select,
+html[data-theme="dark"] .admin-modal #adminView-orders .admin-order-actions button,
+html[data-theme="dark"] .admin-modal #adminView-orders .admin-order-actions a,
+html[data-theme="dark"] .admin-modal #adminView-orders .admin-bulk-actions select,
+html[data-theme="dark"] .admin-modal #adminView-orders .admin-bulk-actions button{border-color:#3b4453!important;color:#e1e6ef!important;background:#242b38!important}
+html[data-theme="dark"] .admin-modal #adminView-orders .admin-order-actions button.admin-primary{border-color:#536c4d!important;color:#fff!important;background:#536c4d!important}
+@media(max-width:1120px){
+  .admin-modal #adminView-orders .admin-orders-toolbar{grid-template-columns:minmax(0,1fr) minmax(130px,160px)!important}
+  .admin-modal #adminView-orders .admin-orders-toolbar input{grid-column:1/-1}
+  .admin-modal #adminView-orders .admin-order-info-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(max-width:680px){
+  .admin-modal #adminView-orders .admin-orders-toolbar{grid-template-columns:minmax(0,1fr)!important;gap:7px!important}
+  .admin-modal #adminView-orders .admin-orders-toolbar>*{grid-column:1!important;width:100%!important}
+  .admin-modal #adminView-orders .admin-order-card{padding:11px!important;border-radius:11px!important}
+  .admin-modal #adminView-orders .admin-order-head{gap:8px;padding-bottom:10px}
+  .admin-modal #adminView-orders .admin-order-code{font-size:11px}
+  .admin-modal #adminView-orders .admin-order-info-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:9px}
+  .admin-modal #adminView-orders .admin-order-info-grid>div{padding:8px}
+  .admin-modal #adminView-orders .admin-order-info-grid>div>b{font-size:8px}
+  .admin-modal #adminView-orders .admin-pill{padding:8px;font-size:8px}
+  .admin-modal #adminView-orders .admin-order-actions{gap:6px!important;padding-top:9px}
+  .admin-modal #adminView-orders .admin-order-actions select{max-width:none;width:100%!important}
+  .admin-modal #adminView-orders .admin-order-actions button,
+  .admin-modal #adminView-orders .admin-order-actions a{flex:1 1 calc(50% - 6px);min-height:35px!important}
+}
+@media(max-width:360px){
+  .admin-modal #adminView-orders .admin-order-info-grid{grid-template-columns:minmax(0,1fr)}
+  .admin-modal #adminView-orders .admin-order-actions button,
+  .admin-modal #adminView-orders .admin-order-actions a{flex-basis:100%}
 }
