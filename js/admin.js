@@ -133,8 +133,8 @@ export function initAdmin() {
             const displayName=s.authUser.name||s.authUser.email||"istifadəçi";
             const profileName=document.getElementById("adminUserStatus"); if(profileName)profileName.textContent=`Aktiv admin: ${displayName}`;
             const avatar=document.getElementById("adminAvatarInitials");
-            if(avatar){const parts=String(s.authUser.name||"").trim().split(/\\s+/).filter(Boolean);avatar.textContent=(parts.length>1?parts[0][0]+parts[parts.length-1][0]:(parts[0]||s.authUser.email||"A").slice(0,2)).toLocaleUpperCase("az-AZ");}
-            const welcome=document.getElementById("adminWelcomeText"); if(welcome)welcome.textContent=`Xoş gəlmisiniz, ${(s.authUser.name||"").trim().split(/\\s+/)[0]||"Admin"}`;
+            if(avatar){const parts=String(s.authUser.name||"").trim().split(/\s+/).filter(Boolean);avatar.textContent=(parts.length>1?parts[0][0]+parts[parts.length-1][0]:(parts[0]||s.authUser.email||"A").slice(0,2)).toLocaleUpperCase("az-AZ");}
+            const welcome=document.getElementById("adminWelcomeText"); if(welcome)welcome.textContent=`Xoş gəlmisiniz, ${(s.authUser.name||"").trim().split(/\s+/)[0]||"Admin"}`;
             const date=document.getElementById("adminCurrentDate");
             if(date){const now=new Date();date.textContent=now.toLocaleDateString("az-AZ",{day:"numeric",month:"long",year:"numeric"});date.dateTime=now.toISOString();}
             document.querySelector("#adminModal .admin-shell")?.classList.remove("admin-sidebar-open","admin-sidebar-collapsed");
