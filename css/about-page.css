@@ -297,3 +297,22 @@ html[data-theme="dark"] body.f1-home #aboutPageView {
 
 /* Homepage About view uses a normal-flow header; sticky section tabs should sit at the viewport edge. */
 body.f1-home #aboutPageView .about-page-tabs{top:0!important}
+
+
+/* About page spacing: keep delivery and FAQ inside the same calm page gutters. */
+body.f1-home #aboutPageView .about-delivery-accordion,
+body.f1-home #aboutPageView .about-faq-accordion{
+  width:auto!important;
+  margin-inline:clamp(16px,1.8vw,30px)!important;
+}
+body.f1-home #aboutPageView .about-faq-accordion .faq-container{
+  width:100%!important;
+  max-width:none!important;
+  margin:0!important;
+}
+@media(max-width:760px){
+  body.f1-home #aboutPageView .about-delivery-accordion,
+  body.f1-home #aboutPageView .about-faq-accordion{
+    margin-inline:0!important;
+  }
+}
