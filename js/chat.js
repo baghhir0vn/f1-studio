@@ -178,51 +178,118 @@ container.appendChild(wrap);
 function appendMsg(text,sender,items=[],chips=[],comparison=[]){
 if(!body) return;
 playChatTick(sender);
-const msg=document.createElement("div");
-msg.className=`chat-msg ${sender}`;
-msg.setAttribute('data-chat-message','true');
-msg.textContent=String(text || '');
-body.appendChild(msg);
+const row=document.createElement('div');
+row.className='chat-message-row '+(sender==='user'?'user':'bot');
+row.setAttribute('data-chat-message','true');
+if(sender!=='user'){
+const avatar=document.createElement('span');
+avatar.className='chat-message-avatar';
+avatar.setAttribute('aria-hidden','true');
+const avatarImg=document.createElement('img');
+avatarImg.src='robot-icon.svg';
+avatarImg.alt='';
+avatarImg.loading='lazy';
+avatar.appendChild(avatarImg);
+row.appendChild(avatar);
+}
+const msg=document.createElement('div');
+msg.className='chat-msg '+(sender==='user'?'user':'bot');
+const messageText=document.createElement('span');
+messageText.className='chat-msg-text';
+messageText.textContent=String(text || '');
+msg.appendChild(messageText);
+const meta=document.createElement('div');
+meta.className='chat-message-meta';
+const stamp=document.createElement('time');
+const now=new Date();
+stamp.dateTime=now.toISOString();
+stamp.textContent=new Intl.DateTimeFormat('az-AZ',{hour:'2-digit',minute:'2-digit',hourCycle:'h23'}).format(now);
+meta.appendChild(stamp);
+if(sender==='user'){
+const checks=document.createElement('span');
+checks.className='chat-message-checks';
+checks.setAttribute('aria-label','Göndərildi');
+checks.textContent='✓✓';
+meta.appendChild(checks);
+}
+msg.appendChild(meta);
+row.appendChild(msg);
+body.appendChild(row);
+if(items.length){
+const strip=document.createElement('div');
+strip.className='chat-products-strip';
 items.slice(0,4).forEach((p,index)=>{
-const card=document.createElement("div");
-card.className="chat-product-card";
+const card=document.createElement('div');
+card.className='chat-product-card';
 const media=document.createElement('div');
 media.className='emoji';
+const imageSource=String(p.image || (Array.isArray(p.images)?p.images[0]:'') || '').trim();
+if(imageSource){
+const image=document.createElement('img');
+image.src=imageSource;
+image.alt=String(p.name || 'Məhsul');
+image.loading='lazy';
+image.decoding='async';
+image.referrerPolicy='no-referrer';
+image.onerror=()=>{
+image.remove();
+media.classList.add('is-fallback');
 media.textContent=p.emoji || '🎁';
+};
+media.appendChild(image);
+}else{
+media.classList.add('is-fallback');
+media.textContent=p.emoji || '🎁';
+}
 card.appendChild(media);
-const details=document.createElement("div");
-details.className="details";
-const name=document.createElement('b'); name.textContent=p.name;
-const price=document.createElement('span'); price.textContent=money(p.price);
-const meta=document.createElement('small'); meta.textContent=[p.customizable?'✨ Fərdi dizayn':'Standart',p.productionTime].filter(Boolean).join(' • ');
-details.append(name,price,meta);
+const details=document.createElement('div');
+details.className='details';
+const name=document.createElement('b');
+name.textContent=String(p.name || 'Məhsul');
+const price=document.createElement('span');
+price.textContent=money(p.price);
+const productMeta=document.createElement('small');
+productMeta.textContent=[p.customizable?'✨ Fərdi dizayn':'Standart',p.productionTime].filter(Boolean).join(' • ');
+details.append(name,price,productMeta);
 card.appendChild(details);
 const actions=document.createElement('div');
 actions.className='chat-product-actions';
 const view=document.createElement('button');
-view.type='button'; view.className='chat-card-secondary'; view.textContent='Baxış';
-view.setAttribute('aria-label',`${p.name} detallarına bax`);
+view.type='button';
+view.className='chat-card-secondary';
+view.textContent='Bax';
+view.setAttribute('aria-label',String(p.name || 'Məhsul')+' detallarına bax');
 view.onclick=()=>{ s.chatMemory.lastSelectedProduct=p; ctx.openProductModal?.(p.id); };
 actions.appendChild(view);
-if(p.customizable){
-const custom=document.createElement('button');
-custom.type='button'; custom.className='chat-card-secondary'; custom.textContent='Fərdiləşdir';
-custom.setAttribute('aria-label',`${p.name} üçün fərdiləşdirməni aç`);
-custom.onclick=()=>{ s.chatMemory.lastSelectedProduct=p; ctx.openCustomization?.(p.id); };
-actions.appendChild(custom);
-}
-const add=document.createElement("button");
-add.type="button"; add.className='chat-card-primary'; add.textContent=p.customizable?'Fərdiləşdir +':'🛒 Səbətə at';
-add.setAttribute('aria-label',`${p.name} ${p.customizable?'üçün fərdiləşdirməni aç':'səbətə əlavə et'}`);
+const add=document.createElement('button');
+add.type='button';
+add.className='chat-card-primary';
+add.setAttribute('aria-label',p.customizable?String(p.name || 'Məhsul')+' üçün fərdiləşdirməni aç':String(p.name || 'Məhsul')+' səbətə əlavə et');
+add.title=p.customizable?'Fərdiləşdir':'Səbətə əlavə et';
+const ns='http://www.w3.org/2000/svg';
+const icon=document.createElementNS(ns,'svg');
+icon.setAttribute('viewBox','0 0 24 24');
+icon.setAttribute('aria-hidden','true');
+icon.classList.add('chat-cart-icon');
+const path=document.createElementNS(ns,'path');
+path.setAttribute('d','M3 4h2l1.6 10.2a2 2 0 0 0 2 1.8h7.9a2 2 0 0 0 1.9-1.5L20 8H6');
+const wheel1=document.createElementNS(ns,'circle');
+wheel1.setAttribute('cx','9');wheel1.setAttribute('cy','19');wheel1.setAttribute('r','1');
+const wheel2=document.createElementNS(ns,'circle');
+wheel2.setAttribute('cx','17');wheel2.setAttribute('cy','19');wheel2.setAttribute('r','1');
+icon.append(path,wheel1,wheel2);
+add.appendChild(icon);
 add.onclick=()=>{
 s.chatMemory.lastSelectedProduct=p;
 p.customizable ? ctx.openCustomization?.(p.id) : ctx.add?.(p.id);
 };
 actions.appendChild(add);
 card.appendChild(actions);
-msg.appendChild(card);
+strip.appendChild(card);
 if(index===0) s.chatMemory.lastSelectedProduct=p;
 });
+msg.appendChild(strip);
+}
 if(Array.isArray(comparison) && comparison.length >= 2){
 const wrap=document.createElement('div');
 wrap.className='chat-comparison';
@@ -244,7 +311,8 @@ const rows=[
 rows.forEach((cells,rowIndex)=>{
 const tr=document.createElement('tr');
 cells.forEach((cell,cellIndex)=>{
-const el=document.createElement(rowIndex===0 ? (cellIndex===0?'th':'th') : (cellIndex===0?'th':'td'));
+const el=document.createElement('th');
+if(rowIndex>0 && cellIndex>0) el=document.createElement('td');
 el.textContent=String(cell);
 if(rowIndex===0 && cellIndex>0) el.scope='col';
 if(cellIndex===0 && rowIndex>0) el.scope='row';
@@ -257,7 +325,9 @@ const actions=document.createElement('div');
 actions.className='chat-compare-actions';
 comparison.slice(0,3).forEach((p)=>{
 const b=document.createElement('button');
-b.type='button'; b.className='chat-card-secondary'; b.textContent=`${p.name} — bax`;
+b.type='button';
+b.className='chat-card-secondary';
+b.textContent=String(p.name || 'Məhsul')+' — bax';
 b.onclick=()=>{ s.chatMemory.lastSelectedProduct=p; ctx.openProductModal?.(p.id); };
 actions.appendChild(b);
 });
