@@ -6,6 +6,76 @@ import { CONFIG } from './config.js';
 import { storageService } from './services/storage-service.js';
 import { isCustomerDesignPathOwnedBy } from './security.js';
 export function initAuth() {
+    const authModes = {
+        login: ["login-submit", "register-switch", "forgot"],
+        register: ["register-submit", "login-switch"],
+        reset: ["reset-panel"],
+        recovery: ["recovery-panel"],
+        account: ["logout", "account-status", "account-history"]
+    };
+    let authPanelMode = "login";
+    let authSubmissionInProgress = false;
+    function setAuthPanelMode(mode = "login") {
+        if (!Object.prototype.hasOwnProperty.call(authModes, mode)) mode = "login";
+        authPanelMode = mode;
+        const modal = document.getElementById("loginModal");
+        if (modal) {
+            modal.dataset.authMode = mode;
+            modal.classList.remove("auth-mode-login", "auth-mode-register", "auth-mode-reset", "auth-mode-recovery", "auth-mode-account");
+            modal.classList.add("auth-mode-" + mode);
+            const visible = new Set(authModes[mode]);
+            modal.querySelectorAll("[data-auth-element]").forEach(element => {
+                const shown = visible.has(element.dataset.authElement);
+                element.hidden = !shown;
+                element.setAttribute("aria-hidden", String(!shown));
+            });
+            modal.querySelectorAll("[data-auth-field]").forEach(field => {
+                const modes = (field.dataset.authField || "").split(/\s+/);
+                const shown = modes.includes(mode);
+                field.hidden = !shown;
+                field.disabled = !shown || mode === "account";
+                field.setAttribute("aria-hidden", String(!shown));
+                if (field.id === "profilePassword") field.autocomplete = mode === "register" ? "new-password" : "current-password";
+            });
+        }
+        document.getElementById("passwordResetPanel")?.classList.toggle("open", mode === "reset");
+        document.getElementById("passwordRecoveryPanel")?.classList.toggle("open", mode === "recovery");
+    }
+    function setAuthSubmissionBusy(busy) {
+        document.querySelectorAll('#loginModal [data-auth-element="register-submit"], #loginModal [data-auth-element="login-submit"]').forEach(button => {
+            if (busy) {
+                if (!button.dataset.authIdleLabel) button.dataset.authIdleLabel = button.textContent.trim();
+                button.disabled = true;
+                button.setAttribute("aria-busy", "true");
+                button.textContent = button.dataset.authElement === "login-submit" ? "Giriş edilir..." : "Hesab yaradılır...";
+            } else {
+                button.disabled = false;
+                button.removeAttribute("aria-busy");
+                if (button.dataset.authIdleLabel) {
+                    button.textContent = button.dataset.authIdleLabel;
+                    delete button.dataset.authIdleLabel;
+                }
+            }
+        });
+    }
+    function showRegisterForm() {
+        if (authSubmissionInProgress) return;
+        setAuthPanelMode("register");
+        requestAnimationFrame(() => document.getElementById("profileName")?.focus());
+    }
+    function showLoginForm() {
+        if (authSubmissionInProgress) return;
+        setAuthPanelMode("login");
+        requestAnimationFrame(() => document.getElementById("profileEmail")?.focus());
+    }
+    function submitAuthForm() {
+        if (authPanelMode === "login") return loginAccount();
+        if (authPanelMode === "register") return registerAccount();
+        if (authPanelMode === "reset") return sendPasswordResetEmail();
+        if (authPanelMode === "recovery") return updatePasswordFromRecovery();
+    }
+
+    setAuthPanelMode("login");
     authService.onAuthStateChange((event) => {
         if(event === "PASSWORD_RECOVERY"){
             s.passwordRecoveryMode = true;
@@ -17,28 +87,41 @@ export function initAuth() {
             ctx.openPasswordRecovery();
             return;
         }
+        setAuthPanelMode(s.authUser ? "account" : "login");
         if (s.authUser) {
             document.getElementById("profileName").value = s.authUser.name || "";
             document.getElementById("profilePhone").value = s.authUser.phone || "";
             document.getElementById("profileEmail").value = s.authUser.email || "";
         } else {
-            ["profileName","profilePhone","profileEmail","profilePassword"].forEach(id => document.getElementById(id).value = "");
+            ["profileName","profilePhone","profileEmail","profilePassword"].forEach(id => {
+                const field = document.getElementById(id);
+                if (field) field.value = "";
+            });
         }
         await ctx.renderProfile();
-        ctx.openDialog("loginModal", "#profileName");
+        ctx.openDialog("loginModal", s.authUser ? "#logoutBtn" : "#profileEmail");
     }
-    function closeLogin() { ctx.closeDialog("loginModal"); }
-    function showForgotPassword(){
-        const panel=document.getElementById("passwordResetPanel");
-        const recovery=document.getElementById("passwordRecoveryPanel");
-        if(recovery) recovery.classList.remove("open");
-        if(panel) panel.classList.add("open");
-        const email=document.getElementById("profileEmail")?.value.trim();
-        const resetEmail=document.getElementById("resetEmail");
-        if(resetEmail && email) resetEmail.value=email;
+    function closeLogin() {
+        ctx.closeDialog("loginModal");
+        if (!s.passwordRecoveryMode) {
+            setAuthPanelMode(s.authUser ? "account" : "login");
+            ["resetEmail","newPassword","newPasswordConfirm","profilePassword"].forEach(id => {
+                const field = document.getElementById(id);
+                if (field) field.value = "";
+            });
+        }
     }
-    function hideForgotPassword(){
-        document.getElementById("passwordResetPanel")?.classList.remove("open");
+    function showForgotPassword() {
+        if (authSubmissionInProgress || s.authUser) return;
+        setAuthPanelMode("reset");
+        const email = document.getElementById("profileEmail")?.value.trim();
+        const resetEmail = document.getElementById("resetEmail");
+        if (resetEmail && email) resetEmail.value = email;
+        requestAnimationFrame(() => document.getElementById("resetEmail")?.focus());
+    }
+    function hideForgotPassword() {
+        setAuthPanelMode(s.authUser ? "account" : "login");
+        requestAnimationFrame(() => document.getElementById("profileEmail")?.focus());
     }
     async function sendPasswordResetEmail(){
         const email=document.getElementById("resetEmail")?.value.trim();
@@ -52,13 +135,7 @@ export function initAuth() {
         }
     }
     function openPasswordRecovery(){
-        document.getElementById("passwordResetPanel")?.classList.remove("open");
-        document.getElementById("passwordRecoveryPanel")?.classList.add("open");
-        document.getElementById("profilePassword")?.setAttribute("disabled","disabled");
-        document.getElementById("profileName")?.setAttribute("disabled","disabled");
-        document.getElementById("profilePhone")?.setAttribute("disabled","disabled");
-        document.getElementById("profileEmail")?.setAttribute("disabled","disabled");
-        document.getElementById("forgotPasswordBtn")?.setAttribute("disabled","true");
+        setAuthPanelMode("recovery");
         ctx.openDialog("loginModal", "#newPassword");
         const status=document.getElementById("profileStatus");
         if(status) status.textContent="Şifrənizi yeniləmək üçün yeni şifrəni daxil edin.";
@@ -75,9 +152,7 @@ export function initAuth() {
             }
             s.passwordRecoveryMode=false;
             ["newPassword","newPasswordConfirm"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
-            ["profilePassword","profileName","profilePhone","profileEmail"].forEach(id=>document.getElementById(id)?.removeAttribute("disabled"));
-            document.getElementById("forgotPasswordBtn")?.removeAttribute("disabled");
-            document.getElementById("passwordRecoveryPanel")?.classList.remove("open");
+            setAuthPanelMode(s.authUser ? "account" : "login");
             await ctx.renderProfile();
             await ctx.startAdminRealtime();
             showToast("✅ Şifrəniz uğurla yeniləndi.");
@@ -87,42 +162,72 @@ export function initAuth() {
         }
     }
     async function registerAccount() {
+        if (authSubmissionInProgress) return;
         const name=document.getElementById("profileName").value.trim(), phone=document.getElementById("profilePhone").value.trim(), email=document.getElementById("profileEmail").value.trim(), password=document.getElementById("profilePassword").value;
         if(name.length<2 || !isValidPhone(phone) || !/^\S+@\S+\.\S+$/.test(email) || password.length<8) return showToast("Ad, telefon, düzgün email və ən azı 8 simvolluq şifrə daxil edin.");
+        authSubmissionInProgress = true;
+        setAuthSubmissionBusy(true);
         try {
-            const data=await ctx.api("/api/auth/register",{method:"POST",body:JSON.stringify({name,phone,email,password})});
-            if(data?.session && data?.user){
-                s.authUser=data.user; s.profile=s.authUser;
-                await ctx.renderProfile(); await ctx.startAdminRealtime();
-                showToast("Hesab yaradıldı və giriş edildi.");
-            }else{
-                s.authUser=null; s.profile=null;
-                await ctx.renderProfile();
-                showToast("✅ Hesab yaradıldı. E-poçtunuza gələn təsdiq keçidini açın, sonra giriş edin.");
+            try {
+                const data=await ctx.api("/api/auth/register",{method:"POST",body:JSON.stringify({name,phone,email,password})});
+                if(data?.session && data?.user){
+                    s.authUser=data.user; s.profile=s.authUser;
+                    await ctx.renderProfile(); await ctx.startAdminRealtime();
+                    closeLogin();
+                    showToast("Hesab yaradıldı və giriş edildi.");
+                }else{
+                    s.authUser=null; s.profile=null;
+                    document.getElementById("profilePassword").value = "";
+                    await ctx.renderProfile();
+                    setAuthPanelMode("login");
+                    showToast("✅ Hesab yaradıldı. E-poçtunuza gələn təsdiq keçidini açın, sonra giriş edin.");
+                }
+            } catch(e) {
+                showToast(e.message === "EMAIL_EXISTS" ? "Bu email artıq qeydiyyatdadır." : "Qeydiyyat alınmadı.");
             }
-        } catch(e) {
-            showToast(e.message === "EMAIL_EXISTS" ? "Bu email artıq qeydiyyatdadır." : "Qeydiyyat alınmadı.");
+        } finally {
+            authSubmissionInProgress = false;
+            setAuthSubmissionBusy(false);
         }
     }
     async function loginAccount() {
         if(s.passwordRecoveryMode) return showToast("Əvvəlcə yeni şifrənizi təyin edin.");
+        if (authSubmissionInProgress) return;
         const email=document.getElementById("profileEmail").value.trim(), password=document.getElementById("profilePassword").value;
         if(!/^\S+@\S+\.\S+$/.test(email) || password.length<8) return showToast("Email və şifrəni düzgün daxil edin.");
+        authSubmissionInProgress = true;
+        setAuthSubmissionBusy(true);
         try {
-            const data=await ctx.api("/api/auth/login",{method:"POST",body:JSON.stringify({email,password})});
-            if(data?.user?.blocked){ await ctx.api("/api/auth/logout",{method:"POST"}).catch(()=>{}); s.authUser=null; s.profile=null; await ctx.renderProfile(); return showToast("Bu hesab bloklanıb. Adminlə əlaqə saxlayın."); }
-            s.authUser=data.user; s.profile=s.authUser; await ctx.renderProfile(); await ctx.startAdminRealtime(); showToast("Giriş edildi.");
-        } catch(e) {        showToast("Email və ya şifrə yanlışdır.");
+            try {
+                const data=await ctx.api("/api/auth/login",{method:"POST",body:JSON.stringify({email,password})});
+                if(data?.user?.blocked){
+                    await ctx.api("/api/auth/logout",{method:"POST"}).catch(()=>{});
+                    s.authUser=null; s.profile=null;
+                    await ctx.renderProfile();
+                    setAuthPanelMode("login");
+                    return showToast("Bu hesab bloklanıb. Adminlə əlaqə saxlayın.");
+                }
+                s.authUser=data.user; s.profile=s.authUser;
+                await ctx.renderProfile(); await ctx.startAdminRealtime();
+                closeLogin();
+                showToast("Giriş edildi.");
+            } catch(e) {
+                showToast("Email və ya şifrə yanlışdır.");
+            }
+        } finally {
+            authSubmissionInProgress = false;
+            setAuthSubmissionBusy(false);
         }
     }
     async function logoutProfile() {
         await ctx.api("/api/auth/logout",{method:"POST"}).catch(()=>{});
         s.authUser=null; s.profile=null; s.orders=[]; s.passwordRecoveryMode=false;
         ctx.stopAdminRealtime(); s.adminUnreadOrders=0; ctx.updateAdminNotifBadge();
-        document.getElementById("passwordRecoveryPanel")?.classList.remove("open");
-        ["profilePassword","profileName","profilePhone","profileEmail"].forEach(id=>document.getElementById(id)?.removeAttribute("disabled"));
-        ctx.renderProfile();
-        ["profileName","profilePhone","profileEmail","profilePassword"].forEach(id => document.getElementById(id).value="");
+        ["resetEmail","newPassword","newPasswordConfirm","profileName","profilePhone","profileEmail","profilePassword"].forEach(id=>{
+            const field=document.getElementById(id); if(field) field.value="";
+        });
+        setAuthPanelMode("login");
+        await ctx.renderProfile();
         showToast("Hesabdan çıxıldı.");
     }
     async function loadCurrentUser() {
@@ -133,6 +238,8 @@ export function initAuth() {
         } catch (_) { s.authUser=null; s.profile=null; ctx.stopAdminRealtime(); await ctx.renderProfile(); }
     }
     async function renderProfile() {
+        const modal=document.getElementById("loginModal");
+        if (!modal?.classList.contains("open") && !s.passwordRecoveryMode) setAuthPanelMode(s.authUser ? "account" : "login");
         const status=document.getElementById("profileStatus"), logout=document.getElementById("logoutBtn");
         status.textContent=s.authUser ? `Aktiv hesab: ${s.authUser.name} (${s.authUser.email})` : "Hesaba giriş edilməyib.";
         logout.style.display=s.authUser ? "block" : "none";
@@ -196,6 +303,9 @@ export function initAuth() {
     Object.assign(ctx, {
     openLogin,
     closeLogin,
+    showRegisterForm,
+    showLoginForm,
+    submitAuthForm,
     showForgotPassword,
     hideForgotPassword,
     sendPasswordResetEmail,
