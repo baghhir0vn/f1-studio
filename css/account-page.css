@@ -162,6 +162,8 @@ html[data-theme="dark"] .account-page-view {
 .ac-guest-icon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.6; }
 .ac-guest-card h1 { margin: 0; font-size: 22px; }
 .ac-guest-card p { margin: 0 0 8px; color: var(--ac-muted); font-size: 13px; }
+body.f1-account-route .chat-trigger { right: 20px !important; bottom: 18px !important; min-width: 158px !important; height: 50px !important; min-height: 50px !important; gap: 7px !important; padding: 4px 12px 4px 5px !important; border: 3px solid #e10a11 !important; border-radius: 999px !important; background: #fff !important; color: #17191d !important; box-shadow: 0 7px 20px rgba(205,0,8,.14) !important; font-size: 12px !important; }
+body.f1-account-route .chat-trigger-avatar { width: 34px !important; height: 34px !important; flex-basis: 34px !important; }
 body.f1-account-route .actions [data-action="openLogin"] { color: var(--ac-accent); background: var(--ac-soft-red); border-radius: 9px; }
 body.f1-account-route .f1-mobile-dock [data-action="openLogin"] { color: var(--ac-accent); }
 @keyframes ac-shimmer { to { background-position: -200% 0; } }
@@ -177,6 +179,8 @@ body.f1-account-route .f1-mobile-dock [data-action="openLogin"] { color: var(--a
 @media (max-width: 760px) {
   .account-shell { grid-template-columns: minmax(0,1fr); gap: 12px; padding: 12px 12px 18px; }
   body.f1-account-route { padding-bottom: calc(78px + env(safe-area-inset-bottom)); }
+  body.f1-account-route .chat-trigger { right: 12px !important; bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important; min-width: 142px !important; height: 43px !important; min-height: 43px !important; padding: 3px 10px 3px 4px !important; border-width: 2px !important; gap: 6px !important; font-size: 11px !important; }
+  body.f1-account-route .chat-trigger-avatar { width: 30px !important; height: 30px !important; flex-basis: 30px !important; }
   .ac-sidebar, .ac-main-column, .ac-details-column { display: contents; }
   .ac-profile-card { grid-area: profile; display: flex; min-height: 92px; padding: 15px; border: 1px solid var(--ac-line); border-radius: 14px; background: var(--ac-card); box-shadow: var(--ac-shadow); }
   .ac-avatar { width: 62px; height: 62px; flex-basis: 62px; }
