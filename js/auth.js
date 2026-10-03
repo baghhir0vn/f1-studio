@@ -277,8 +277,12 @@ export function initAuth() {
         logout.style.display=s.authUser ? "block" : "none";
         const forgot=document.getElementById("forgotPasswordBtn");
         if(forgot) forgot.style.display=s.authUser ? "none" : "inline-block";
-        const loginBtn=document.querySelector('.actions .btn-login[data-action="openLogin"]');
-        if (loginBtn) loginBtn.textContent=s.authUser ? `👤 ${s.authUser.name.split(" ")[0]}` : "👤 Giriş";
+        const loginBtn=document.querySelector('.actions [data-action="openLogin"]');
+        if (loginBtn) {
+            const label = s.authUser ? "Hesabım" : "Giriş / Profil";
+            loginBtn.setAttribute("aria-label", label);
+            loginBtn.setAttribute("title", label);
+        }
         ctx.updateAdminButton();
         await ctx.renderOrderHistory();
     }
