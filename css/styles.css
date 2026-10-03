@@ -2406,3 +2406,78 @@ html[data-theme="dark"] .newsletter-feedback.is-success{border-color:#40553b;bac
 html[data-theme="dark"] .newsletter-feedback.is-error{border-color:#69423d;background:#2c211f;color:#ffc4b8}
 @keyframes f1NewsletterCheckPop{0%{opacity:0;transform:scale(.35) rotate(-45deg)}65%{opacity:1;transform:scale(1.18) rotate(7deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
 @media(prefers-reduced-motion:reduce){.newsletter-feedback-icon.is-success{animation:none}}
+
+
+/* Customer authentication modal: one visible auth flow at a time. */
+#loginModal [data-auth-element][hidden],
+#loginModal [data-auth-field][hidden] {
+  display: none !important;
+}
+#loginModal .password-reset-panel:not(.open),
+#loginModal .password-recovery-panel:not(.open) {
+  display: none !important;
+}
+#loginModal .password-reset-panel.open,
+#loginModal .password-recovery-panel.open {
+  display: grid !important;
+  gap: 9px !important;
+}
+#loginModal .profile-actions-grid {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+#loginModal .profile-actions-grid > .auth-primary-button,
+#loginModal .password-reset-panel > .auth-primary-button,
+#loginModal .password-recovery-panel > .auth-primary-button {
+  box-sizing: border-box !important;
+  display: flex !important;
+  position: static !important;
+  float: none !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+  min-height: 44px !important;
+  height: auto !important;
+  margin: 0 !important;
+  padding: 10px 12px !important;
+  border-radius: 11px !important;
+  text-align: center !important;
+  white-space: normal !important;
+  line-height: 1.25 !important;
+}
+#loginModal .auth-view-switch {
+  box-sizing: border-box !important;
+  display: block !important;
+  width: 100% !important;
+  min-height: 38px !important;
+  padding: 8px 10px !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  background: transparent !important;
+  color: #536c4d !important;
+  font-family: inherit !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+  text-align: center !important;
+  cursor: pointer !important;
+}
+#loginModal .auth-view-switch:hover {
+  background: #f3f6f0 !important;
+}
+#loginModal .password-reset-panel.open {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+#loginModal .password-reset-panel.open > .auth-secondary-button {
+  box-sizing: border-box !important;
+  display: flex !important;
+  position: static !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 42px !important;
+  margin: 0 !important;
+  padding: 9px 12px !important;
+}
