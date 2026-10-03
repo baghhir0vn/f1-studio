@@ -57,7 +57,7 @@
     <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
     <link rel="icon" type="image/png" href="f1-logo.png?v=128">
     <link rel="apple-touch-icon" href="f1-logo.png?v=128">
-    <link rel="stylesheet" href="css/styles.css?v=138">
+    <link rel="stylesheet" href="css/styles.css?v=142">
     <link rel="stylesheet" href="css/admin-scroll.css?v=1">
     <link rel="stylesheet" href="css/order-delivery-info.css?v=1">
     <link rel="stylesheet" href="css/f1-reference-refresh.css?v=1">
@@ -67,6 +67,7 @@
     <link rel="stylesheet" href="css/about-page.css?v=10">
 <link rel="stylesheet" href="css/chat-assistant.css?v=6">
 <link rel="stylesheet" href="css/admin-dashboard-refresh.css?v=2">
+<link rel="stylesheet" href="css/account-page.css?v=2">
 </head>
 <body class="f1-home">
 <div class="announcement-bar" id="announcementBar" aria-label="F1 Studio xidmət üstünlükləri">
@@ -125,6 +126,7 @@
 </div>
 
 <main id="home">
+<section id="accountPage" class="account-page-view" hidden aria-hidden="true" aria-label="Hesabım"><div class="ac-guest-card" role="status"><span>Hesab məlumatları yüklənir...</span></div></section>
 
 <section id="categoryPageView" class="category-page-view" hidden aria-labelledby="categoryPageTitle">
   <nav class="category-page-breadcrumbs" aria-label="Səhifə yolu">
@@ -892,7 +894,7 @@
 </div>
 
 <!-- PROFİL MODALI -->
-<div class="modal-center" id="loginModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="profileModalTitle">
+<div class="modal-center" id="loginModal" data-auth-mode="login" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="profileModalTitle">
     <div class="dialog">
         <div class="head">
             <h2 id="profileModalTitle">
@@ -904,34 +906,36 @@
             <button class="close" type="button" data-action="closeLogin" aria-label="Profili bağla">×</button>
         </div>
         <p class="profile-intro">Hesab məlumatlarınız təhlükəsiz saxlanılır. Giriş etdikdən sonra sifariş tarixçənizi digər cihazlarda da görə bilərsiniz.</p>
-        <div class="form">
-            <input id="profileName" autocomplete="name" placeholder="Adınız və Soyadınız" aria-label="Ad və soyad">
-            <input id="profilePhone" autocomplete="tel" placeholder="Telefon nömrəniz" aria-label="Telefon nömrəsi">
-            <input id="profileEmail" type="email" autocomplete="email" placeholder="E-poçt (hesab üçün vacibdir)" aria-label="E-poçt">
-            <input id="profilePassword" type="password" autocomplete="current-password" placeholder="Şifrə (ən azı 8 simvol)" aria-label="Şifrə">
+        <form class="form" id="customerAuthForm" data-submit-action="submitAuthForm" novalidate>
+            <input id="profileName" data-auth-field="register" autocomplete="name" placeholder="Adınız və Soyadınız" aria-label="Ad və soyad" hidden>
+            <input id="profilePhone" data-auth-field="register" autocomplete="tel" placeholder="Telefon nömrəniz" aria-label="Telefon nömrəsi" hidden>
+            <input id="profileEmail" data-auth-field="login register" type="email" autocomplete="email" placeholder="E-poçt (hesab üçün vacibdir)" aria-label="E-poçt">
+            <input id="profilePassword" data-auth-field="login register" type="password" autocomplete="current-password" placeholder="Şifrə (ən azı 8 simvol)" aria-label="Şifrə">
 <div class="profile-actions-grid">
-                <button class="add profile-primary" data-action="registerAccount">Qeydiyyatdan keç</button>
-                <button class="btn-login profile-secondary" data-action="loginAccount">Giriş et</button>
+                <button class="add profile-primary auth-primary-button" type="submit" data-auth-element="register-submit" hidden>Qeydiyyatdan keç</button>
+                <button class="btn-login profile-secondary auth-primary-button" type="submit" data-auth-element="login-submit">Giriş et</button>
             </div>
-            <button id="forgotPasswordBtn" class="password-reset-link" type="button" data-action="showForgotPassword">Şifrəmi unutdum?</button>
-            <div id="passwordResetPanel" class="password-reset-panel">
+            <button class="auth-view-switch" type="button" data-auth-element="register-switch" data-action="showRegisterForm">Qeydiyyat</button>
+            <button class="auth-view-switch" type="button" data-auth-element="login-switch" data-action="showLoginForm" hidden>Artıq hesabım var</button>
+            <button id="forgotPasswordBtn" class="password-reset-link auth-view-switch" type="button" data-auth-element="forgot" data-action="showForgotPassword">Şifrəmi unutdum?</button>
+            <div id="passwordResetPanel" class="password-reset-panel" data-auth-element="reset-panel" hidden>
                 <div class="password-reset-title">🔐 Şifrəni sıfırla</div>
                 <div class="password-reset-help">E-poçt ünvanınızı daxil edin. Hesabınızla əlaqəlidirsə, şifrəni yeniləmək üçün təhlükəsiz keçid göndərəcəyik.</div>
                 <input id="resetEmail" type="email" autocomplete="email" placeholder="E-poçt ünvanınız" aria-label="Şifrə sıfırlamaq üçün e-poçt">
-                <button class="add" type="button" data-action="sendPasswordResetEmail">📧 Reset linki göndər</button>
-                <button class="btn-login" type="button" data-action="hideForgotPassword">Geri</button>
+                <button class="add auth-primary-button" type="button" data-action="sendPasswordResetEmail">📧 Reset linki göndər</button>
+                <button class="btn-login auth-secondary-button" type="button" data-action="hideForgotPassword">Geri</button>
             </div>
-            <div id="passwordRecoveryPanel" class="password-recovery-panel">
+            <div id="passwordRecoveryPanel" class="password-recovery-panel" data-auth-element="recovery-panel" hidden>
                 <div class="password-reset-title">🔑 Yeni şifrə</div>
                 <div class="password-reset-help">E-poçtunuza gələn keçiddən sonra burada yeni şifrənizi təyin edin.</div>
                 <input id="newPassword" type="password" autocomplete="new-password" placeholder="Yeni şifrə (ən azı 8 simvol)" aria-label="Yeni şifrə">
                 <input id="newPasswordConfirm" type="password" autocomplete="new-password" placeholder="Yeni şifrəni təkrar yazın" aria-label="Yeni şifrənin təkrarı">
-                <button class="add" type="button" data-action="updatePasswordFromRecovery">✅ Şifrəni yenilə</button>
+                <button class="add auth-primary-button" type="button" data-action="updatePasswordFromRecovery">✅ Şifrəni yenilə</button>
             </div>
-            <button id="logoutBtn" class="btn-login" style="display:none;" data-action="logoutProfile">Hesabdan çıx</button>
-            <div id="profileStatus" class="account-badge"></div>
-        </div>
-        <div class="order-history" id="orderHistory"></div>
+            <button id="logoutBtn" class="btn-login" type="button" data-auth-element="account" style="display:none;" data-action="logoutProfile">Hesabdan çıx</button>
+            <div id="profileStatus" class="account-badge" data-auth-element="account" hidden></div>
+        </form>
+        <div class="order-history" id="orderHistory" data-auth-element="account" hidden></div>
     </div>
 </div>
 
@@ -1387,7 +1391,7 @@
 
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
 <noscript><div style="padding:16px;background:#fff1f2;color:#7f1d1d;text-align:center;font-family:system-ui">Bu saytın sifariş və məhsul funksiyaları üçün JavaScript aktiv olmalıdır.</div></noscript>
-    <script type="module" src="js/app.js?v=138"></script>
+    <script type="module" src="js/app.js?v=142"></script>
     <script type="module" src="js/reference-mobile-dock.js?v=1"></script>
 </body>
 </html>

@@ -1,11 +1,63 @@
 import { escapeHTML, money, isValidPhone, showToast } from './ui.js';
-import { authService } from './services/auth-service.js';
+import { authService } from './services/auth-service.js?v=2';
 import { state as s, ctx } from './state.js';
 import { getProfileForUser } from './services/profile-service.js';
 import { CONFIG } from './config.js';
 import { storageService } from './services/storage-service.js';
 import { isCustomerDesignPathOwnedBy } from './security.js';
 export function initAuth() {
+    const authModes = {
+        login: ["login-submit", "register-switch", "forgot"],
+        register: ["register-submit", "login-switch"],
+        reset: ["reset-panel"],
+        recovery: ["recovery-panel"]
+    };
+    let authPanelMode = "login";
+    function setAuthPanelMode(mode = "login") {
+        if (!Object.prototype.hasOwnProperty.call(authModes, mode)) mode = "login";
+        authPanelMode = mode;
+        const modal = document.getElementById("loginModal");
+        if (modal) {
+            modal.dataset.authMode = mode;
+            modal.classList.remove("auth-mode-login", "auth-mode-register", "auth-mode-reset", "auth-mode-recovery");
+            modal.classList.add("auth-mode-" + mode);
+            const visible = new Set(authModes[mode]);
+            modal.querySelectorAll("[data-auth-element]").forEach(element => {
+                const isVisible = visible.has(element.dataset.authElement);
+                element.hidden = !isVisible;
+                element.setAttribute("aria-hidden", String(!isVisible));
+            });
+            modal.querySelectorAll("[data-auth-field]").forEach(field => {
+                const modes = (field.dataset.authField || "").split(/\s+/);
+                const isVisible = modes.includes(mode);
+                field.hidden = !isVisible;
+                field.disabled = !isVisible;
+                field.setAttribute("aria-hidden", String(!isVisible));
+            });
+        }
+        document.getElementById("passwordResetPanel")?.classList.toggle("open", mode === "reset");
+        document.getElementById("passwordRecoveryPanel")?.classList.toggle("open", mode === "recovery");
+    }
+    setAuthPanelMode("login");
+
+    let authSubmissionInProgress = false;
+    function setAuthSubmissionBusy(busy) {
+        document.querySelectorAll('#loginModal [data-auth-element="register-submit"], #loginModal [data-auth-element="login-submit"]').forEach(button => {
+            if (busy) {
+                if (!button.dataset.authIdleLabel) button.dataset.authIdleLabel = button.textContent.trim();
+                button.disabled = true;
+                button.setAttribute("aria-busy", "true");
+                button.textContent = button.dataset.authElement === "login-submit" ? "Giriş edilir..." : "Hesab yaradılır...";
+            } else {
+                button.disabled = false;
+                button.removeAttribute("aria-busy");
+                if (button.dataset.authIdleLabel) {
+                    button.textContent = button.dataset.authIdleLabel;
+                    delete button.dataset.authIdleLabel;
+                }
+            }
+        });
+    }
     authService.onAuthStateChange((event) => {
         if(event === "PASSWORD_RECOVERY"){
             s.passwordRecoveryMode = true;
@@ -17,28 +69,49 @@ export function initAuth() {
             ctx.openPasswordRecovery();
             return;
         }
+        setAuthPanelMode("login");
         if (s.authUser) {
-            document.getElementById("profileName").value = s.authUser.name || "";
-            document.getElementById("profilePhone").value = s.authUser.phone || "";
-            document.getElementById("profileEmail").value = s.authUser.email || "";
-        } else {
-            ["profileName","profilePhone","profileEmail","profilePassword"].forEach(id => document.getElementById(id).value = "");
+            ctx.openAccountPage?.();
+            return;
         }
+        ["profileName","profilePhone","profileEmail","profilePassword"].forEach(id => document.getElementById(id).value = "");
         await ctx.renderProfile();
-        ctx.openDialog("loginModal", "#profileName");
+        ctx.openDialog("loginModal", "#profileEmail");
     }
-    function closeLogin() { ctx.closeDialog("loginModal"); }
+    function closeLogin() {
+        ctx.closeDialog("loginModal");
+        if (!s.passwordRecoveryMode) {
+            setAuthPanelMode("login");
+            ["resetEmail", "newPassword", "newPasswordConfirm"].forEach(id => {
+                const field = document.getElementById(id);
+                if (field) field.value = "";
+            });
+        }
+    }
+    function showRegisterForm() {
+        if (authSubmissionInProgress) return;
+        setAuthPanelMode("register");
+        requestAnimationFrame(() => document.getElementById("profileName")?.focus());
+    }
+    function showLoginForm() {
+        if (authSubmissionInProgress) return;
+        setAuthPanelMode("login");
+        requestAnimationFrame(() => document.getElementById("profileEmail")?.focus());
+    }
+    function submitAuthForm() {
+        if (authPanelMode === "login") return loginAccount();
+        if (authPanelMode === "register") return registerAccount();
+        if (authPanelMode === "reset") return sendPasswordResetEmail();
+        if (authPanelMode === "recovery") return updatePasswordFromRecovery();
+    }
     function showForgotPassword(){
-        const panel=document.getElementById("passwordResetPanel");
-        const recovery=document.getElementById("passwordRecoveryPanel");
-        if(recovery) recovery.classList.remove("open");
-        if(panel) panel.classList.add("open");
+        setAuthPanelMode("reset");
         const email=document.getElementById("profileEmail")?.value.trim();
         const resetEmail=document.getElementById("resetEmail");
         if(resetEmail && email) resetEmail.value=email;
     }
     function hideForgotPassword(){
-        document.getElementById("passwordResetPanel")?.classList.remove("open");
+        setAuthPanelMode("login");
     }
     async function sendPasswordResetEmail(){
         const email=document.getElementById("resetEmail")?.value.trim();
@@ -52,13 +125,7 @@ export function initAuth() {
         }
     }
     function openPasswordRecovery(){
-        document.getElementById("passwordResetPanel")?.classList.remove("open");
-        document.getElementById("passwordRecoveryPanel")?.classList.add("open");
-        document.getElementById("profilePassword")?.setAttribute("disabled","disabled");
-        document.getElementById("profileName")?.setAttribute("disabled","disabled");
-        document.getElementById("profilePhone")?.setAttribute("disabled","disabled");
-        document.getElementById("profileEmail")?.setAttribute("disabled","disabled");
-        document.getElementById("forgotPasswordBtn")?.setAttribute("disabled","true");
+        setAuthPanelMode("recovery");
         ctx.openDialog("loginModal", "#newPassword");
         const status=document.getElementById("profileStatus");
         if(status) status.textContent="Şifrənizi yeniləmək üçün yeni şifrəni daxil edin.";
@@ -75,9 +142,7 @@ export function initAuth() {
             }
             s.passwordRecoveryMode=false;
             ["newPassword","newPasswordConfirm"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
-            ["profilePassword","profileName","profilePhone","profileEmail"].forEach(id=>document.getElementById(id)?.removeAttribute("disabled"));
-            document.getElementById("forgotPasswordBtn")?.removeAttribute("disabled");
-            document.getElementById("passwordRecoveryPanel")?.classList.remove("open");
+            setAuthPanelMode("login");
             await ctx.renderProfile();
             await ctx.startAdminRealtime();
             showToast("✅ Şifrəniz uğurla yeniləndi.");
@@ -89,39 +154,73 @@ export function initAuth() {
     async function registerAccount() {
         const name=document.getElementById("profileName").value.trim(), phone=document.getElementById("profilePhone").value.trim(), email=document.getElementById("profileEmail").value.trim(), password=document.getElementById("profilePassword").value;
         if(name.length<2 || !isValidPhone(phone) || !/^\S+@\S+\.\S+$/.test(email) || password.length<8) return showToast("Ad, telefon, düzgün email və ən azı 8 simvolluq şifrə daxil edin.");
+        if (authSubmissionInProgress) return;
+        authSubmissionInProgress = true;
+        setAuthSubmissionBusy(true);
         try {
             const data=await ctx.api("/api/auth/register",{method:"POST",body:JSON.stringify({name,phone,email,password})});
             if(data?.session && data?.user){
                 s.authUser=data.user; s.profile=s.authUser;
                 await ctx.renderProfile(); await ctx.startAdminRealtime();
+                await ctx.closeLogin();
+                ctx.openAccountPage?.();
                 showToast("Hesab yaradıldı və giriş edildi.");
             }else{
                 s.authUser=null; s.profile=null;
+                document.getElementById("profilePassword").value = "";
                 await ctx.renderProfile();
+                setAuthPanelMode("login");
                 showToast("✅ Hesab yaradıldı. E-poçtunuza gələn təsdiq keçidini açın, sonra giriş edin.");
             }
         } catch(e) {
-            showToast(e.message === "EMAIL_EXISTS" ? "Bu email artıq qeydiyyatdadır." : "Qeydiyyat alınmadı.");
+            const errorCode = e?.code || e?.message;
+            const messages = {
+                EMAIL_EXISTS: "Bu email artıq qeydiyyatdadır.",
+                AUTH_RATE_LIMITED: "Çox cəhd edildi. Bir az gözləyib yenidən yoxlayın.",
+                AUTH_NETWORK_ERROR: "Bağlantı xətası. İnterneti yoxlayıb yenidən cəhd edin.",
+                REGISTER_FAILED: "Qeydiyyat tamamlanmadı. Məlumatları yoxlayıb yenidən cəhd edin."
+            };
+            showToast(messages[errorCode] || "Qeydiyyat alınmadı. Məlumatları yoxlayıb yenidən cəhd edin.");
+        } finally {
+            authSubmissionInProgress = false;
+            setAuthSubmissionBusy(false);
         }
     }
     async function loginAccount() {
         if(s.passwordRecoveryMode) return showToast("Əvvəlcə yeni şifrənizi təyin edin.");
         const email=document.getElementById("profileEmail").value.trim(), password=document.getElementById("profilePassword").value;
         if(!/^\S+@\S+\.\S+$/.test(email) || password.length<8) return showToast("Email və şifrəni düzgün daxil edin.");
+        if (authSubmissionInProgress) return;
+        authSubmissionInProgress = true;
+        setAuthSubmissionBusy(true);
         try {
             const data=await ctx.api("/api/auth/login",{method:"POST",body:JSON.stringify({email,password})});
             if(data?.user?.blocked){ await ctx.api("/api/auth/logout",{method:"POST"}).catch(()=>{}); s.authUser=null; s.profile=null; await ctx.renderProfile(); return showToast("Bu hesab bloklanıb. Adminlə əlaqə saxlayın."); }
-            s.authUser=data.user; s.profile=s.authUser; await ctx.renderProfile(); await ctx.startAdminRealtime(); showToast("Giriş edildi.");
-        } catch(e) {        showToast("Email və ya şifrə yanlışdır.");
+            s.authUser=data.user; s.profile=s.authUser; await ctx.renderProfile(); await ctx.startAdminRealtime(); await ctx.closeLogin(); ctx.openAccountPage?.(); showToast("Giriş edildi.");
+        } catch(e) {
+            const errorCode = e?.code || e?.message;
+            const messages = {
+                INVALID_CREDENTIALS: "Email və ya şifrə yanlışdır.",
+                EMAIL_NOT_CONFIRMED: "Girişdən əvvəl e-poçt ünvanınızı təsdiqləyin.",
+                AUTH_RATE_LIMITED: "Çox cəhd edildi. Bir az gözləyib yenidən yoxlayın.",
+                AUTH_NETWORK_ERROR: "Bağlantı xətası. İnterneti yoxlayıb yenidən cəhd edin.",
+                PROFILE_LOOKUP_FAILED: "Giriş təsdiqlənmədi: profil məlumatları təhlükəsiz yoxlanmadı. Bir az sonra yenidən cəhd edin.",
+                LOGIN_FAILED: "Giriş tamamlanmadı. Məlumatları yoxlayıb yenidən cəhd edin."
+            };
+            showToast(messages[errorCode] || "Giriş zamanı xəta oldu. Bir az sonra yenidən cəhd edin.");
+        } finally {
+            authSubmissionInProgress = false;
+            setAuthSubmissionBusy(false);
         }
     }
     async function logoutProfile() {
         await ctx.api("/api/auth/logout",{method:"POST"}).catch(()=>{});
         s.authUser=null; s.profile=null; s.orders=[]; s.passwordRecoveryMode=false;
         ctx.stopAdminRealtime(); s.adminUnreadOrders=0; ctx.updateAdminNotifBadge();
-        document.getElementById("passwordRecoveryPanel")?.classList.remove("open");
-        ["profilePassword","profileName","profilePhone","profileEmail"].forEach(id=>document.getElementById(id)?.removeAttribute("disabled"));
+        setAuthPanelMode("login");
+        s.accountShowAllOrders=false;
         ctx.renderProfile();
+        if (window.location.hash === "#account") window.location.hash = "#home";
         ["profileName","profilePhone","profileEmail","profilePassword"].forEach(id => document.getElementById(id).value="");
         showToast("Hesabdan çıxıldı.");
     }
@@ -141,7 +240,9 @@ export function initAuth() {
         const loginBtn=document.querySelector('.actions .btn-login[data-action="openLogin"]');
         if (loginBtn) loginBtn.textContent=s.authUser ? `👤 ${s.authUser.name.split(" ")[0]}` : "👤 Giriş";
         ctx.updateAdminButton();
+        s.accountAuthResolved = true;
         await ctx.renderOrderHistory();
+        ctx.syncAccountRoute?.();
     }
     function customerOrderStatusLabel(status){
         return ({pending_confirmation:'Təsdiq gözləyir',confirmed:'Təsdiqləndi',preparing:'Hazırlanır',ready:'Hazırdır',shipped:'Göndərildi',completed:'Tamamlandı',cancelled:'Ləğv edildi'})[status] || status || 'Naməlum';
@@ -166,11 +267,15 @@ export function initAuth() {
     }
     async function renderOrderHistory(){
         const box=document.getElementById("orderHistory"); if(!box) return;
-        if(!s.authUser){ box.innerHTML='<div class="form-help">Sifariş tarixçəsini görmək üçün hesaba daxil olun.</div>'; return; }
+        if(!s.authUser){ s.accountOrdersFetched=false; s.accountOrdersLoadError=false; s.orders=[]; box.innerHTML='<div class="form-help">Sifariş tarixçəsini görmək üçün hesaba daxil olun.</div>'; return; }
         let loadError=false;
-        try { const data=await ctx.api("/api/me/orders"); s.orders=data.orders||[]; } catch (error) {
+        s.accountOrdersFetched=false;
+        s.accountOrdersLoadError=false;
+        try { const data=await ctx.api("/api/me/orders"); s.orders=data.orders||[]; s.accountOrdersFetched=true; } catch (error) {
             console.error('Customer order history error:', error);
             s.orders=[];
+            s.accountOrdersFetched=true;
+            s.accountOrdersLoadError=true;
             loadError=true;
         }
         if(loadError){
@@ -196,6 +301,9 @@ export function initAuth() {
     Object.assign(ctx, {
     openLogin,
     closeLogin,
+    showRegisterForm,
+    showLoginForm,
+    submitAuthForm,
     showForgotPassword,
     hideForgotPassword,
     sendPasswordResetEmail,
