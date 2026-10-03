@@ -18,12 +18,10 @@ export function initAuth() {
             return;
         }
         if (s.authUser) {
-            document.getElementById("profileName").value = s.authUser.name || "";
-            document.getElementById("profilePhone").value = s.authUser.phone || "";
-            document.getElementById("profileEmail").value = s.authUser.email || "";
-        } else {
-            ["profileName","profilePhone","profileEmail","profilePassword"].forEach(id => document.getElementById(id).value = "");
+            ctx.openAccountPage?.();
+            return;
         }
+        ["profileName","profilePhone","profileEmail","profilePassword"].forEach(id => document.getElementById(id).value = "");
         await ctx.renderProfile();
         ctx.openDialog("loginModal", "#profileName");
     }
@@ -94,6 +92,8 @@ export function initAuth() {
             if(data?.session && data?.user){
                 s.authUser=data.user; s.profile=s.authUser;
                 await ctx.renderProfile(); await ctx.startAdminRealtime();
+                await ctx.closeLogin();
+                ctx.openAccountPage?.();
                 showToast("Hesab yaradıldı və giriş edildi.");
             }else{
                 s.authUser=null; s.profile=null;
@@ -111,7 +111,7 @@ export function initAuth() {
         try {
             const data=await ctx.api("/api/auth/login",{method:"POST",body:JSON.stringify({email,password})});
             if(data?.user?.blocked){ await ctx.api("/api/auth/logout",{method:"POST"}).catch(()=>{}); s.authUser=null; s.profile=null; await ctx.renderProfile(); return showToast("Bu hesab bloklanıb. Adminlə əlaqə saxlayın."); }
-            s.authUser=data.user; s.profile=s.authUser; await ctx.renderProfile(); await ctx.startAdminRealtime(); showToast("Giriş edildi.");
+            s.authUser=data.user; s.profile=s.authUser; await ctx.renderProfile(); await ctx.startAdminRealtime(); await ctx.closeLogin(); ctx.openAccountPage?.(); showToast("Giriş edildi.");
         } catch(e) {        showToast("Email və ya şifrə yanlışdır.");
         }
     }
@@ -121,7 +121,9 @@ export function initAuth() {
         ctx.stopAdminRealtime(); s.adminUnreadOrders=0; ctx.updateAdminNotifBadge();
         document.getElementById("passwordRecoveryPanel")?.classList.remove("open");
         ["profilePassword","profileName","profilePhone","profileEmail"].forEach(id=>document.getElementById(id)?.removeAttribute("disabled"));
+        s.accountShowAllOrders=false;
         ctx.renderProfile();
+        if (window.location.hash === "#account") window.location.hash = "#home";
         ["profileName","profilePhone","profileEmail","profilePassword"].forEach(id => document.getElementById(id).value="");
         showToast("Hesabdan çıxıldı.");
     }
@@ -141,7 +143,9 @@ export function initAuth() {
         const loginBtn=document.querySelector('.actions .btn-login[data-action="openLogin"]');
         if (loginBtn) loginBtn.textContent=s.authUser ? `👤 ${s.authUser.name.split(" ")[0]}` : "👤 Giriş";
         ctx.updateAdminButton();
+        s.accountAuthResolved = true;
         await ctx.renderOrderHistory();
+        ctx.syncAccountRoute?.();
     }
     function customerOrderStatusLabel(status){
         return ({pending_confirmation:'Təsdiq gözləyir',confirmed:'Təsdiqləndi',preparing:'Hazırlanır',ready:'Hazırdır',shipped:'Göndərildi',completed:'Tamamlandı',cancelled:'Ləğv edildi'})[status] || status || 'Naməlum';
@@ -166,11 +170,15 @@ export function initAuth() {
     }
     async function renderOrderHistory(){
         const box=document.getElementById("orderHistory"); if(!box) return;
-        if(!s.authUser){ box.innerHTML='<div class="form-help">Sifariş tarixçəsini görmək üçün hesaba daxil olun.</div>'; return; }
+        if(!s.authUser){ s.accountOrdersFetched=false; s.accountOrdersLoadError=false; s.orders=[]; box.innerHTML='<div class="form-help">Sifariş tarixçəsini görmək üçün hesaba daxil olun.</div>'; return; }
         let loadError=false;
-        try { const data=await ctx.api("/api/me/orders"); s.orders=data.orders||[]; } catch (error) {
+        s.accountOrdersFetched=false;
+        s.accountOrdersLoadError=false;
+        try { const data=await ctx.api("/api/me/orders"); s.orders=data.orders||[]; s.accountOrdersFetched=true; } catch (error) {
             console.error('Customer order history error:', error);
             s.orders=[];
+            s.accountOrdersFetched=true;
+            s.accountOrdersLoadError=true;
             loadError=true;
         }
         if(loadError){
