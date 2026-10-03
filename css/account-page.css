@@ -13,7 +13,7 @@ body.f1-account-route main#home > #accountPage { display: block !important; }
   --ac-soft-red: #fff0f1;
   --ac-shadow: 0 5px 22px rgba(26, 33, 46, .055);
   width: 100%;
-  min-height: 65vh;
+  min-height: 0;
   color: var(--ac-ink);
   background: var(--ac-bg);
   font-family: inherit;
@@ -157,7 +157,7 @@ html[data-theme="dark"] .account-page-view {
 .ac-benefits article span { display: grid; gap: 3px; min-width: 0; }
 .ac-benefits b { color: var(--ac-ink); font-size: 10px; line-height: 1.35; }
 .ac-benefits small { color: var(--ac-muted); font-size: 9px; line-height: 1.4; }
-.ac-guest-card { width: min(520px, calc(100% - 30px)); min-height: 300px; margin: 56px auto; display: grid; justify-items: center; align-content: center; gap: 10px; padding: 28px; text-align: center; }
+.ac-guest-card { width: min(520px, calc(100% - 30px)); min-height: 280px; margin: 38px auto; display: grid; justify-items: center; align-content: center; gap: 10px; padding: 28px; text-align: center; }
 .ac-guest-icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 50%; background: var(--ac-soft-red); color: var(--ac-accent); }
 .ac-guest-icon svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.6; }
 .ac-guest-card h1 { margin: 0; font-size: 22px; }
@@ -177,6 +177,7 @@ body.f1-account-route .f1-mobile-dock [data-action="openLogin"] { color: var(--a
   .ac-support-card { grid-column: 1 / -1; }
 }
 @media (max-width: 760px) {
+  .ac-guest-card { min-height: 220px; margin: 20px auto 24px; padding: 22px; }
   .account-shell { grid-template-columns: minmax(0,1fr); gap: 12px; padding: 12px 12px 18px; }
   body.f1-account-route { padding-bottom: calc(78px + env(safe-area-inset-bottom)); }
   body.f1-account-route .chat-trigger { right: 12px !important; bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important; min-width: 142px !important; height: 43px !important; min-height: 43px !important; padding: 3px 10px 3px 4px !important; border-width: 2px !important; gap: 6px !important; font-size: 11px !important; }
