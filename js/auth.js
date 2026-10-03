@@ -6,28 +6,48 @@ import { CONFIG } from './config.js';
 import { storageService } from './services/storage-service.js';
 import { isCustomerDesignPathOwnedBy } from './security.js';
 export function initAuth() {
+    const authModes = {
+        login: ["login-submit", "register-switch", "forgot"],
+        register: ["register-submit", "login-switch"],
+        reset: ["reset-panel"],
+        recovery: ["recovery-panel"]
+    };
+    let authPanelMode = "login";
     function setAuthPanelMode(mode = "login") {
-        const resetPanel = document.getElementById("passwordResetPanel");
-        const recoveryPanel = document.getElementById("passwordRecoveryPanel");
-        resetPanel?.classList.toggle("open", mode === "reset");
-        recoveryPanel?.classList.toggle("open", mode === "recovery");
-        ["profilePassword", "profileName", "profilePhone", "profileEmail"].forEach(id => {
-            const field = document.getElementById(id);
-            if (field) field.disabled = mode === "recovery";
-        });
-        const forgot = document.getElementById("forgotPasswordBtn");
-        if (forgot) forgot.disabled = mode === "recovery";
+        if (!Object.prototype.hasOwnProperty.call(authModes, mode)) mode = "login";
+        authPanelMode = mode;
+        const modal = document.getElementById("loginModal");
+        if (modal) {
+            modal.dataset.authMode = mode;
+            modal.classList.remove("auth-mode-login", "auth-mode-register", "auth-mode-reset", "auth-mode-recovery");
+            modal.classList.add("auth-mode-" + mode);
+            const visible = new Set(authModes[mode]);
+            modal.querySelectorAll("[data-auth-element]").forEach(element => {
+                const isVisible = visible.has(element.dataset.authElement);
+                element.hidden = !isVisible;
+                element.setAttribute("aria-hidden", String(!isVisible));
+            });
+            modal.querySelectorAll("[data-auth-field]").forEach(field => {
+                const modes = (field.dataset.authField || "").split(/\s+/);
+                const isVisible = modes.includes(mode);
+                field.hidden = !isVisible;
+                field.disabled = !isVisible;
+                field.setAttribute("aria-hidden", String(!isVisible));
+            });
+        }
+        document.getElementById("passwordResetPanel")?.classList.toggle("open", mode === "reset");
+        document.getElementById("passwordRecoveryPanel")?.classList.toggle("open", mode === "recovery");
     }
     setAuthPanelMode("login");
 
     let authSubmissionInProgress = false;
     function setAuthSubmissionBusy(busy) {
-        document.querySelectorAll('#loginModal [data-action="registerAccount"], #loginModal [data-action="loginAccount"]').forEach(button => {
+        document.querySelectorAll('#loginModal [data-auth-element="register-submit"], #loginModal [data-auth-element="login-submit"]').forEach(button => {
             if (busy) {
                 if (!button.dataset.authIdleLabel) button.dataset.authIdleLabel = button.textContent.trim();
                 button.disabled = true;
                 button.setAttribute("aria-busy", "true");
-                button.textContent = button.dataset.action === "loginAccount" ? "Giriş edilir..." : "Hesab yaradılır...";
+                button.textContent = button.dataset.authElement === "login-submit" ? "Giriş edilir..." : "Hesab yaradılır...";
             } else {
                 button.disabled = false;
                 button.removeAttribute("aria-busy");
@@ -56,11 +76,33 @@ export function initAuth() {
         }
         ["profileName","profilePhone","profileEmail","profilePassword"].forEach(id => document.getElementById(id).value = "");
         await ctx.renderProfile();
-        ctx.openDialog("loginModal", "#profileName");
+        ctx.openDialog("loginModal", "#profileEmail");
     }
     function closeLogin() {
         ctx.closeDialog("loginModal");
-        if (!s.passwordRecoveryMode) setAuthPanelMode("login");
+        if (!s.passwordRecoveryMode) {
+            setAuthPanelMode("login");
+            ["resetEmail", "newPassword", "newPasswordConfirm"].forEach(id => {
+                const field = document.getElementById(id);
+                if (field) field.value = "";
+            });
+        }
+    }
+    function showRegisterForm() {
+        if (authSubmissionInProgress) return;
+        setAuthPanelMode("register");
+        requestAnimationFrame(() => document.getElementById("profileName")?.focus());
+    }
+    function showLoginForm() {
+        if (authSubmissionInProgress) return;
+        setAuthPanelMode("login");
+        requestAnimationFrame(() => document.getElementById("profileEmail")?.focus());
+    }
+    function submitAuthForm() {
+        if (authPanelMode === "login") return loginAccount();
+        if (authPanelMode === "register") return registerAccount();
+        if (authPanelMode === "reset") return sendPasswordResetEmail();
+        if (authPanelMode === "recovery") return updatePasswordFromRecovery();
     }
     function showForgotPassword(){
         setAuthPanelMode("reset");
@@ -125,7 +167,9 @@ export function initAuth() {
                 showToast("Hesab yaradıldı və giriş edildi.");
             }else{
                 s.authUser=null; s.profile=null;
+                document.getElementById("profilePassword").value = "";
                 await ctx.renderProfile();
+                setAuthPanelMode("login");
                 showToast("✅ Hesab yaradıldı. E-poçtunuza gələn təsdiq keçidini açın, sonra giriş edin.");
             }
         } catch(e) {
@@ -257,6 +301,9 @@ export function initAuth() {
     Object.assign(ctx, {
     openLogin,
     closeLogin,
+    showRegisterForm,
+    showLoginForm,
+    submitAuthForm,
     showForgotPassword,
     hideForgotPassword,
     sendPasswordResetEmail,
