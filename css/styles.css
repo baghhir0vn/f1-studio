@@ -2491,3 +2491,22 @@ html[data-theme="dark"] .newsletter-feedback.is-error{border-color:#69423d;backg
     min-height: 42px !important;
   }
 }
+
+
+/* The reset panel stacks both actions at full width at phone widths too. */
+#loginModal .password-reset-panel.open {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+#loginModal .password-reset-panel.open > .auth-secondary-button {
+  box-sizing: border-box !important;
+  display: flex !important;
+  position: static !important;
+  grid-column: 1 / -1 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 42px !important;
+  height: auto !important;
+  padding: 9px 12px !important;
+}
