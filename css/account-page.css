@@ -247,3 +247,50 @@ body.f1-account-route .f1-mobile-dock [data-action="openLogin"] { color: var(--a
   .ac-capability-note { margin-left: 0; }
 }
 
+/* Keep authentication feedback visible above the account login dialog. */
+body.f1-account-route #toast {
+  position: fixed !important;
+  z-index: 10001 !important;
+  top: max(14px, env(safe-area-inset-top, 0px)) !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: 50% !important;
+  width: max-content !important;
+  max-width: min(440px, calc(100vw - 28px)) !important;
+  box-sizing: border-box !important;
+  padding: 11px 15px !important;
+  border: 1px solid var(--ac-line) !important;
+  border-radius: 12px !important;
+  background: var(--ac-card) !important;
+  color: var(--ac-ink) !important;
+  box-shadow: 0 10px 28px rgba(20, 26, 37, .16) !important;
+  font-size: 12px !important;
+  line-height: 1.45 !important;
+  text-align: center !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  transform: translate(-50%, -8px) !important;
+  pointer-events: none !important;
+  transition: opacity .18s ease, transform .18s ease, visibility .18s ease !important;
+}
+body.f1-account-route #toast.show {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translate(-50%, 0) !important;
+}
+body.f1-account-route #toast.toast-error {
+  border-color: rgba(229, 31, 42, .24) !important;
+  color: #b51e27 !important;
+}
+body.f1-account-route #toast.toast-success {
+  border-color: rgba(33, 167, 96, .24) !important;
+  color: #167b46 !important;
+}
+body.f1-account-route #loginModal .password-reset-panel:not(.open),
+body.f1-account-route #loginModal .password-recovery-panel:not(.open) {
+  display: none !important;
+}
+body.f1-account-route #loginModal .password-reset-panel.open,
+body.f1-account-route #loginModal .password-recovery-panel.open {
+  display: grid !important;
+}
