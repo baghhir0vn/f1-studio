@@ -2510,3 +2510,11 @@ html[data-theme="dark"] .newsletter-feedback.is-error{border-color:#69423d;backg
   height: auto !important;
   padding: 9px 12px !important;
 }
+
+
+/* Auth state visibility must win over button layout rules with !important display. */
+#loginModal .profile-actions-grid > [data-auth-element][hidden],
+#loginModal .auth-view-switch[data-auth-element][hidden],
+#loginModal [data-auth-field][hidden] {
+  display: none !important;
+}
