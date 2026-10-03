@@ -2406,3 +2406,25 @@ html[data-theme="dark"] .newsletter-feedback.is-success{border-color:#40553b;bac
 html[data-theme="dark"] .newsletter-feedback.is-error{border-color:#69423d;background:#2c211f;color:#ffc4b8}
 @keyframes f1NewsletterCheckPop{0%{opacity:0;transform:scale(.35) rotate(-45deg)}65%{opacity:1;transform:scale(1.18) rotate(7deg)}100%{opacity:1;transform:scale(1) rotate(0)}}
 @media(prefers-reduced-motion:reduce){.newsletter-feedback-icon.is-success{animation:none}}
+
+
+/* Auth modal fix: override the global circular .add product button styles locally. */
+#loginModal .profile-actions-grid > button {
+  box-sizing: border-box !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  height: auto !important;
+  min-height: 42px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 12px !important;
+  border-radius: 11px !important;
+  white-space: normal !important;
+  line-height: 1.25 !important;
+}
+#loginModal .password-reset-panel:not(.open),
+#loginModal .password-recovery-panel:not(.open) { display: none !important; }
+#loginModal .password-reset-panel.open,
+#loginModal .password-recovery-panel.open { display: grid !important; gap: 8px !important; }
+@media(max-width:560px){#loginModal .profile-actions-grid > button{min-height:40px!important}}

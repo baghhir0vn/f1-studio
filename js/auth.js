@@ -6,6 +6,20 @@ import { CONFIG } from './config.js';
 import { storageService } from './services/storage-service.js';
 import { isCustomerDesignPathOwnedBy } from './security.js';
 export function initAuth() {
+    function setAuthPanelMode(mode = "login") {
+        const resetPanel = document.getElementById("passwordResetPanel");
+        const recoveryPanel = document.getElementById("passwordRecoveryPanel");
+        resetPanel?.classList.toggle("open", mode === "reset");
+        recoveryPanel?.classList.toggle("open", mode === "recovery");
+        ["profilePassword", "profileName", "profilePhone", "profileEmail"].forEach(id => {
+            const field = document.getElementById(id);
+            if (field) field.disabled = mode === "recovery";
+        });
+        const forgot = document.getElementById("forgotPasswordBtn");
+        if (forgot) forgot.disabled = mode === "recovery";
+    }
+    setAuthPanelMode("login");
+
     let authSubmissionInProgress = false;
     function setAuthSubmissionBusy(busy) {
         document.querySelectorAll('#loginModal [data-action="registerAccount"], #loginModal [data-action="loginAccount"]').forEach(button => {
@@ -35,6 +49,7 @@ export function initAuth() {
             ctx.openPasswordRecovery();
             return;
         }
+        setAuthPanelMode("login");
         if (s.authUser) {
             ctx.openAccountPage?.();
             return;
@@ -43,18 +58,18 @@ export function initAuth() {
         await ctx.renderProfile();
         ctx.openDialog("loginModal", "#profileName");
     }
-    function closeLogin() { ctx.closeDialog("loginModal"); }
+    function closeLogin() {
+        ctx.closeDialog("loginModal");
+        if (!s.passwordRecoveryMode) setAuthPanelMode("login");
+    }
     function showForgotPassword(){
-        const panel=document.getElementById("passwordResetPanel");
-        const recovery=document.getElementById("passwordRecoveryPanel");
-        if(recovery) recovery.classList.remove("open");
-        if(panel) panel.classList.add("open");
+        setAuthPanelMode("reset");
         const email=document.getElementById("profileEmail")?.value.trim();
         const resetEmail=document.getElementById("resetEmail");
         if(resetEmail && email) resetEmail.value=email;
     }
     function hideForgotPassword(){
-        document.getElementById("passwordResetPanel")?.classList.remove("open");
+        setAuthPanelMode("login");
     }
     async function sendPasswordResetEmail(){
         const email=document.getElementById("resetEmail")?.value.trim();
@@ -68,13 +83,7 @@ export function initAuth() {
         }
     }
     function openPasswordRecovery(){
-        document.getElementById("passwordResetPanel")?.classList.remove("open");
-        document.getElementById("passwordRecoveryPanel")?.classList.add("open");
-        document.getElementById("profilePassword")?.setAttribute("disabled","disabled");
-        document.getElementById("profileName")?.setAttribute("disabled","disabled");
-        document.getElementById("profilePhone")?.setAttribute("disabled","disabled");
-        document.getElementById("profileEmail")?.setAttribute("disabled","disabled");
-        document.getElementById("forgotPasswordBtn")?.setAttribute("disabled","true");
+        setAuthPanelMode("recovery");
         ctx.openDialog("loginModal", "#newPassword");
         const status=document.getElementById("profileStatus");
         if(status) status.textContent="Şifrənizi yeniləmək üçün yeni şifrəni daxil edin.";
@@ -91,9 +100,7 @@ export function initAuth() {
             }
             s.passwordRecoveryMode=false;
             ["newPassword","newPasswordConfirm"].forEach(id=>{const el=document.getElementById(id);if(el)el.value="";});
-            ["profilePassword","profileName","profilePhone","profileEmail"].forEach(id=>document.getElementById(id)?.removeAttribute("disabled"));
-            document.getElementById("forgotPasswordBtn")?.removeAttribute("disabled");
-            document.getElementById("passwordRecoveryPanel")?.classList.remove("open");
+            setAuthPanelMode("login");
             await ctx.renderProfile();
             await ctx.startAdminRealtime();
             showToast("✅ Şifrəniz uğurla yeniləndi.");
@@ -166,8 +173,7 @@ export function initAuth() {
         await ctx.api("/api/auth/logout",{method:"POST"}).catch(()=>{});
         s.authUser=null; s.profile=null; s.orders=[]; s.passwordRecoveryMode=false;
         ctx.stopAdminRealtime(); s.adminUnreadOrders=0; ctx.updateAdminNotifBadge();
-        document.getElementById("passwordRecoveryPanel")?.classList.remove("open");
-        ["profilePassword","profileName","profilePhone","profileEmail"].forEach(id=>document.getElementById(id)?.removeAttribute("disabled"));
+        setAuthPanelMode("login");
         s.accountShowAllOrders=false;
         ctx.renderProfile();
         if (window.location.hash === "#account") window.location.hash = "#home";
