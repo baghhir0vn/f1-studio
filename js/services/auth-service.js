@@ -32,7 +32,10 @@ export const authService = {
             options: { data: { name: cleanName, phone: cleanPhone } }
         });
         if (error) throw error;
-        const profile = data.user ? await getProfileForUser(data.user) : null;
+        // With email confirmation enabled, Supabase returns a user but no session.
+        // Do not query the RLS-protected profiles table as an anonymous user; the
+        // caller only needs the session to distinguish immediate login from confirmation.
+        const profile = data.session && data.user ? await getProfileForUser(data.user) : null;
         return { user: profile, session: data.session };
     },
     async login(email, password) {
