@@ -68,6 +68,38 @@ export function initAuth() {
         setAuthPanelMode("login");
         requestAnimationFrame(() => document.getElementById("profileEmail")?.focus());
     }
+    function getAuthFailureMessage(error, flow) {
+        const message = String(error?.message || "").toLowerCase();
+        const code = String(error?.code || "").toLowerCase();
+        const signature = code + " " + message;
+
+        // Log non-sensitive error metadata only; never log form values or credentials.
+        console.error("F1 " + flow + " request failed", {
+            code: error?.code || null,
+            status: Number(error?.status) || null,
+            name: error?.name || null
+        });
+
+        if (/email.?not.?confirmed|email_not_confirmed/.test(signature)) {
+            return "E-poçt ünvanınız təsdiqlənməyib. Qeydiyyat e-poçtundakı keçidi açın, sonra yenidən daxil olun.";
+        }
+        if (flow === "register" && /already registered|user already exists|email_exists/.test(signature)) {
+            return "Bu e-poçt ilə hesab artıq mövcud ola bilər. Daxil olun və ya şifrəni sıfırlayın.";
+        }
+        if (/failed to fetch|fetch failed|network|timeout|timed out/.test(message)) {
+            return "Serverlə əlaqə qurulmadı. İnternet bağlantısını yoxlayıb yenidən cəhd edin.";
+        }
+        if (flow === "login" && /invalid login credentials|invalid_credentials/.test(signature)) {
+            return "Email və ya şifrə yanlışdır.";
+        }
+        if (flow === "register" && /weak password|password.*at least|password.*too short/.test(message)) {
+            return "Şifrə çox zəifdir. Ən azı 8 simvol və daha güclü şifrə seçin.";
+        }
+        return flow === "register"
+            ? "Qeydiyyat alınmadı. Məlumatları yoxlayıb bir az sonra yenidən cəhd edin."
+            : "Giriş alınmadı. E-poçt və şifrəni yoxlayıb yenidən cəhd edin.";
+    }
+
     function submitAuthForm() {
         if (authPanelMode === "login") return loginAccount();
         if (authPanelMode === "register") return registerAccount();
@@ -183,7 +215,7 @@ export function initAuth() {
                     showToast("✅ Hesab yaradıldı. E-poçtunuza gələn təsdiq keçidini açın, sonra giriş edin.");
                 }
             } catch(e) {
-                showToast(e.message === "EMAIL_EXISTS" ? "Bu email artıq qeydiyyatdadır." : "Qeydiyyat alınmadı.");
+                showToast(getAuthFailureMessage(e, "register"));
             }
         } finally {
             authSubmissionInProgress = false;
@@ -212,7 +244,7 @@ export function initAuth() {
                 closeLogin();
                 showToast("Giriş edildi.");
             } catch(e) {
-                showToast("Email və ya şifrə yanlışdır.");
+                showToast(getAuthFailureMessage(e, "login"));
             }
         } finally {
             authSubmissionInProgress = false;
