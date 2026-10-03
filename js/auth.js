@@ -1,5 +1,5 @@
 import { escapeHTML, money, isValidPhone, showToast } from './ui.js';
-import { authService } from './services/auth-service.js';
+import { authService } from './services/auth-service.js?v=2';
 import { state as s, ctx } from './state.js';
 import { getProfileForUser } from './services/profile-service.js';
 import { CONFIG } from './config.js';
@@ -122,7 +122,14 @@ export function initAuth() {
                 showToast("✅ Hesab yaradıldı. E-poçtunuza gələn təsdiq keçidini açın, sonra giriş edin.");
             }
         } catch(e) {
-            showToast(e.message === "EMAIL_EXISTS" ? "Bu email artıq qeydiyyatdadır." : "Qeydiyyat alınmadı.");
+            const errorCode = e?.code || e?.message;
+            const messages = {
+                EMAIL_EXISTS: "Bu email artıq qeydiyyatdadır.",
+                AUTH_RATE_LIMITED: "Çox cəhd edildi. Bir az gözləyib yenidən yoxlayın.",
+                AUTH_NETWORK_ERROR: "Bağlantı xətası. İnterneti yoxlayıb yenidən cəhd edin.",
+                REGISTER_FAILED: "Qeydiyyat tamamlanmadı. Məlumatları yoxlayıb yenidən cəhd edin."
+            };
+            showToast(messages[errorCode] || "Qeydiyyat alınmadı. Məlumatları yoxlayıb yenidən cəhd edin.");
         } finally {
             authSubmissionInProgress = false;
             setAuthSubmissionBusy(false);
@@ -140,7 +147,16 @@ export function initAuth() {
             if(data?.user?.blocked){ await ctx.api("/api/auth/logout",{method:"POST"}).catch(()=>{}); s.authUser=null; s.profile=null; await ctx.renderProfile(); return showToast("Bu hesab bloklanıb. Adminlə əlaqə saxlayın."); }
             s.authUser=data.user; s.profile=s.authUser; await ctx.renderProfile(); await ctx.startAdminRealtime(); await ctx.closeLogin(); ctx.openAccountPage?.(); showToast("Giriş edildi.");
         } catch(e) {
-            showToast("Email və ya şifrə yanlışdır.");
+            const errorCode = e?.code || e?.message;
+            const messages = {
+                INVALID_CREDENTIALS: "Email və ya şifrə yanlışdır.",
+                EMAIL_NOT_CONFIRMED: "Girişdən əvvəl e-poçt ünvanınızı təsdiqləyin.",
+                AUTH_RATE_LIMITED: "Çox cəhd edildi. Bir az gözləyib yenidən yoxlayın.",
+                AUTH_NETWORK_ERROR: "Bağlantı xətası. İnterneti yoxlayıb yenidən cəhd edin.",
+                PROFILE_LOOKUP_FAILED: "Giriş təsdiqlənmədi: profil məlumatları təhlükəsiz yoxlanmadı. Bir az sonra yenidən cəhd edin.",
+                LOGIN_FAILED: "Giriş tamamlanmadı. Məlumatları yoxlayıb yenidən cəhd edin."
+            };
+            showToast(messages[errorCode] || "Giriş zamanı xəta oldu. Bir az sonra yenidən cəhd edin.");
         } finally {
             authSubmissionInProgress = false;
             setAuthSubmissionBusy(false);
