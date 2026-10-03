@@ -2496,3 +2496,11 @@ html[data-theme="dark"] .newsletter-feedback.is-error{border-color:#69423d;backg
   margin: 0 !important;
   padding: 9px 12px !important;
 }
+
+/* Keep inactive auth controls hidden even when button layout rules use !important. */
+#loginModal [data-auth-element][hidden],
+#loginModal [data-auth-field][hidden],
+#loginModal .profile-actions-grid > [data-auth-element][hidden],
+#loginModal [data-auth-element] [hidden] {
+  display: none !important;
+}
