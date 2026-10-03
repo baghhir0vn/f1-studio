@@ -6,6 +6,24 @@ import { CONFIG } from './config.js';
 import { storageService } from './services/storage-service.js';
 import { isCustomerDesignPathOwnedBy } from './security.js';
 export function initAuth() {
+    let authSubmissionInProgress = false;
+    function setAuthSubmissionBusy(busy) {
+        document.querySelectorAll('#loginModal [data-action="registerAccount"], #loginModal [data-action="loginAccount"]').forEach(button => {
+            if (busy) {
+                if (!button.dataset.authIdleLabel) button.dataset.authIdleLabel = button.textContent.trim();
+                button.disabled = true;
+                button.setAttribute("aria-busy", "true");
+                button.textContent = button.dataset.action === "loginAccount" ? "Giriş edilir..." : "Hesab yaradılır...";
+            } else {
+                button.disabled = false;
+                button.removeAttribute("aria-busy");
+                if (button.dataset.authIdleLabel) {
+                    button.textContent = button.dataset.authIdleLabel;
+                    delete button.dataset.authIdleLabel;
+                }
+            }
+        });
+    }
     authService.onAuthStateChange((event) => {
         if(event === "PASSWORD_RECOVERY"){
             s.passwordRecoveryMode = true;
@@ -87,6 +105,9 @@ export function initAuth() {
     async function registerAccount() {
         const name=document.getElementById("profileName").value.trim(), phone=document.getElementById("profilePhone").value.trim(), email=document.getElementById("profileEmail").value.trim(), password=document.getElementById("profilePassword").value;
         if(name.length<2 || !isValidPhone(phone) || !/^\S+@\S+\.\S+$/.test(email) || password.length<8) return showToast("Ad, telefon, düzgün email və ən azı 8 simvolluq şifrə daxil edin.");
+        if (authSubmissionInProgress) return;
+        authSubmissionInProgress = true;
+        setAuthSubmissionBusy(true);
         try {
             const data=await ctx.api("/api/auth/register",{method:"POST",body:JSON.stringify({name,phone,email,password})});
             if(data?.session && data?.user){
@@ -102,17 +123,27 @@ export function initAuth() {
             }
         } catch(e) {
             showToast(e.message === "EMAIL_EXISTS" ? "Bu email artıq qeydiyyatdadır." : "Qeydiyyat alınmadı.");
+        } finally {
+            authSubmissionInProgress = false;
+            setAuthSubmissionBusy(false);
         }
     }
     async function loginAccount() {
         if(s.passwordRecoveryMode) return showToast("Əvvəlcə yeni şifrənizi təyin edin.");
         const email=document.getElementById("profileEmail").value.trim(), password=document.getElementById("profilePassword").value;
         if(!/^\S+@\S+\.\S+$/.test(email) || password.length<8) return showToast("Email və şifrəni düzgün daxil edin.");
+        if (authSubmissionInProgress) return;
+        authSubmissionInProgress = true;
+        setAuthSubmissionBusy(true);
         try {
             const data=await ctx.api("/api/auth/login",{method:"POST",body:JSON.stringify({email,password})});
             if(data?.user?.blocked){ await ctx.api("/api/auth/logout",{method:"POST"}).catch(()=>{}); s.authUser=null; s.profile=null; await ctx.renderProfile(); return showToast("Bu hesab bloklanıb. Adminlə əlaqə saxlayın."); }
             s.authUser=data.user; s.profile=s.authUser; await ctx.renderProfile(); await ctx.startAdminRealtime(); await ctx.closeLogin(); ctx.openAccountPage?.(); showToast("Giriş edildi.");
-        } catch(e) {        showToast("Email və ya şifrə yanlışdır.");
+        } catch(e) {
+            showToast("Email və ya şifrə yanlışdır.");
+        } finally {
+            authSubmissionInProgress = false;
+            setAuthSubmissionBusy(false);
         }
     }
     async function logoutProfile() {
