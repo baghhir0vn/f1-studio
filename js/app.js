@@ -6,7 +6,7 @@ import { initSiteSettings } from './site-settings.js?v=4';
 import { initHomepageContent } from './homepage-content.js';
 import { initCatalog } from './catalog.js?v=136';
 import { initCategoryPage } from './category-page.js';
-import { initAuth } from './auth.js';
+import { initAuth } from './auth.js?v=1';
 import { initCustomization } from './customization.js';
 import { initDesignStudio } from './design-studio.js';
 import { initCart } from './cart.js';
