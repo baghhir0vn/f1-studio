@@ -22,10 +22,10 @@ function redactAuthDiagnosticValue(value) {
         text = String(value);
     }
     return String(text ?? "")
-        .replace(/Bearer\\s+[A-Za-z0-9._~+\\/-]+=*/gi, "Bearer [REDACTED]")
-        .replace(/(access_token|refresh_token|id_token|token|api[_-]?key|password)\\s*[:=]\\s*["']?[^"'&\\s,;]+/gi, "$1=[REDACTED]")
-        .replace(/\\beyJ[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}\\b/g, "[REDACTED_TOKEN]")
-        .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}/gi, "[REDACTED_EMAIL]")
+        .replace(/Bearer\s+[A-Za-z0-9._~+\/-]+=*/gi, "Bearer [REDACTED]")
+        .replace(/(access_token|refresh_token|id_token|token|api[_-]?key|password)["']?\s*[:=]\s*["']?[^"'&\s,;]+/gi, "$1=[REDACTED]")
+        .replace(/\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b/g, "[REDACTED_TOKEN]")
+        .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[REDACTED_EMAIL]")
         .slice(0, 500);
 }
 
