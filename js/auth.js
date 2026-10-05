@@ -1,5 +1,5 @@
 import { escapeHTML, money, isValidPhone, showToast } from './ui.js';
-import { authService } from './services/auth-service.js';
+import { authService, getAuthDiagnosticMetadata, isAuthDiagnosticEnabled } from './services/auth-service.js';
 import { state as s, ctx } from './state.js';
 import { getProfileForUser } from './services/profile-service.js';
 import { CONFIG } from './config.js';
@@ -98,6 +98,51 @@ export function initAuth() {
         return flow === "register"
             ? "Qeydiyyat alınmadı. Məlumatları yoxlayıb bir az sonra yenidən cəhd edin."
             : "Giriş alınmadı. E-poçt və şifrəni yoxlayıb yenidən cəhd edin.";
+    }
+
+    function formatAuthDiagnosticValue(value) {
+        return value === undefined ? "undefined" : value === null ? "null" : String(value).slice(0, 500);
+    }
+
+    function showLoginAuthDiagnostic(error) {
+        if (!isAuthDiagnosticEnabled()) return;
+        const details = getAuthDiagnosticMetadata(error);
+        console.error("[AUTH DIAGNOSTIC] Login error metadata", details);
+
+        const toast = document.getElementById("toast");
+        if (!toast) return;
+        let block = toast.querySelector(".auth-diagnostic");
+        if (!block) {
+            toast.appendChild(document.createElement("br"));
+            block = document.createElement("pre");
+            block.className = "auth-diagnostic";
+            Object.assign(block.style, {
+                whiteSpace: "pre-wrap",
+                textAlign: "left",
+                fontSize: "12px",
+                lineHeight: "1.45",
+                maxWidth: "min(80vw, 520px)",
+                maxHeight: "180px",
+                overflow: "auto",
+                margin: "8px 0 0",
+                padding: "8px 10px",
+                borderRadius: "8px",
+                background: "rgba(0, 0, 0, 0.08)"
+            });
+            toast.appendChild(block);
+        }
+        block.textContent = [
+            "AUTH DIAGNOSTIC",
+            `Name: ${formatAuthDiagnosticValue(details.name)}`,
+            `Code: ${formatAuthDiagnosticValue(details.code)}`,
+            `Status: ${formatAuthDiagnosticValue(details.status)}`,
+            `Message: ${formatAuthDiagnosticValue(details.message)}`
+        ].join("\n");
+        clearTimeout(window.__toastTimer);
+        window.__toastTimer = setTimeout(() => {
+            toast.classList.remove("show");
+            block.remove();
+        }, 30000);
     }
 
     function submitAuthForm() {
@@ -232,6 +277,13 @@ export function initAuth() {
         try {
             try {
                 const data=await ctx.api("/api/auth/login",{method:"POST",body:JSON.stringify({email,password})});
+                if (isAuthDiagnosticEnabled()) {
+                    console.info("[AUTH DIAGNOSTIC] Login result processed", {
+                        resultKeys: Object.keys(data || {}),
+                        hasUser: Boolean(data?.user),
+                        hasSession: Boolean(data?.session)
+                    });
+                }
                 if(data?.user?.blocked){
                     await ctx.api("/api/auth/logout",{method:"POST"}).catch(()=>{});
                     s.authUser=null; s.profile=null;
@@ -240,11 +292,18 @@ export function initAuth() {
                     return showToast("Bu hesab bloklanıb. Adminlə əlaqə saxlayın.");
                 }
                 s.authUser=data.user; s.profile=s.authUser;
+                if (isAuthDiagnosticEnabled()) {
+                    console.info("[AUTH DIAGNOSTIC] Session and account state updated", {
+                        hasUser: Boolean(s.authUser),
+                        hasSession: Boolean(data?.session)
+                    });
+                }
                 await ctx.renderProfile(); await ctx.startAdminRealtime();
                 closeLogin();
                 showToast("Giriş edildi.");
             } catch(e) {
                 showToast(getAuthFailureMessage(e, "login"));
+                showLoginAuthDiagnostic(e);
             }
         } finally {
             authSubmissionInProgress = false;
