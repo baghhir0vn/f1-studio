@@ -4,6 +4,44 @@ function getPasswordResetRedirect() {
     const origin = window.location.origin;
     return /^https?:\/\//i.test(origin) ? `${origin}/` : null;
 }
+
+const AUTH_DIAGNOSTIC_HOST = "f1studio-nine.vercel.app";
+const AUTH_DIAGNOSTIC_FIELDS = ["name", "message", "code", "status", "statusCode", "error", "error_description"];
+
+export function isAuthDiagnosticEnabled() {
+    return typeof window !== "undefined" && window.location.hostname === AUTH_DIAGNOSTIC_HOST;
+}
+
+function redactAuthDiagnosticValue(value) {
+    if (value === undefined || value === null) return value;
+    if (typeof value === "number" || typeof value === "boolean") return value;
+    let text;
+    try {
+        text = typeof value === "string" ? value : JSON.stringify(value);
+    } catch (_) {
+        text = String(value);
+    }
+    return String(text ?? "")
+        .replace(/Bearer\s+[A-Za-z0-9._~+\/-]+=*/gi, "Bearer [REDACTED]")
+        .replace(/(access_token|refresh_token|id_token|token|api[_-]?key|password)["']?\s*[:=]\s*["']?[^"'&\s,;]+/gi, "$1=[REDACTED]")
+        .replace(/\beyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b/g, "[REDACTED_TOKEN]")
+        .replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, "[REDACTED_EMAIL]")
+        .slice(0, 500);
+}
+
+export function getAuthDiagnosticMetadata(error) {
+    const metadata = {};
+    for (const field of AUTH_DIAGNOSTIC_FIELDS) {
+        let value;
+        try {
+            value = error?.[field];
+        } catch (_) {
+            value = "[unavailable]";
+        }
+        metadata[field] = redactAuthDiagnosticValue(value);
+    }
+    return metadata;
+}
 export const authService = {
     onAuthStateChange(callback) { return sb.auth.onAuthStateChange(callback); },
     async getUser() { return sb.auth.getUser(); },
@@ -41,7 +79,25 @@ export const authService = {
     async login(email, password) {
         const cleanEmail = String(email || '').trim().toLowerCase();
         if (!cleanEmail || String(password || '').length > 128) throw new Error('INVALID_AUTH_INPUT');
-        const { data, error } = await sb.auth.signInWithPassword({ email: cleanEmail, password });
+        const diagnosticEnabled = isAuthDiagnosticEnabled();
+        if (diagnosticEnabled) console.info("[AUTH DIAGNOSTIC] Supabase request started");
+
+        let authResult;
+        try {
+            authResult = await sb.auth.signInWithPassword({ email: cleanEmail, password });
+        } catch (error) {
+            if (diagnosticEnabled) {
+                console.error("[AUTH DIAGNOSTIC] Supabase request rejected", getAuthDiagnosticMetadata(error));
+            }
+            throw error;
+        }
+
+        const { data, error } = authResult;
+        if (diagnosticEnabled) {
+            console.info("[AUTH DIAGNOSTIC] Supabase response received", error
+                ? getAuthDiagnosticMetadata(error)
+                : { name: undefined, message: undefined, code: undefined, status: undefined, statusCode: undefined, error: undefined, error_description: undefined, hasUser: Boolean(data?.user), hasSession: Boolean(data?.session) });
+        }
         if (error) throw error;
         return { user: await getProfileForUser(data.user), session: data.session };
     },
