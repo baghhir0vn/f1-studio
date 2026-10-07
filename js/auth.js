@@ -160,6 +160,10 @@ export function initAuth() {
         }
     });
     async function openLogin() {
+        if (s.authUser && typeof ctx.openAccountPage === "function") {
+            ctx.openAccountPage();
+            return;
+        }
         if(s.passwordRecoveryMode){
             ctx.openPasswordRecovery();
             return;
