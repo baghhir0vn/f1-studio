@@ -1,6 +1,10 @@
 import { loadJSON } from './ui.js';
 export const state = {
   authUser: null,
+  accountAuthResolved: false,
+  accountOrdersFetched: false,
+  accountOrdersLoadError: false,
+  accountShowAllOrders: false,
   passwordRecoveryMode: false,
   serverCatalogReady: false,
   catalogLoadErrorShown: false,
