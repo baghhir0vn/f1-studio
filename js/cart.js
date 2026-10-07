@@ -198,6 +198,7 @@ export function initCart() {
                 s.authUser=fresh.user; s.profile=fresh.user;
                 if(s.authUser?.blocked){ popup.close(); return showToast("Bu hesab bloklanıb. Sifariş yaratmaq mümkün deyil."); }
             }
+            const orderItemsSnapshot=s.cart.map(i=>{const p=ctx.getProduct(i.id)||{};const image=Array.isArray(p.images)?p.images[0]:p.image;return {productId:Number(i.id),name:String(p.name||"Fərdi məhsul").slice(0,180),image:String(image||""),qty:Number(i.qty),priceCents:Math.max(0,Math.round((Number(p.price)||0)*100)),customization:i.customization||null};});
             const result=await ctx.api("/api/orders",{method:"POST",body:JSON.stringify({
                 items:s.cart.map(i=>({productId:Number(i.id),qty:Number(i.qty),customization:i.customization||null})),
                 customer:{name:customerName,phone:customerPhone,email:s.authUser?.email||""},
@@ -209,6 +210,7 @@ export function initCart() {
                 showToast("Sifariş yaradıldı, amma WhatsApp keçidi hazırlana bilmədi. Adminlə əlaqə saxlayın.");
                 return;
             }
+            ctx.showOrderConfirmation?.(result.order,orderItemsSnapshot,whatsappUrl);
             popup.location=whatsappUrl;
             s.cart=[]; ctx.saveCart();
             document.getElementById("orderForm").style.display="none";

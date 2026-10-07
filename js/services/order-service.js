@@ -87,7 +87,7 @@ export const orderService = {
         });
         if (error) throw error;
         const order = data?.order || data;
-        return { order: { orderCode: order.order_code, status: order.status, total_cents: Math.round(Number(order.total) * 100) } };
+        return { order: { orderCode: order.order_code, status: order.status, total_cents: Math.round(Number(order.total) * 100), createdAt: order.created_at || null, delivery: order.delivery || payload.delivery, giftWrap: order.gift_wrap === true } };
     },
     async listAdmin() {
         const data = await fetchAllRows(() => sb.from('orders').select('id,order_code,status,created_at,total,customer_name,customer_phone,customer_email,delivery,address,address_unknown,gift_wrap,user_id,order_items(id,product_id,product_name,qty,price,customization)').order('created_at', { ascending: false }), { pageSize: 1000, maxRows: 25000 });
