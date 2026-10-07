@@ -19,6 +19,7 @@ import { makeClientId } from './security.js';
 import { initMotion } from './motion.js';
 import { initAboutPage } from './about-page.js?v=1';
 import { initAccountPage } from './account-page.js?v=1';
+import { initOrderConfirmation } from './order-confirmation.js';
 Object.assign(ctx, { openDialog, closeDialog, makeClientId, toggleTheme, toggleMobileMenu, closeMobileMenu, subscribeNewsletter });
 initModalManager();
 initSiteSettings();
@@ -40,6 +41,7 @@ ctx.api = createApi({
 initEvents();
 initAboutPage();
 initAccountPage();
+initOrderConfirmation();
 window.addEventListener('load', () => {
     initTheme();
     ctx.normalizeCartLines?.();
