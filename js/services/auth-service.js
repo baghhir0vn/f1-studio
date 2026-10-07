@@ -1,5 +1,6 @@
 import { sb } from '../config.js';
 import { getProfileForUser } from './profile-service.js';
+import { isSafeCustomerAvatarPath } from '../security.js';
 function getPasswordResetRedirect() {
     const origin = window.location.origin;
     return /^https?:\/\//i.test(origin) ? `${origin}/` : null;
@@ -100,6 +101,26 @@ export const authService = {
         }
         if (error) throw error;
         return { user: await getProfileForUser(data.user), session: data.session };
+    },
+    async updateProfileAvatar({ avatarPath = null, avatarTemplate = null } = {}) {
+        const { data: currentData, error: currentError } = await sb.auth.getUser();
+        const currentUser = currentData?.user;
+        if (currentError || !currentUser?.id) throw new Error('AUTH_REQUIRED');
+        const templateIds = new Set(['portrait-1', 'portrait-2', 'portrait-3', 'portrait-4', 'portrait-5', 'portrait-6']);
+        const cleanPath = typeof avatarPath === 'string' ? avatarPath : '';
+        const cleanTemplate = typeof avatarTemplate === 'string' ? avatarTemplate : '';
+        if (cleanPath && !isSafeCustomerAvatarPath(cleanPath, currentUser.id)) throw new Error('INVALID_AVATAR_PATH');
+        if (!cleanPath && !templateIds.has(cleanTemplate)) throw new Error('INVALID_AVATAR_TEMPLATE');
+        const metadata = currentUser.user_metadata && typeof currentUser.user_metadata === 'object' ? currentUser.user_metadata : {};
+        const { data, error } = await sb.auth.updateUser({
+            data: {
+                ...metadata,
+                profile_avatar_path: cleanPath || null,
+                profile_avatar_template: cleanPath ? null : cleanTemplate
+            }
+        });
+        if (error || !data?.user) throw error || new Error('AVATAR_UPDATE_FAILED');
+        return { user: await getProfileForUser(data.user) };
     },
     async logout() {
         const { error } = await sb.auth.signOut();

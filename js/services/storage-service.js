@@ -1,5 +1,5 @@
 import { sb } from '../config.js';
-import { isSafeCustomerDesignPath, isSafeProductImagePath } from '../security.js';
+import { isSafeCustomerAvatarPath, isSafeCustomerDesignPath, isSafeProductImagePath } from '../security.js';
 const ALLOWED_BUCKETS = new Set(['customer-designs', 'product-images']);
 const CUSTOMER_FILE_TYPES = new Set(['image/png','image/jpeg','image/webp','application/pdf']);
 const PRODUCT_FILE_TYPES = new Set(['image/jpeg','image/png','image/webp','image/gif','image/avif']);
@@ -27,6 +27,27 @@ export const storageService = {
         const ttl = Math.min(3600, Math.max(60, Number(expiresIn) || 900));
         const { data, error } = await sb.storage.from('customer-designs').createSignedUrl(path, ttl);
         if (error || !data?.signedUrl) throw new Error('DESIGN_SIGNED_URL_FAILED');
+        return data.signedUrl;
+    },
+    async uploadCustomerAvatar(path, file, userId) {
+        if (!isSafeCustomerAvatarPath(path, userId)) throw new Error('INVALID_AVATAR_PATH');
+        if (!file || file.type !== 'image/webp' || Number(file.size) > 512 * 1024) throw new Error('AVATAR_FILE_TYPE');
+        const { error } = await sb.storage.from('customer-avatars').upload(path, file, {
+            cacheControl: '3600', upsert: false, contentType: 'image/webp'
+        });
+        if (error) throw new Error('AVATAR_UPLOAD_FAILED');
+        return { path };
+    },
+    async removeCustomerAvatar(path, userId) {
+        if (!isSafeCustomerAvatarPath(path, userId)) throw new Error('INVALID_AVATAR_PATH');
+        const { error } = await sb.storage.from('customer-avatars').remove([path]);
+        if (error) throw new Error('AVATAR_REMOVE_FAILED');
+    },
+    async createCustomerAvatarSignedUrl(path, userId, expiresIn = 3600) {
+        if (!isSafeCustomerAvatarPath(path, userId)) throw new Error('INVALID_AVATAR_PATH');
+        const ttl = Math.min(3600, Math.max(60, Number(expiresIn) || 3600));
+        const { data, error } = await sb.storage.from('customer-avatars').createSignedUrl(path, ttl);
+        if (error || !data?.signedUrl) throw new Error('AVATAR_SIGNED_URL_FAILED');
         return data.signedUrl;
     },
     async uploadProductImage(path, file) {

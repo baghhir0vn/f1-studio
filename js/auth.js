@@ -248,12 +248,12 @@ export function initAuth() {
             try {
                 const data=await ctx.api("/api/auth/register",{method:"POST",body:JSON.stringify({name,phone,email,password})});
                 if(data?.session && data?.user){
-                    s.authUser=data.user; s.profile=s.authUser;
+                    s.authUser=data.user; s.profile=s.authUser; s.accountAuthResolved=true; s.accountOrdersFetched=false; s.accountOrdersLoadError=false;
                     await ctx.renderProfile(); await ctx.startAdminRealtime();
                     closeLogin();
                     showToast("Hesab yaradıldı və giriş edildi.");
                 }else{
-                    s.authUser=null; s.profile=null;
+                    s.authUser=null; s.profile=null; s.accountAuthResolved=true; s.accountOrdersFetched=true; s.accountOrdersLoadError=false; s.orders=[];
                     document.getElementById("profilePassword").value = "";
                     await ctx.renderProfile();
                     setAuthPanelMode("login");
@@ -286,12 +286,12 @@ export function initAuth() {
                 }
                 if(data?.user?.blocked){
                     await ctx.api("/api/auth/logout",{method:"POST"}).catch(()=>{});
-                    s.authUser=null; s.profile=null;
+                    s.authUser=null; s.profile=null; s.accountAuthResolved=true; s.accountOrdersFetched=true; s.accountOrdersLoadError=false; s.orders=[];
                     await ctx.renderProfile();
                     setAuthPanelMode("login");
                     return showToast("Bu hesab bloklanıb. Adminlə əlaqə saxlayın.");
                 }
-                s.authUser=data.user; s.profile=s.authUser;
+                s.authUser=data.user; s.profile=s.authUser; s.accountAuthResolved=true; s.accountOrdersFetched=false; s.accountOrdersLoadError=false;
                 if (isAuthDiagnosticEnabled()) {
                     console.info("[AUTH DIAGNOSTIC] Session and account state updated", {
                         hasUser: Boolean(s.authUser),
@@ -312,7 +312,7 @@ export function initAuth() {
     }
     async function logoutProfile() {
         await ctx.api("/api/auth/logout",{method:"POST"}).catch(()=>{});
-        s.authUser=null; s.profile=null; s.orders=[]; s.passwordRecoveryMode=false;
+        s.authUser=null; s.profile=null; s.orders=[]; s.passwordRecoveryMode=false; s.accountAuthResolved=true; s.accountOrdersFetched=true; s.accountOrdersLoadError=false; s.accountShowAllOrders=false;
         ctx.stopAdminRealtime(); s.adminUnreadOrders=0; ctx.updateAdminNotifBadge();
         ["resetEmail","newPassword","newPasswordConfirm","profileName","profilePhone","profileEmail","profilePassword"].forEach(id=>{
             const field=document.getElementById(id); if(field) field.value="";
@@ -324,9 +324,17 @@ export function initAuth() {
     async function loadCurrentUser() {
         try {
             const data=await ctx.api("/api/me");
-            if(data?.user?.blocked){ await ctx.api("/api/auth/logout",{method:"POST"}).catch(()=>{}); s.authUser=null; s.profile=null; ctx.stopAdminRealtime(); await ctx.renderProfile(); showToast("Bu hesab bloklanıb. Adminlə əlaqə saxlayın."); return; }
-            s.authUser=data.user; s.profile=data.user; await ctx.renderProfile(); await ctx.startAdminRealtime();
-        } catch (_) { s.authUser=null; s.profile=null; ctx.stopAdminRealtime(); await ctx.renderProfile(); }
+            if(data?.user?.blocked){
+                await ctx.api("/api/auth/logout",{method:"POST"}).catch(()=>{});
+                s.authUser=null; s.profile=null; s.accountAuthResolved=true; s.accountOrdersFetched=true; s.accountOrdersLoadError=false; s.orders=[];
+                ctx.stopAdminRealtime(); await ctx.renderProfile(); showToast("Bu hesab bloklanıb. Adminlə əlaqə saxlayın."); return;
+            }
+            s.authUser=data.user; s.profile=data.user; s.accountAuthResolved=true; s.accountOrdersFetched=false; s.accountOrdersLoadError=false;
+            await ctx.renderProfile(); await ctx.startAdminRealtime();
+        } catch (_) {
+            s.authUser=null; s.profile=null; s.accountAuthResolved=true; s.accountOrdersFetched=true; s.accountOrdersLoadError=false; s.orders=[];
+            ctx.stopAdminRealtime(); await ctx.renderProfile();
+        }
     }
     async function renderProfile() {
         const modal=document.getElementById("loginModal");
@@ -367,19 +375,33 @@ export function initAuth() {
         }
     }
     async function renderOrderHistory(){
-        const box=document.getElementById("orderHistory"); if(!box) return;
-        if(!s.authUser){ box.innerHTML='<div class="form-help">Sifariş tarixçəsini görmək üçün hesaba daxil olun.</div>'; return; }
+        const box=document.getElementById("orderHistory");
+        if(!s.authUser){
+            s.orders=[]; s.accountOrdersFetched=true; s.accountOrdersLoadError=false;
+            if(box) box.innerHTML='<div class="form-help">Sifariş tarixçəsini görmək üçün hesaba daxil olun.</div>';
+            ctx.renderAccountDashboard?.();
+            return;
+        }
+        if(!box) return;
+        s.accountOrdersFetched=false; s.accountOrdersLoadError=false;
         let loadError=false;
         try { const data=await ctx.api("/api/me/orders"); s.orders=data.orders||[]; } catch (error) {
             console.error('Customer order history error:', error);
             s.orders=[];
             loadError=true;
         }
+        s.accountOrdersFetched=true;
+        s.accountOrdersLoadError=loadError;
         if(loadError){
             box.innerHTML='<div class="customer-order-error"><div><b>Sifarişlər yüklənmədi.</b><span>Bağlantını yoxlayıb yenidən cəhd edə bilərsən.</span></div><button type="button" class="order-wa-btn" data-action="renderOrderHistory">↻ Yenilə</button></div>';
+            ctx.renderAccountDashboard?.();
             return;
         }
-        if(!s.orders.length){ box.innerHTML='<div class="customer-cabinet-empty"><div><b>Hələ sifariş yoxdur.</b><span>Məhsul seçib səbətdən ilk sifarişini yarada bilərsən.</span></div><button type="button" class="order-wa-btn" data-action="renderOrderHistory">↻ Yenilə</button></div>'; return; }
+        if(!s.orders.length){
+            box.innerHTML='<div class="customer-cabinet-empty"><div><b>Hələ sifariş yoxdur.</b><span>Məhsul seçib səbətdən ilk sifarişini yarada bilərsən.</span></div><button type="button" class="order-wa-btn" data-action="renderOrderHistory">↻ Yenilə</button></div>';
+            ctx.renderAccountDashboard?.();
+            return;
+        }
         const active=s.orders.filter(o=>!['completed','cancelled'].includes(o.status)).length;
         const completed=s.orders.filter(o=>o.status==='completed').length;
         const total=s.orders.reduce((sum,o)=>sum+(Number(o.total_cents)||0),0)/100;
@@ -391,9 +413,10 @@ export function initAuth() {
             const activeIndex=stages.indexOf(o.status);
             const progress=(o.status==='pending_confirmation') ? 0 : (o.status==='cancelled' ? 0 : Math.max(0,Math.min(5,activeIndex+1)));
             const steps=stages.map((stage,idx)=>`<span class="customer-step ${o.status==='cancelled'?'cancelled':idx<progress?'done':idx===progress-1?'current':''}" title="${escapeHTML(customerOrderStatusLabel(stage))}"></span>`).join('');
-            const designLinks=(o.items||[]).flatMap(i=>{const path=i.customization?.imagePath;if(!path||!isCustomerDesignPathOwnedBy(path,s.authUser?.id))return [];return [`<button type="button" class="order-design-link" data-action="openCustomerDesign" data-action-args='[${JSON.stringify(path)}]'>🎨 Dizayn faylına bax</button>`];}).join('');
-            return `<article class="order-row customer-order-card"><div class="customer-order-top"><div><b>${code}</b><div class="customer-order-date">${date}</div></div><span class="customer-order-status ${o.status==='cancelled'?'is-cancelled':o.status==='completed'?'is-complete':''}">${escapeHTML(customerOrderStatusLabel(o.status))}</span></div><div class="customer-order-progress">${steps}</div><div class="customer-order-items">${items||'Məhsul məlumatı yoxdur'}</div><div class="customer-order-bottom"><b>${money((Number(o.total_cents)||0)/100)}</b><div class="customer-order-actions">${designLinks}<button type="button" class="order-wa-btn" data-action="openOrderWhatsApp" data-action-args='[${JSON.stringify(o.orderCode||o.order_code||'')}]'>💬 WhatsApp</button></div></div></article>`;
+            const designLinks=(o.items||[]).flatMap(i=>{const path=i.customization?.imagePath;if(!path||!isCustomerDesignPathOwnedBy(path,s.authUser?.id))return [];return [`<button type="button" class="order-design-link" data-action="openCustomerDesign" data-action-args='${JSON.stringify([path])}'>🎨 Dizayn faylına bax</button>`];}).join('');
+            return `<article class="order-row customer-order-card"><div class="customer-order-top"><div><b>${code}</b><div class="customer-order-date">${date}</div></div><span class="customer-order-status ${o.status==='cancelled'?'is-cancelled':o.status==='completed'?'is-complete':''}">${escapeHTML(customerOrderStatusLabel(o.status))}</span></div><div class="customer-order-progress">${steps}</div><div class="customer-order-items">${items||'Məhsul məlumatı yoxdur'}</div><div class="customer-order-bottom"><b>${money((Number(o.total_cents)||0)/100)}</b><div class="customer-order-actions">${designLinks}<button type="button" class="order-wa-btn" data-action="openOrderWhatsApp" data-action-args='${JSON.stringify([o.orderCode||o.order_code||''])}'>💬 WhatsApp</button></div></div></article>`;
         }).join('');
+        ctx.renderAccountDashboard?.();
     }
     Object.assign(ctx, {
     openLogin,

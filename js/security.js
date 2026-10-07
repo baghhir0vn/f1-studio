@@ -45,6 +45,12 @@ export function isUuid(value) {
 export function isSafeCustomerDesignPath(path) {
     return /^orders\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\.(jpg|jpeg|png|webp|pdf)$/i.test(String(path || ''));
 }
+export function isSafeCustomerAvatarPath(path, userId) {
+    const cleanUserId = String(userId || '').trim();
+    if (!isUuid(cleanUserId)) return false;
+    return /^avatars\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\/[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\.webp$/i.test(String(path || ''))
+        && String(path).toLowerCase().startsWith(`avatars/${cleanUserId.toLowerCase()}/`);
+}
 export function isCustomerDesignPathOwnedBy(path, userId) {
     const cleanUserId = String(userId || '').trim();
     if (!isUuid(cleanUserId) || !isSafeCustomerDesignPath(path)) return false;
