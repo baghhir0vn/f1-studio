@@ -75,7 +75,15 @@ export function initCatalog() {
         }
     }
     async function loadServerReviews() {
-        try { const data=await ctx.api("/api/reviews"); if(Array.isArray(data.reviews)){ s.localReviews=data.reviews; ctx.renderReviews(); } } catch (_) {}
+        try {
+            const data = await ctx.api("/api/reviews");
+            if (Array.isArray(data.reviews)) {
+                s.localReviews = data.reviews;
+                s.serverReviewsLoaded = true;
+                ctx.renderReviews();
+                ctx.updateAboutMetrics?.();
+            }
+        } catch (_) {}
     }
     function openProductModal(id, e) {
         if(!ctx.ensureCatalogReady()) return;
