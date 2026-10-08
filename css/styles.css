@@ -2505,3 +2505,66 @@ html[data-theme="dark"] .newsletter-feedback.is-error{border-color:#69423d;backg
 #loginModal [data-auth-element] [hidden] {
   display: none !important;
 }
+
+/* Compact customer reviews without changing the review flow. */
+#reviews.section{
+  margin-top:48px!important;
+  margin-bottom:48px!important;
+}
+#reviews.section>h2{
+  margin-bottom:12px!important;
+  padding-bottom:8px!important;
+}
+#reviews .reviews-section{
+  padding:18px!important;
+  border-radius:18px!important;
+}
+#reviewsList>p{
+  margin:0!important;
+  font-size:13px!important;
+  line-height:1.45!important;
+}
+#reviews .reviews-section>div[style*="border-top"]{
+  margin-top:14px!important;
+  padding-top:12px!important;
+  border-top:1px solid var(--f1-line)!important;
+}
+#reviews #reviewsFormTitle{
+  margin:0 0 8px!important;
+}
+#reviews .form{
+  gap:8px!important;
+  margin-top:0!important;
+  padding-top:0!important;
+  border-top:0!important;
+}
+#reviews .form textarea{
+  min-height:82px!important;
+}
+@media(max-width:760px){
+  #reviews.section{
+    margin-top:32px!important;
+    margin-bottom:32px!important;
+  }
+  #reviews.section>h2{
+    margin-bottom:10px!important;
+    padding-bottom:7px!important;
+  }
+  #reviews .reviews-section{
+    padding:14px!important;
+    border-radius:16px!important;
+  }
+  #reviews .reviews-section>div[style*="border-top"]{
+    margin-top:12px!important;
+    padding-top:10px!important;
+  }
+  #reviews #reviewsFormTitle{
+    margin-bottom:7px!important;
+  }
+  #reviews .form{
+    gap:7px!important;
+  }
+  #reviews .form textarea{
+    min-height:74px!important;
+  }
+}
