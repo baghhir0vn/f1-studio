@@ -324,3 +324,14 @@ body.f1-account-route #loginModal .password-recovery-panel.open {
 .ac-avatar-file-note{margin:9px 1px 0}
 @media(max-width:760px){.ac-avatar-editor{flex-basis:62px;width:62px}.ac-avatar-shell{width:62px;height:62px}.ac-avatar-picker{top:calc(100% + 8px);left:0}}
 @media(max-width:420px){.ac-avatar-editor{flex-basis:54px;width:54px}.ac-avatar-shell{width:54px;height:54px}}
+
+/* Account order status notifications */
+.ac-notification-intro{margin:-5px 0 8px;color:var(--ac-muted);font-size:10px;line-height:1.55}
+.ac-notification-list{display:grid;min-width:0}
+.ac-notification-row{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:11px;min-width:0;padding:12px 0;border-top:1px solid var(--ac-line)}
+.ac-notification-icon{width:32px;height:32px;display:grid;place-items:center;border-radius:10px;background:var(--ac-soft-red);color:var(--ac-accent)}
+.ac-notification-icon svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.ac-notification-copy{display:grid;gap:3px;min-width:0}
+.ac-notification-copy b{overflow:hidden;color:var(--ac-ink);font-size:11px;text-overflow:ellipsis;white-space:nowrap}
+.ac-notification-copy small{color:var(--ac-muted);font-size:9px;line-height:1.4}
+@media(max-width:420px){.ac-notification-row{grid-template-columns:32px minmax(0,1fr);gap:9px}.ac-notification-row>.ac-order-status{grid-column:2;justify-self:start;margin-top:-4px}}

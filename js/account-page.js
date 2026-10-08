@@ -10,6 +10,7 @@ const icons = {
     heart: '<path d="M20.8 8.7c0 5-8.8 10-8.8 10s-8.8-5-8.8-10A4.7 4.7 0 0 1 12 6.2a4.7 4.7 0 0 1 8.8 2.5Z"/>',
     pin: '<path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',
     card: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h4"/>',
+    cart: '<path d="M3 4h2l2 11h10l3-8H6"/><circle cx="9" cy="19" r="1"/><circle cx="17" cy="19" r="1"/>',
     coupon: '<path d="M4 5h16v4a3 3 0 0 0 0 6v4H4v-4a3 3 0 0 0 0-6V5Z"/><path d="M13 8v2m0 4v2"/>',
     design: '<path d="m4 16 9-9 4 4-9 9H4zM14 6l2-2 4 4-2 2"/>',
     bell: '<path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9ZM10 21h4"/>',
@@ -220,6 +221,22 @@ function renderAccountDashboard() {
     const lastDeliveryLabel = latestAddressOrder?.delivery === 'region' ? 'Rayonlar / poçt' : latestAddressOrder?.delivery === 'ganja' ? 'Gəncə daxili çatdırılma' : latestAddressOrder?.delivery === 'pickup' ? 'Mağazadan götürmə' : 'Çatdırılma məlumatı';
     const orderCount = s.accountOrdersLoadError ? '—' : s.accountOrdersFetched ? String(orders.length) : '—';
     const customCount = s.accountOrdersLoadError ? '—' : s.accountOrdersFetched ? String(customizationCount) : '—';
+    const cartCount = Array.isArray(s.cart) ? s.cart.reduce((sum, item) => sum + Math.max(1, Number(item.qty) || 1), 0) : 0;
+    const notificationMarkup = !s.accountOrdersFetched
+        ? '<div class="ac-empty" role="status"><b>Sifariş məlumatları yüklənir.</b><span>Bir az gözləyin.</span></div>'
+        : s.accountOrdersLoadError
+            ? '<div class="ac-empty" role="status"><b>Sifariş yenilikləri yüklənmədi.</b><span>Bağlantını yoxlayıb yenidən cəhd edin.</span><button class="ac-text-link" type="button" data-action="refreshAccountOrders">Yenidən yoxla</button></div>'
+            : !orders.length
+                ? '<div class="ac-empty"><b>Hələ bildiriş yoxdur.</b><span>Sifarişlərinizin status yenilikləri burada görünəcək.</span></div>'
+                : orders.slice(0, 5).map(order => {
+                    const code = escapeHTML(order.orderCode || order.order_code || 'Sifariş');
+                    const status = orderStatus(order.status);
+                    const created = order.createdAt ? new Date(order.createdAt) : null;
+                    const date = created && Number.isFinite(created.getTime())
+                        ? created.toLocaleString('az-AZ', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+                        : 'Tarix yoxdur';
+                    return '<article class="ac-notification-row"><span class="ac-notification-icon">' + icon('bell') + '</span><span class="ac-notification-copy"><b>Sifariş #' + code + '</b><small>' + escapeHTML(date) + '</small></span><span class="ac-order-status ac-status-' + status.className + '">' + escapeHTML(status.label) + '</span></article>';
+                }).join('');
     const supportText = 'Müştəri dəstəyimiz hər zaman yanınızdadır.';
 
     page.innerHTML = `
@@ -235,11 +252,10 @@ function renderAccountDashboard() {
             <button type="button" data-action="scrollAccountSection" data-action-args='["accountOrders"]'>${icon('orders')}<span>Sifarişlərim</span></button>
             <button type="button" data-action="accountOpenFavorites">${icon('heart')}<span>Favorilərim</span></button>
             <button type="button" data-action="scrollAccountSection" data-action-args='["accountDelivery"]'>${icon('pin')}<span>Ünvanlarım</span></button>
-            <button type="button" data-action="showAccountNotice" data-action-args='["kupon"]'>${icon('coupon')}<span>Kuponlarım</span><small>Mövcud deyil</small></button>
             <button type="button" data-action="scrollAccountSection" data-action-args='["accountOrders"]'>${icon('design')}<span>Fərdiləşdirmələrim</span></button>
             <button type="button" data-action="scrollAccountSection" data-action-args='["accountInformation"]'>${icon('user')}<span>Hesab məlumatları</span></button>
             <button type="button" data-action="accountChangePassword">${icon('lock')}<span>Şifrəni dəyiş</span></button>
-            <button type="button" data-action="showAccountNotice" data-action-args='["bildiriş"]'>${icon('bell')}<span>Bildirişlər</span><small>Mövcud deyil</small></button>
+            <button type="button" data-action="scrollAccountSection" data-action-args='["accountNotifications"]'>${icon('bell')}<span>Bildirişlər</span></button>
             <button class="ac-logout-link" type="button" data-action="logoutProfile">${icon('logout')}<span>Çıxış et</span></button>
           </nav>
         </aside>
@@ -253,12 +269,18 @@ function renderAccountDashboard() {
             <button class="ac-stat-card ac-stat-red" type="button" data-action="scrollAccountSection" data-action-args='["accountOrders"]'><span class="ac-stat-icon">${icon('orders')}</span><span><small>Sifarişlər</small><b>${orderCount}</b><em>Hamısına bax ${icon('arrow')}</em></span></button>
             <button class="ac-stat-card ac-stat-pink" type="button" data-action="accountOpenFavorites"><span class="ac-stat-icon">${icon('heart')}</span><span><small>Favorilər</small><b>${favoriteCount}</b><em>Hamısına bax ${icon('arrow')}</em></span></button>
             <button class="ac-stat-card ac-stat-purple" type="button" data-action="scrollAccountSection" data-action-args='["accountOrders"]'><span class="ac-stat-icon">${icon('design')}</span><span><small>Fərdiləşdirmə</small><b>${customCount}</b><em>Sifarişlərdə saxlanıb</em></span></button>
-            <button class="ac-stat-card ac-stat-green" type="button" data-action="showAccountNotice" data-action-args='["kupon"]'><span class="ac-stat-icon">${icon('coupon')}</span><span><small>Kuponlar</small><b>—</b><em>Kupon sistemi mövcud deyil</em></span></button>
+            <button class="ac-stat-card ac-stat-green" type="button" data-action="openCart"><span class="ac-stat-icon">${icon('cart')}</span><span><small>Səbətdə</small><b>${cartCount}</b><em>Səbətə bax ${icon('arrow')}</em></span></button>
           </section>
 
           <section class="ac-card ac-orders-card" id="accountOrders" aria-labelledby="accountOrdersTitle">
             <div class="ac-section-head"><div><span class="ac-eyebrow">SİFARİŞ TARİXÇƏSİ</span><h2 id="accountOrdersTitle">Son sifarişlərim</h2></div><button type="button" class="ac-text-link" data-action="toggleAllAccountOrders">${s.accountShowAllOrders ? 'Son 3 sifarişi göstər' : 'Hamısına bax'} ${icon('arrow')}</button></div>
             <div class="ac-order-list">${renderOrderRows()}</div>
+          </section>
+
+          <section class="ac-card ac-notifications-card" id="accountNotifications" aria-labelledby="accountNotificationsTitle">
+            <div class="ac-section-head"><div><span class="ac-eyebrow">SİFARİŞ YENİLİKLƏRİ</span><h2 id="accountNotificationsTitle">Bildirişlər</h2></div><button type="button" class="ac-text-link" data-action="refreshAccountOrders">Yenilə ${icon('arrow')}</button></div>
+            <p class="ac-notification-intro">Sifarişlərinizin cari statusu və tarixçəsi burada göstərilir.</p>
+            <div class="ac-notification-list" aria-live="polite">${notificationMarkup}</div>
           </section>
 
           <section class="ac-custom-card">
