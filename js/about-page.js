@@ -1,5 +1,4 @@
 import { state as s, ctx } from './state.js';
-import { CONFIG } from './config.js';
 
 const aboutRouteHashes = new Set(['about', 'about-contact', 'delivery-info', 'faq', 'order-rules']);
 
@@ -16,18 +15,20 @@ export function initAboutPage() {
         const categories = products
             ? new Set(products.map(product => String(product?.cat || '').trim()).filter(Boolean)).size
             : null;
-        const channels = [
-            CONFIG.whatsappNumber,
-            CONFIG.instagram,
-            CONFIG.tiktok
-        ].filter(value => String(value || '').trim()).length;
-        const deliveryOptions = Object.keys(CONFIG.delivery || {}).length;
+        const reviewsLoaded = s.serverReviewsLoaded === true;
+        const reviews = reviewsLoaded && Array.isArray(s.localReviews) ? s.localReviews : [];
+        const ratings = reviews
+            .map(review => Number(review?.stars))
+            .filter(stars => Number.isInteger(stars) && stars >= 1 && stars <= 5);
+        const averageRating = ratings.length
+            ? `${(ratings.reduce((sum, stars) => sum + stars, 0) / ratings.length).toFixed(1)}/5`
+            : '—';
 
         const values = {
             products: products ? products.length : '—',
             categories: categories ?? '—',
-            delivery: deliveryOptions || '—',
-            channels: channels || '—'
+            reviews: reviewsLoaded ? reviews.length : '—',
+            rating: averageRating
         };
         Object.entries(values).forEach(([key, value]) => {
             const node = view.querySelector('[data-about-stat="' + key + '"]');
