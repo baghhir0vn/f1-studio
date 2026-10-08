@@ -135,8 +135,15 @@ html[data-theme="dark"] .account-page-view {
 .ac-primary-button, .ac-outline-button { min-height: 38px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid var(--ac-accent); border-radius: 9px; padding: 0 15px; background: var(--ac-accent); color: #fff; font: inherit; font-size: 11px; font-weight: 650; text-decoration: none; white-space: nowrap; cursor: pointer; transition: filter .18s ease, transform .18s ease; }
 .ac-primary-button:hover { filter: brightness(.96); transform: translateY(-1px); }
 .ac-primary-button svg, .ac-outline-button svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
-.ac-information-card, .ac-delivery-card { display: grid; gap: 13px; }
-.ac-information-card .ac-section-head, .ac-delivery-card .ac-section-head { margin-bottom: 0; }
+.ac-account-data-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 15px; min-width: 0; }
+.ac-information-card, .ac-address-card { display: grid; align-content: start; gap: 13px; min-width: 0; }
+.ac-information-card .ac-section-head, .ac-address-card .ac-section-head { margin-bottom: 0; }
+.ac-order-delivery { display: flex; align-items: center; gap: 10px; margin-top: 10px; padding: 12px 2px 0; border-top: 1px solid var(--ac-line); }
+.ac-order-delivery-icon { width: 34px; height: 34px; display: grid; place-items: center; flex: 0 0 34px; border-radius: 10px; background: #eef9f1; color: #218b50; }
+.ac-order-delivery-icon svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.ac-order-delivery > span:last-child { display: grid; gap: 3px; min-width: 0; }
+.ac-order-delivery small { color: var(--ac-muted); font-size: 9px; }
+.ac-order-delivery b { color: var(--ac-ink); overflow-wrap: anywhere; font-size: 10px; font-weight: 600; line-height: 1.45; }
 .ac-info-row { display: grid; grid-template-columns: 22px minmax(0,1fr); align-items: start; gap: 10px; }
 .ac-info-row > svg { width: 19px; height: 19px; margin-top: 2px; fill: none; stroke: var(--ac-ink); stroke-width: 1.55; stroke-linecap: round; stroke-linejoin: round; }
 .ac-info-row > span { display: grid; gap: 3px; min-width: 0; }
@@ -211,8 +218,10 @@ body.f1-account-route .f1-mobile-dock [data-action="openLogin"] { color: var(--a
   .ac-custom-card { grid-area: custom; grid-template-columns: 48px minmax(0,1fr); gap: 12px; padding: 14px; }
   .ac-custom-art { transform: scale(.78); transform-origin: left center; }
   .ac-custom-card .ac-primary-button { grid-column: 1 / -1; width: 100%; }
+  .ac-account-data-grid { display: contents; }
   .ac-information-card { grid-area: information; }
-  .ac-delivery-card { grid-area: delivery; }
+  .ac-address-card { grid-area: addresses; }
+  .ac-notifications-card { grid-area: notifications; }
   .ac-support-card { grid-area: support; }
   .ac-benefits { grid-area: benefits; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 0; padding: 6px; }
   .ac-benefits article { min-height: 61px; padding: 9px; border-right: 0; }
@@ -222,7 +231,7 @@ body.f1-account-route .f1-mobile-dock [data-action="openLogin"] { color: var(--a
   .ac-benefits b { font-size: 9px; }
   .ac-benefits small { font-size: 8px; }
   .ac-details-column { display: contents; }
-  .account-shell { grid-template-areas: "profile" "welcome" "stats" "menu" "nav" "orders" "information" "delivery" "custom" "support" "benefits"; }
+  .account-shell { grid-template-areas: "profile" "welcome" "stats" "menu" "nav" "orders" "information" "addresses" "notifications" "custom" "support" "benefits"; }
 }
 @media (max-width: 420px) {
   .account-shell { padding-right: 10px; padding-left: 10px; }

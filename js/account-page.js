@@ -3,6 +3,7 @@ import { state as s, ctx } from './state.js';
 import { isCustomerDesignPathOwnedBy, isSafeCustomerAvatarPath, safeResourceUrl } from './security.js';
 import { authService } from './services/auth-service.js';
 import { storageService } from './services/storage-service.js';
+import { CONFIG } from './config.js';
 
 const icons = {
     user: '<circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c.8-3.5 3-5.3 6.5-5.3s5.7 1.8 6.5 5.3"/>',
@@ -216,9 +217,14 @@ function renderAccountDashboard() {
     const favoriteCount = new Set((Array.isArray(s.favs) ? s.favs : []).map(String)).size;
     const customizationCount = orders.reduce((sum, order) => sum + (Array.isArray(order.items) ? order.items.filter(item => item.customization && typeof item.customization === 'object' && Object.values(item.customization).some(value => value != null && String(value).trim() !== '')).length : 0), 0);
     const latestAddressOrder = orders.find(order => String(order.address || '').trim() && !order.addressUnknown);
-    const latestOrderPhone = orders.find(order => String(order.customer?.phone || '').trim())?.customer?.phone || '';
+    const latestDeliveryOrder = orders.find(order => String(order.delivery || '').trim()) || orders[0] || null;
     const addressValue = String(latestAddressOrder?.address || '').trim();
-    const lastDeliveryLabel = latestAddressOrder?.delivery === 'region' ? 'Rayonlar / poçt' : latestAddressOrder?.delivery === 'ganja' ? 'Gəncə daxili çatdırılma' : latestAddressOrder?.delivery === 'pickup' ? 'Mağazadan götürmə' : 'Çatdırılma məlumatı';
+    const addressSummary = !s.accountOrdersFetched
+        ? 'Sifariş ünvanları yüklənir.'
+        : s.accountOrdersLoadError
+            ? 'Ünvan məlumatı yüklənmədi.'
+            : addressValue || 'Son sifarişdə ayrıca ünvan saxlanılmayıb';
+    const lastDeliveryLabel = latestDeliveryOrder?.delivery === 'region' ? 'Rayonlar / poçt' : latestDeliveryOrder?.delivery === 'ganja' ? 'Gəncə daxili çatdırılma' : latestDeliveryOrder?.delivery === 'pickup' ? 'Mağazadan götürmə' : latestDeliveryOrder ? 'Çatdırılma məlumatı' : 'Məlumat yoxdur';
     const orderCount = s.accountOrdersLoadError ? '—' : s.accountOrdersFetched ? String(orders.length) : '—';
     const customCount = s.accountOrdersLoadError ? '—' : s.accountOrdersFetched ? String(customizationCount) : '—';
     const cartCount = Array.isArray(s.cart) ? s.cart.reduce((sum, item) => sum + Math.max(1, Number(item.qty) || 1), 0) : 0;
@@ -251,7 +257,7 @@ function renderAccountDashboard() {
             <button class="is-active" type="button" data-action="scrollAccountSection" data-action-args='["accountWelcome"]'>${icon('user')}<span>Ümumi məlumat</span></button>
             <button type="button" data-action="scrollAccountSection" data-action-args='["accountOrders"]'>${icon('orders')}<span>Sifarişlərim</span></button>
             <button type="button" data-action="accountOpenFavorites">${icon('heart')}<span>Favorilərim</span></button>
-            <button type="button" data-action="scrollAccountSection" data-action-args='["accountDelivery"]'>${icon('pin')}<span>Ünvanlarım</span></button>
+            <button type="button" data-action="scrollAccountSection" data-action-args='["accountAddresses"]'>${icon('pin')}<span>Ünvanlarım</span></button>
             <button type="button" data-action="scrollAccountSection" data-action-args='["accountOrders"]'>${icon('design')}<span>Fərdiləşdirmələrim</span></button>
             <button type="button" data-action="scrollAccountSection" data-action-args='["accountInformation"]'>${icon('user')}<span>Hesab məlumatları</span></button>
             <button type="button" data-action="accountChangePassword">${icon('lock')}<span>Şifrəni dəyiş</span></button>
@@ -275,7 +281,24 @@ function renderAccountDashboard() {
           <section class="ac-card ac-orders-card" id="accountOrders" aria-labelledby="accountOrdersTitle">
             <div class="ac-section-head"><div><span class="ac-eyebrow">SİFARİŞ TARİXÇƏSİ</span><h2 id="accountOrdersTitle">Son sifarişlərim</h2></div><button type="button" class="ac-text-link" data-action="toggleAllAccountOrders">${s.accountShowAllOrders ? 'Son 3 sifarişi göstər' : 'Hamısına bax'} ${icon('arrow')}</button></div>
             <div class="ac-order-list">${renderOrderRows()}</div>
+            <div class="ac-order-delivery" id="accountDelivery" aria-label="Son sifarişin çatdırılma məlumatı"><span class="ac-order-delivery-icon">${icon('truck')}</span><span><small>Son sifarişin çatdırılma üsulu</small><b>${escapeHTML(s.accountOrdersFetched && !s.accountOrdersLoadError ? lastDeliveryLabel : s.accountOrdersLoadError ? 'Məlumat yüklənmədi' : 'Sifariş məlumatları yüklənir')}</b></span></div>
           </section>
+
+          <div class="ac-account-data-grid">
+            <section class="ac-card ac-information-card" id="accountInformation" aria-labelledby="accountInformationTitle">
+              <div class="ac-section-head"><div><span class="ac-eyebrow">ŞƏXSİ MƏLUMATLAR</span><h2 id="accountInformationTitle">Hesab məlumatları</h2></div><button class="ac-edit-button" type="button" disabled title="Profil redaktəsi üçün mövcud backend funksiyası yoxdur">Redaktə et</button></div>
+              <div class="ac-info-row">${icon('user')}<span><small>Ad Soyad</small><b>${escapeHTML(name)}</b></span></div>
+              <div class="ac-info-row">${icon('card')}<span><small>E-poçt</small><b>${escapeHTML(email || 'Məlumat əlavə edilməyib')}</b></span></div>
+              <div class="ac-info-row">${icon('support')}<span><small>Telefon</small><b>${escapeHTML(phone || 'Məlumat əlavə edilməyib')}</b></span></div>
+              <p class="ac-capability-note">Məlumatlar profilinizdən oxunur.</p>
+            </section>
+
+            <section class="ac-card ac-address-card" id="accountAddresses" aria-labelledby="accountAddressesTitle">
+              <div class="ac-section-head"><div><span class="ac-eyebrow">ÇATDIRILMA ÜNVANLARI</span><h2 id="accountAddressesTitle">Ünvanlarım</h2></div></div>
+              <div class="ac-info-row">${icon('pin')}<span><small>Son sifarişdəki ünvan</small><b>${escapeHTML(addressSummary)}</b></span></div>
+              <p class="ac-capability-note">Ünvanlar ayrıca saxlanılmır; bu məlumat son sifarişdən götürülür.</p>
+            </section>
+          </div>
 
           <section class="ac-card ac-notifications-card" id="accountNotifications" aria-labelledby="accountNotificationsTitle">
             <div class="ac-section-head"><div><span class="ac-eyebrow">SİFARİŞ YENİLİKLƏRİ</span><h2 id="accountNotificationsTitle">Bildirişlər</h2></div><button type="button" class="ac-text-link" data-action="refreshAccountOrders">Yenilə ${icon('arrow')}</button></div>
@@ -290,22 +313,7 @@ function renderAccountDashboard() {
           </section>
         </div>
 
-        <aside class="ac-details-column" aria-label="Hesab və çatdırılma məlumatları">
-          <section class="ac-card ac-information-card" id="accountInformation">
-            <div class="ac-section-head"><div><span class="ac-eyebrow">ŞƏXSİ MƏLUMATLAR</span><h2>Hesab məlumatları</h2></div><button class="ac-edit-button" type="button" disabled title="Profil redaktəsi üçün mövcud backend funksiyası yoxdur">Redaktə et</button></div>
-            <div class="ac-info-row">${icon('user')}<span><small>Ad Soyad</small><b>${escapeHTML(name)}</b></span></div>
-            <div class="ac-info-row">${icon('card')}<span><small>E-poçt</small><b>${escapeHTML(email || 'Məlumat əlavə edilməyib')}</b></span></div>
-            <div class="ac-info-row">${icon('support')}<span><small>Telefon</small><b>${escapeHTML(phone || 'Məlumat əlavə edilməyib')}</b></span></div>
-            <p class="ac-capability-note">Profil məlumatları hazırda hesabınızdan oxunur.</p>
-          </section>
-
-          <section class="ac-card ac-delivery-card" id="accountDelivery">
-            <div class="ac-section-head"><div><span class="ac-eyebrow">SON SİFARİŞ</span><h2>Çatdırılma ünvanım</h2></div><button class="ac-edit-button" type="button" disabled title="Saxlanmış ünvanları redaktə edən ayrıca funksiya yoxdur">Redaktə et</button></div>
-            <div class="ac-info-row">${icon('pin')}<span><small>${escapeHTML(lastDeliveryLabel)}</small><b>${escapeHTML(addressValue || 'Son sifarişdə ayrıca ünvan saxlanılmayıb')}</b></span></div>
-            <div class="ac-info-row">${icon('support')}<span><small>Telefon</small><b>${escapeHTML(latestOrderPhone || phone || 'Məlumat yoxdur')}</b></span></div>
-            <p class="ac-capability-note">Ünvanlar ayrıca saxlanmır; bu məlumat son sifarişdən götürülür.</p>
-          </section>
-
+        <aside class="ac-details-column" aria-label="F1 Studio dəstəyi">
           <section class="ac-card ac-support-card">
             <span class="ac-support-icon">${icon('support')}</span><span class="ac-eyebrow">F1 STUDIO DƏSTƏYİ</span><h2>Yardıma ehtiyacınız var?</h2><p>${supportText}</p><button type="button" class="ac-outline-button" data-action="accountOpenSupport">${icon('support')} Dəstək ilə əlaqə</button>
           </section>
@@ -386,7 +394,21 @@ export function initAccountPage() {
         ctx.showAllProducts?.();
         showToast('Fərdiləşdirmək istədiyiniz məhsulu seçib “Fərdiləşdir” düyməsinə toxunun.');
     }
-    function accountOpenSupport() { window.location.hash = '#about-contact'; }
+    function accountOpenSupport() {
+        let digits = String(CONFIG.whatsappNumber || '').replace(/\D/g, '');
+        if (digits.startsWith('00')) digits = digits.slice(2);
+        else if (digits.startsWith('0')) digits = `994${digits.slice(1)}`;
+        else if (digits.length === 9) digits = `994${digits}`;
+        if (!/^\d{8,15}$/.test(digits)) {
+            showToast('WhatsApp dəstək nömrəsi hazırda təyin edilməyib.');
+            return;
+        }
+        const link = document.createElement('a');
+        link.href = `https://wa.me/${digits}?text=${encodeURIComponent('Salam! F1 Studio ilə bağlı dəstəyə ehtiyacım var.')}`;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.click();
+    }
     function accountChangePassword() {
         const profileEmail = document.getElementById('profileEmail');
         if (profileEmail && s.authUser?.email) profileEmail.value = s.authUser.email;
