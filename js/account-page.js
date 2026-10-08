@@ -235,7 +235,6 @@ function renderAccountDashboard() {
             <button type="button" data-action="scrollAccountSection" data-action-args='["accountOrders"]'>${icon('orders')}<span>Sifarişlərim</span></button>
             <button type="button" data-action="accountOpenFavorites">${icon('heart')}<span>Favorilərim</span></button>
             <button type="button" data-action="scrollAccountSection" data-action-args='["accountDelivery"]'>${icon('pin')}<span>Ünvanlarım</span></button>
-            <button type="button" data-action="showAccountNotice" data-action-args='["kart"]'>${icon('card')}<span>Kartlarım</span><small>Mövcud deyil</small></button>
             <button type="button" data-action="showAccountNotice" data-action-args='["kupon"]'>${icon('coupon')}<span>Kuponlarım</span><small>Mövcud deyil</small></button>
             <button type="button" data-action="scrollAccountSection" data-action-args='["accountOrders"]'>${icon('design')}<span>Fərdiləşdirmələrim</span></button>
             <button type="button" data-action="scrollAccountSection" data-action-args='["accountInformation"]'>${icon('user')}<span>Hesab məlumatları</span></button>
