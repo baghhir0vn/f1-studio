@@ -40,7 +40,7 @@
   padding:30px clamp(25px,3vw,42px) 24px!important;
   border-radius:23px 0 0 23px!important;
   background-color:#111!important;
-  background-image:linear-gradient(90deg,rgba(7,9,9,.91) 0%,rgba(8,9,9,.78) 53%,rgba(8,9,9,.37) 100%),linear-gradient(0deg,rgba(6,7,7,.67),transparent 62%),url("../assets/reference/hero-reference.svg")!important;
+  background-image:linear-gradient(90deg,rgba(7,9,9,.91) 0%,rgba(8,9,9,.78) 53%,rgba(8,9,9,.37) 100%),linear-gradient(0deg,rgba(6,7,7,.67),transparent 62%),url("../assets/reference/hero-scene.jpg")!important;
   background-size:cover!important;
   background-position:center!important;
   color:#fff!important;
@@ -142,14 +142,14 @@
 #loginModal .auth-remember input:focus-visible+.auth-checkmark{outline:3px solid rgba(227,42,48,.16)!important}
 #loginModal .password-reset-link{align-self:auto!important;margin:0!important;padding:3px 0!important;border:0!important;background:transparent!important;color:#df252b!important;font:700 10px/1.35 Inter,ui-sans-serif,system-ui,sans-serif!important;cursor:pointer!important}
 #loginModal .password-reset-link:hover{text-decoration:underline!important}
-#loginModal .profile-actions-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:9px!important;margin:1px 0 0!important}
+#loginModal .profile-actions-grid{display:grid!important;grid-template-columns:minmax(0,1fr)!important;gap:8px!important;margin:1px 0 0!important}
 #loginModal .profile-actions-grid>[data-auth-element][hidden]{display:none!important}
 #loginModal .auth-form .profile-actions-grid>[data-auth-element="login-submit"],
 #loginModal .auth-form .profile-actions-grid>[data-auth-element="register-submit"],
 #loginModal .password-reset-panel>button.add,
 #loginModal .password-recovery-panel>button.add{
   box-sizing:border-box!important;display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;min-width:0!important;
-  min-height:50px!important;height:auto!important;margin:0!important;padding:12px 16px!important;border:1px solid #e52127!important;border-radius:10px!important;
+  min-height:42px!important;height:auto!important;margin:0!important;padding:10px 14px!important;border:1px solid #e52127!important;border-radius:10px!important;
   background:#e52127!important;color:#fff!important;font:800 12px/1.2 Inter,ui-sans-serif,system-ui,sans-serif!important;
   letter-spacing:.01em!important;text-align:center!important;cursor:pointer!important;box-shadow:0 8px 18px rgba(229,33,39,.13)!important;transition:background .16s ease,transform .16s ease,box-shadow .16s ease!important;
 }
@@ -161,7 +161,7 @@
 #loginModal .auth-view-switch{
   box-sizing:border-box!important;display:block!important;width:100%!important;min-height:36px!important;margin:1px 0 0!important;padding:7px!important;
   border:0!important;border-radius:8px!important;background:transparent!important;color:#777b80!important;
-  font:550 11px/1.4 Inter,ui-sans-serif,system-ui,sans-serif!important;text-align:center!important;cursor:pointer!important;
+  font:550 12px/1.4 Inter,ui-sans-serif,system-ui,sans-serif!important;text-align:center!important;cursor:pointer!important;
 }
 #loginModal .auth-view-switch span{color:#e32127!important;font-weight:750!important;text-decoration:underline!important;text-underline-offset:2px!important}
 #loginModal .auth-view-switch:hover{background:#fff6f6!important}
