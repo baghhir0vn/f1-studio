@@ -410,7 +410,7 @@ html[data-theme="dark"] header,html[data-theme="dark"] .nav,html[data-theme="dar
 .promo-personal{background:linear-gradient(110deg,#f8f1e9 0%,#f7efe7 52%,#f1e5de 100%)!important}
 .promo-offer{background:linear-gradient(110deg,#eef3ea 0%,#f3f4ec 52%,#e6eee3 100%)!important}
 .promo-personal .promo-gift{background-image:linear-gradient(90deg,rgba(248,241,233,.28),rgba(248,241,233,0) 45%),url('https://images.pexels.com/photos/5485173/pexels-photo-5485173.jpeg?cs=srgb&dl=pexels-karola-g-5485173.jpg&fm=jpg')!important}
-.promo-offer .promo-offer-art{background-image:linear-gradient(90deg,rgba(238,243,234,.3),rgba(238,243,234,0) 45%),url('https://images.pexels.com/photos/5486845/pexels-photo-5486845.jpeg?cs=srgb&dl=pexels-ai25-studio-5486845.jpg&fm=jpg')!important}
+.promo-offer .promo-offer-art{background-image:linear-gradient(90deg,rgba(238,243,234,.3),rgba(238,243,234,0) 45%),url('../assets/reference/promo-offer-gift.jpg')!important}
 
 /* Newsletter: centered, balanced and never scattered across the page. */
 .newsletter-strip{max-width:1260px!important;margin:0 auto 76px!important;padding:24px 28px!important;display:grid!important;grid-template-columns:minmax(0,1fr) minmax(400px,520px)!important;align-items:center!important;gap:30px!important;border:1px solid var(--f1-line)!important;border-radius:22px!important;background:linear-gradient(100deg,#f7f5ee 0%,#fff 62%)!important;box-shadow:var(--f1-shadow-soft)!important}
