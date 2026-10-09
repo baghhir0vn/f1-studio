@@ -180,7 +180,7 @@ body.f1-home #catalogSearchPanel .toolbar-sort select{width:100%!important;paddi
   body.f1-home>header .mobile-nav{position:absolute!important;top:100%!important;left:9px!important;right:9px!important;z-index:65!important;border:1px solid #e5e7e9!important;border-radius:10px!important;background:#fff!important}
   body.f1-home #home .hero-giftique{display:block!important;width:calc(100% - 24px)!important;height:clamp(220px,61vw,270px)!important;min-height:220px!important;margin:7px 12px 0!important;border-radius:11px!important}
   body.f1-home #home .hero-giftique .hero-art{position:absolute!important;inset:0!important;width:100%!important;height:100%!important;margin:0!important}
-  body.f1-home #home .hero-giftique .hero-art:before{width:100%!important;background:linear-gradient(90deg,rgba(9,10,12,.83) 0%,rgba(9,10,12,.64) 42%,rgba(9,10,12,.12) 86%,rgba(9,10,12,0) 100%)!important}
+  body.f1-home #home .hero-giftique .hero-art:before{width:100%!important;background:linear-gradient(110deg,rgba(183,121,72,.22) 0%,rgba(140,91,57,.11) 38%,rgba(140,91,57,0) 72%),linear-gradient(90deg,rgba(9,10,12,.62) 0%,rgba(9,10,12,.42) 42%,rgba(9,10,12,.10) 86%,rgba(9,10,12,0) 100%)!important}
   body.f1-home #home .hero-giftique .hero-art img{object-position:62% center!important}
   body.f1-home #home .hero-giftique .hero-copy{width:100%!important;height:100%!important;min-height:0!important;padding:20px 18px!important;background:transparent!important}
   body.f1-home #home .hero-giftique .hero-eyebrow{margin-bottom:9px!important;padding:4px 7px!important;font-size:6.5px!important}
