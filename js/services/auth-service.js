@@ -58,6 +58,15 @@ export const authService = {
         if (cleanPassword.length < 8 || cleanPassword.length > 128) throw new Error('INVALID_AUTH_INPUT');
         return sb.auth.updateUser({ password: cleanPassword });
     },
+    async resendSignupConfirmation(email) {
+        const cleanEmail = String(email || '').trim().toLowerCase();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail) || cleanEmail.length > 254) throw new Error('INVALID_AUTH_INPUT');
+        const redirectTo = getPasswordResetRedirect();
+        const options = redirectTo ? { emailRedirectTo: redirectTo } : {};
+        const { error } = await sb.auth.resend({ type: 'signup', email: cleanEmail, options });
+        if (error) throw error;
+        return { ok: true };
+    },
     async register({ name, phone, email, password }) {
         const cleanEmail = String(email || '').trim().toLowerCase();
         const cleanName = String(name || '').trim().slice(0, 80);

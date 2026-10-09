@@ -68,6 +68,7 @@
 <link rel="stylesheet" href="css/chat-assistant.css?v=6">
 <link rel="stylesheet" href="css/admin-dashboard-refresh.css?v=2">
     <link rel="stylesheet" href="css/account-page.css?v=1">
+<link rel="stylesheet" href="css/auth-redesign.css?v=1">
 </head>
 <body class="f1-home">
 <div class="announcement-bar" id="announcementBar" aria-label="F1 Studio xidmət üstünlükləri">
@@ -895,50 +896,119 @@
     </div>
 </div>
 
-<!-- PROFİL MODALI -->
-<div class="modal-center" id="loginModal" data-auth-mode="login" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="profileModalTitle">
-    <div class="dialog">
-        <div class="head">
-            <h2 id="profileModalTitle">
-                <span class="profile-title-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" role="presentation"><circle cx="12" cy="8" r="3.2"></circle><path d="M5.5 19.2c.7-3.2 3.1-5 6.5-5s5.8 1.8 6.5 5"></path></svg>
-                </span>
-                <span class="profile-title-copy"><span>Müştəri hesabı</span><small>Təhlükəsiz giriş</small></span>
-            </h2>
-            <button class="close" type="button" data-action="closeLogin" aria-label="Profili bağla">×</button>
+<!-- PROFİL / GİRİŞ MODALI -->
+<div class="modal-center auth-modal" id="loginModal" data-auth-mode="login" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="profileModalTitle">
+  <div class="dialog auth-dialog">
+    <div class="auth-shell">
+      <aside class="auth-brand-panel" aria-label="F1 Studio hesabının üstünlükləri">
+        <div class="auth-brand-top"><span class="auth-brand-mark"><b>F1</b> STUDIO</span><span class="auth-brand-tag">FƏRDİ HƏDİYYƏLƏR</span></div>
+        <div class="auth-brand-copy">
+          <span class="auth-brand-eyebrow">F1 STUDIO HESABI</span>
+          <h2>Xoş gəldiniz!</h2>
+          <p>F1 Studio hesabınıza daxil olun və şəxsi təcrübənizi davam etdirin.</p>
+          <div class="auth-brand-points">
+            <div class="auth-brand-point">
+              <span class="auth-point-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 7h16v13H4zM8 7V5a4 4 0 0 1 8 0v2M8 12h8M8 16h5"/></svg></span>
+              <span><b>Sifarişlərinizi izləyin</b><small>Sifariş tarixçəniz hər zaman hesabınızda.</small></span>
+            </div>
+            <div class="auth-brand-point">
+              <span class="auth-point-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20.8 8.8c0 5.2-8.8 11-8.8 11s-8.8-5.8-8.8-11A4.8 4.8 0 0 1 12 6.7a4.8 4.8 0 0 1 8.8 2.1Z"/></svg></span>
+              <span><b>Favorilərinizi yadda saxlayın</b><small>Bəyəndiyiniz hədiyyələrə tez qayıdın.</small></span>
+            </div>
+            <div class="auth-brand-point">
+              <span class="auth-point-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m14 6 4 4M4 20l4.5-.9L20 7.6 16.4 4 4.9 15.5 4 20Z"/><path d="M13 7l4 4"/></svg></span>
+              <span><b>Dizaynlarınızı idarə edin</b><small>Fərdiləşdirmələrinizi bir yerdə saxlayın.</small></span>
+            </div>
+          </div>
         </div>
-        <p class="profile-intro">Hesab məlumatlarınız təhlükəsiz saxlanılır. Giriş etdikdən sonra sifariş tarixçənizi digər cihazlarda da görə bilərsiniz.</p>
-        <form class="form" id="customerAuthForm" data-submit-action="submitAuthForm" novalidate>
-            <input id="profileName" data-auth-field="register account" autocomplete="name" placeholder="Adınız və Soyadınız" aria-label="Ad və soyad">
-            <input id="profilePhone" data-auth-field="register account" autocomplete="tel" placeholder="Telefon nömrəniz" aria-label="Telefon nömrəsi">
-            <input id="profileEmail" data-auth-field="login register account" type="email" autocomplete="email" placeholder="E-poçt (hesab üçün vacibdir)" aria-label="E-poçt">
-            <input id="profilePassword" data-auth-field="login register" type="password" autocomplete="current-password" placeholder="Şifrə (ən azı 8 simvol)" aria-label="Şifrə">
-<div class="profile-actions-grid">
-                <button class="add profile-primary auth-primary-button" type="submit" data-auth-element="register-submit" hidden>Qeydiyyatdan keç</button>
-                <button class="btn-login profile-secondary auth-primary-button" type="submit" data-auth-element="login-submit">Giriş et</button>
+        <div class="auth-brand-foot"><span class="auth-brand-dot"></span> Fərdi hazırlanır, sizə özəl.</div>
+      </aside>
+
+      <section class="auth-main" aria-label="Hesaba giriş">
+        <div class="auth-main-head">
+          <span class="auth-wordmark" aria-label="F1 Studio"><b>F1</b><span>STUDIO</span></span>
+          <button class="close" type="button" data-action="closeLogin" aria-label="Giriş pəncərəsini bağla">×</button>
+        </div>
+        <div class="auth-form-content">
+          <span class="auth-panel-eyebrow">TƏHLÜKƏSİZ HESAB GİRİŞİ</span>
+          <h2 id="profileModalTitle"><span id="profileModalTitleText">Hesabınıza daxil olun</span></h2>
+          <p class="profile-intro" id="profileModalIntro">Zəhmət olmasa hesabınıza daxil olmaq üçün məlumatlarınızı daxil edin.</p>
+          <form class="form auth-form" id="customerAuthForm" data-submit-action="submitAuthForm" novalidate>
+            <div class="auth-input-group" data-auth-field-group="register account">
+              <label for="profileName">Ad və soyad</label>
+              <input id="profileName" data-auth-field="register account" autocomplete="name" placeholder="Adınızı və soyadınızı daxil edin" aria-label="Ad və soyad">
             </div>
-            <button class="auth-view-switch" type="button" data-auth-element="register-switch" data-action="showRegisterForm">Qeydiyyat</button>
-            <button class="auth-view-switch" type="button" data-auth-element="login-switch" data-action="showLoginForm" hidden>Artıq hesabım var</button>
-            <button id="forgotPasswordBtn" class="password-reset-link auth-view-switch" type="button" data-auth-element="forgot" data-action="showForgotPassword">Şifrəmi unutdum?</button>
+            <div class="auth-input-group" data-auth-field-group="register account">
+              <label for="profilePhone">Telefon nömrəsi</label>
+              <input id="profilePhone" data-auth-field="register account" autocomplete="tel" placeholder="Telefon nömrənizi daxil edin" aria-label="Telefon nömrəsi">
+            </div>
+            <div class="auth-input-group" data-auth-field-group="login register account">
+              <label for="profileEmail">E-poçt ünvanı</label>
+              <input id="profileEmail" data-auth-field="login register account" type="email" autocomplete="email" placeholder="E-poçt ünvanınızı daxil edin" aria-label="E-poçt ünvanı">
+            </div>
+            <div class="auth-input-group" data-auth-field-group="login register">
+              <label for="profilePassword">Şifrə</label>
+              <div class="auth-password-control">
+                <input id="profilePassword" data-auth-field="login register" type="password" autocomplete="current-password" placeholder="Şifrənizi daxil edin" aria-label="Şifrə">
+                <button class="auth-password-toggle" type="button" data-action="toggleAuthPassword" data-action-args='["profilePassword", {"$":"this"}]' aria-label="Şifrəni göstər" aria-pressed="false">
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.2-6 9.5-6 9.5 6 9.5 6-3.2 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.6"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="auth-options-row" data-auth-element="remember-row">
+              <label class="auth-remember" for="rememberAuthEmail">
+                <input id="rememberAuthEmail" type="checkbox" data-change-action="rememberAuthEmail" data-change-args='[{"$":"this"}]'>
+                <span class="auth-checkmark" aria-hidden="true"></span><span>Məni yadda saxla</span>
+              </label>
+              <button id="forgotPasswordBtn" class="password-reset-link" type="button" data-auth-element="forgot" data-action="showForgotPassword">Şifrəni unutmusunuz?</button>
+            </div>
+            <div class="profile-actions-grid">
+              <button class="add profile-primary auth-primary-button" type="submit" data-auth-element="register-submit" hidden>Qeydiyyatdan keç</button>
+              <button class="btn-login profile-secondary auth-primary-button" type="submit" data-auth-element="login-submit">Daxil ol</button>
+            </div>
+            <button class="auth-view-switch" type="button" data-auth-element="register-switch" data-action="showRegisterForm">Hesabınız yoxdur? <span>Qeydiyyatdan keçin</span></button>
+            <button class="auth-view-switch" type="button" data-auth-element="login-switch" data-action="showLoginForm" hidden>Artıq hesabınız var? <span>Daxil olun</span></button>
+
             <div id="passwordResetPanel" class="password-reset-panel" data-auth-element="reset-panel" hidden>
-                <div class="password-reset-title">🔐 Şifrəni sıfırla</div>
-                <div class="password-reset-help">E-poçt ünvanınızı daxil edin. Hesabınızla əlaqəlidirsə, şifrəni yeniləmək üçün təhlükəsiz keçid göndərəcəyik.</div>
-                <input id="resetEmail" data-auth-field="reset" type="email" autocomplete="email" placeholder="E-poçt ünvanınız" aria-label="Şifrə sıfırlamaq üçün e-poçt">
-                <button class="add auth-primary-button" type="submit">📧 Reset linki göndər</button>
-                <button class="btn-login auth-secondary-button" type="button" data-action="hideForgotPassword">Geri</button>
+              <div class="auth-state-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3"/></svg></div>
+              <div class="password-reset-title">Şifrənizi unutmusunuz?</div>
+              <div class="password-reset-help">E-poçt ünvanınızı daxil edin. Hesabınızla əlaqəlidirsə, təhlükəsiz yeniləmə keçidi göndərəcəyik.</div>
+              <div class="auth-input-group"><label for="resetEmail">E-poçt ünvanı</label><input id="resetEmail" data-auth-field="reset" type="email" autocomplete="email" placeholder="E-poçt ünvanınızı daxil edin" aria-label="Şifrə sıfırlamaq üçün e-poçt"></div>
+              <button class="add auth-primary-button" type="submit">Link göndər</button>
+              <button class="btn-login auth-secondary-button" type="button" data-action="hideForgotPassword">Girişə qayıt</button>
             </div>
+
             <div id="passwordRecoveryPanel" class="password-recovery-panel" data-auth-element="recovery-panel" hidden>
-                <div class="password-reset-title">🔑 Yeni şifrə</div>
-                <div class="password-reset-help">E-poçtunuza gələn keçiddən sonra burada yeni şifrənizi təyin edin.</div>
-                <input id="newPassword" data-auth-field="recovery" type="password" autocomplete="new-password" placeholder="Yeni şifrə (ən azı 8 simvol)" aria-label="Yeni şifrə">
-                <input id="newPasswordConfirm" data-auth-field="recovery" type="password" autocomplete="new-password" placeholder="Yeni şifrəni təkrar yazın" aria-label="Yeni şifrənin təkrarı">
-                <button class="add auth-primary-button" type="submit">✅ Şifrəni yenilə</button>
+              <div class="auth-state-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3"/></svg></div>
+              <div class="password-reset-title">Yeni şifrə təyin edin</div>
+              <div class="password-reset-help">E-poçtunuza gələn təhlükəsiz keçiddən sonra yeni şifrənizi daxil edin.</div>
+              <div class="auth-input-group"><label for="newPassword">Yeni şifrə</label><div class="auth-password-control"><input id="newPassword" data-auth-field="recovery" type="password" autocomplete="new-password" placeholder="Ən azı 8 simvol" aria-label="Yeni şifrə"><button class="auth-password-toggle" type="button" data-action="toggleAuthPassword" data-action-args='["newPassword", {"$":"this"}]' aria-label="Şifrəni göstər" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.2-6 9.5-6 9.5 6 9.5 6-3.2 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.6"/></svg></button></div></div>
+              <div class="auth-input-group"><label for="newPasswordConfirm">Şifrəni təsdiqləyin</label><div class="auth-password-control"><input id="newPasswordConfirm" data-auth-field="recovery" type="password" autocomplete="new-password" placeholder="Yeni şifrəni təkrar daxil edin" aria-label="Yeni şifrənin təkrarı"><button class="auth-password-toggle" type="button" data-action="toggleAuthPassword" data-action-args='["newPasswordConfirm", {"$":"this"}]' aria-label="Şifrəni göstər" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.2-6 9.5-6 9.5 6 9.5 6-3.2 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.6"/></svg></button></div></div>
+              <button class="add auth-primary-button" type="submit">Şifrəni yenilə</button>
             </div>
+
+            <div class="auth-confirmation-panel" data-auth-element="confirmation-panel" hidden>
+              <span class="auth-state-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m4 7 8 6 8-6"/></svg></span>
+              <h3>Təsdiq linki göndərildi!</h3>
+              <p>E-poçtunuza gələn keçidi açın. Hesabınızı təsdiqlədikdən sonra daxil ola bilərsiniz.</p>
+              <button class="auth-secondary-button" type="button" data-action="resendConfirmationEmail" data-action-args='[{"$":"this"}]'>Yenidən göndər</button>
+              <button class="auth-view-switch" type="button" data-action="showLoginForm">Girişə qayıt</button>
+            </div>
+
             <button id="logoutBtn" class="btn-login auth-primary-button" type="button" data-auth-element="logout" data-action="logoutProfile" hidden>Hesabdan çıx</button>
             <div id="profileStatus" class="account-badge" data-auth-element="account-status" hidden></div>
-        </form>
-        <div class="order-history" id="orderHistory" data-auth-element="account-history" hidden></div>
+          </form>
+          <div class="order-history" id="orderHistory" data-auth-element="account-history" hidden></div>
+        </div>
+      </section>
     </div>
+    <div class="auth-benefits" aria-label="F1 Studio xidmət üstünlükləri">
+      <div><span class="auth-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 20 6v5c0 4.4-3 8-8 10-5-2-8-5.6-8-10V6l8-3Z"/><path d="m9 12 2 2 4-4"/></svg></span><span><b>100% Təhlükəsiz ödəniş</b><small>Məlumatlarınız qorunur</small></span></div>
+      <div><span class="auth-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M3 6h11v11H3zM14 10h4l3 3v4h-7z"/><circle cx="7.5" cy="18" r="2"/><circle cx="18" cy="18" r="2"/></svg></span><span><b>Sürətli çatdırılma</b><small>1–3 iş günü ərzində</small></span></div>
+      <div><span class="auth-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 12v9H4v-9M2 7h20v5H2zM12 7v14M12 7H7a2.5 2.5 0 1 1 2.5-2.5C9.5 6 12 7 12 7ZM12 7h5a2.5 2.5 0 1 0-2.5-2.5C14.5 6 12 7 12 7Z"/></svg></span><span><b>Fərdiləşdirilə bilən hədiyyələr</b><small>Tam sizə özəl</small></span></div>
+      <div><span class="auth-benefit-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 13v-2a8 8 0 0 1 16 0v2M4 13a2 2 0 0 0 2 2h2v-5H6a2 2 0 0 0-2 2Zm16 0a2 2 0 0 1-2 2h-2v-5h2a2 2 0 0 1 2 2ZM12 20h4"/></svg></span><span><b>Müştəri dəstəyi</b><small>Hər zaman yanınızdayıq</small></span></div>
+    </div>
+  </div>
 </div>
 
 <!-- ADMIN PANEL -->
@@ -1393,7 +1463,7 @@
 
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
 <noscript><div style="padding:16px;background:#fff1f2;color:#7f1d1d;text-align:center;font-family:system-ui">Bu saytın sifariş və məhsul funksiyaları üçün JavaScript aktiv olmalıdır.</div></noscript>
-    <script type="module" src="js/app.js?v=142"></script>
+    <script type="module" src="js/app.js?v=143"></script>
     <script type="module" src="js/reference-mobile-dock.js?v=1"></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 import { escapeHTML, money, isValidPhone, showToast } from './ui.js';
-import { authService, getAuthDiagnosticMetadata, isAuthDiagnosticEnabled } from './services/auth-service.js';
+import { authService, getAuthDiagnosticMetadata, isAuthDiagnosticEnabled } from './services/auth-service.js?v=2';
 import { state as s, ctx } from './state.js';
 import { getProfileForUser } from './services/profile-service.js';
 import { CONFIG } from './config.js';
@@ -7,10 +7,11 @@ import { storageService } from './services/storage-service.js';
 import { isCustomerDesignPathOwnedBy } from './security.js';
 export function initAuth() {
     const authModes = {
-        login: ["login-submit", "register-switch", "forgot"],
+        login: ["login-submit", "register-switch", "forgot", "remember-row"],
         register: ["register-submit", "login-switch"],
         reset: ["reset-panel"],
         recovery: ["recovery-panel"],
+        confirmation: ["confirmation-panel"],
         account: ["logout", "account-status", "account-history"]
     };
     let authPanelMode = "login";
@@ -18,6 +19,26 @@ export function initAuth() {
     function setAuthPanelMode(mode = "login") {
         if (!Object.prototype.hasOwnProperty.call(authModes, mode)) mode = "login";
         authPanelMode = mode;
+        const panelTitles = {
+            login: "Hesabınıza daxil olun",
+            register: "Hesab yaradın",
+            reset: "Şifrənizi unutmusunuz?",
+            recovery: "Yeni şifrə təyin edin",
+            confirmation: "Təsdiq linki göndərildi!",
+            account: "Müştəri hesabı"
+        };
+        const panelIntros = {
+            login: "Zəhmət olmasa hesabınıza daxil olmaq üçün məlumatlarınızı daxil edin.",
+            register: "F1 Studio hesabınızı yaratmaq üçün məlumatları doldurun.",
+            reset: "E-poçt ünvanınızı daxil edin. Şifrənizi yeniləmək üçün təhlükəsiz keçid göndərək.",
+            recovery: "E-poçtunuza gələn təhlükəsiz keçid vasitəsilə yeni şifrənizi təyin edin.",
+            confirmation: "Hesabınızı aktivləşdirmək üçün e-poçtunuza göndərilən təsdiq keçidini açın.",
+            account: "Hesab məlumatlarınız və sifariş tarixçəniz."
+        };
+        const title = document.getElementById("profileModalTitleText");
+        const intro = document.getElementById("profileModalIntro");
+        if (title) title.textContent = panelTitles[mode] || panelTitles.login;
+        if (intro) intro.textContent = panelIntros[mode] || panelIntros.login;
         const modal = document.getElementById("loginModal");
         if (modal) {
             modal.dataset.authMode = mode;
@@ -35,6 +56,11 @@ export function initAuth() {
                 field.hidden = !shown;
                 field.disabled = !shown || mode === "account";
                 field.setAttribute("aria-hidden", String(!shown));
+                const group = field.closest("[data-auth-field-group]");
+                if (group) {
+                    group.hidden = !shown;
+                    group.setAttribute("aria-hidden", String(!shown));
+                }
                 if (field.id === "profilePassword") field.autocomplete = mode === "register" ? "new-password" : "current-password";
             });
         }
@@ -47,7 +73,7 @@ export function initAuth() {
                 if (!button.dataset.authIdleLabel) button.dataset.authIdleLabel = button.textContent.trim();
                 button.disabled = true;
                 button.setAttribute("aria-busy", "true");
-                button.textContent = button.dataset.authElement === "login-submit" ? "Giriş edilir..." : "Hesab yaradılır...";
+                button.textContent = button.dataset.authElement === "login-submit" ? "Daxil olur..." : "Hesab yaradılır...";
             } else {
                 button.disabled = false;
                 button.removeAttribute("aria-busy");
@@ -145,6 +171,69 @@ export function initAuth() {
         }, 30000);
     }
 
+    function getRememberedAuthEmail() {
+        try { return localStorage.getItem("f1studio.auth.rememberedEmail") || ""; }
+        catch (_) { return ""; }
+    }
+
+    function rememberAuthEmail(checkbox = document.getElementById("rememberAuthEmail")) {
+        try {
+            if (!checkbox?.checked) {
+                localStorage.removeItem("f1studio.auth.rememberedEmail");
+                return;
+            }
+            const email = document.getElementById("profileEmail")?.value.trim() || "";
+            if (/^\S+@\S+\.\S+$/.test(email)) {
+                localStorage.setItem("f1studio.auth.rememberedEmail", email);
+            }
+        } catch (_) {}
+    }
+
+    function toggleAuthPassword(fieldId, button) {
+        const field = document.getElementById(fieldId);
+        if (!field || !button) return;
+        const visible = field.type === "password";
+        field.type = visible ? "text" : "password";
+        button.setAttribute("aria-pressed", String(visible));
+        button.setAttribute("aria-label", visible ? "Şifrəni gizlət" : "Şifrəni göstər");
+        button.innerHTML = visible
+            ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 5.3A10.9 10.9 0 0 1 12 5c6.3 0 9.5 7 9.5 7a16.4 16.4 0 0 1-3.1 3.8M6.2 6.2C3.8 7.8 2.5 12 2.5 12s3.2 7 9.5 7c1 0 1.9-.2 2.8-.5"/></svg>'
+            : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.2-6 9.5-6 9.5 6 9.5 6-3.2 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.6"/></svg>';
+    }
+
+    async function resendConfirmationEmail(button) {
+        if (authSubmissionInProgress) return;
+        const email = document.getElementById("profileEmail")?.value.trim() || "";
+        if (!/^\S+@\S+\.\S+$/.test(email)) {
+            return showToast("Təsdiq məktubu üçün düzgün e-poçt ünvanı daxil edin.");
+        }
+        authSubmissionInProgress = true;
+        const idleLabel = button?.textContent || "";
+        if (button) {
+            button.disabled = true;
+            button.textContent = "Göndərilir...";
+            button.setAttribute("aria-busy", "true");
+        }
+        try {
+            await authService.resendSignupConfirmation(email);
+            showToast("Təsdiq keçidi yenidən göndərildi. E-poçtunuzu yoxlayın.");
+        } catch (error) {
+            console.error("Signup confirmation resend failed", {
+                name: error?.name || null,
+                code: error?.code || null,
+                status: Number(error?.status) || null
+            });
+            showToast("Təsdiq e-poçtu göndərilmədi. Bir az sonra yenidən cəhd edin.");
+        } finally {
+            authSubmissionInProgress = false;
+            if (button) {
+                button.disabled = false;
+                button.removeAttribute("aria-busy");
+                button.textContent = idleLabel;
+            }
+        }
+    }
+
     function submitAuthForm() {
         if (authPanelMode === "login") return loginAccount();
         if (authPanelMode === "register") return registerAccount();
@@ -178,6 +267,11 @@ export function initAuth() {
                 const field = document.getElementById(id);
                 if (field) field.value = "";
             });
+            const rememberedEmail = getRememberedAuthEmail();
+            const emailField = document.getElementById("profileEmail");
+            if (emailField && rememberedEmail) emailField.value = rememberedEmail;
+            const rememberCheckbox = document.getElementById("rememberAuthEmail");
+            if (rememberCheckbox) rememberCheckbox.checked = Boolean(rememberedEmail);
         }
         await ctx.renderProfile();
         ctx.openDialog("loginModal", s.authUser ? "#logoutBtn" : "#profileEmail");
@@ -260,8 +354,8 @@ export function initAuth() {
                     s.authUser=null; s.profile=null; s.accountAuthResolved=true; s.accountOrdersFetched=true; s.accountOrdersLoadError=false; s.orders=[];
                     document.getElementById("profilePassword").value = "";
                     await ctx.renderProfile();
-                    setAuthPanelMode("login");
-                    showToast("✅ Hesab yaradıldı. E-poçtunuza gələn təsdiq keçidini açın, sonra giriş edin.");
+                    setAuthPanelMode("confirmation");
+                    showToast("E-poçtunuza gələn təsdiq keçidini açın, sonra daxil olun.");
                 }
             } catch(e) {
                 showToast(getAuthFailureMessage(e, "register"));
@@ -295,6 +389,7 @@ export function initAuth() {
                     setAuthPanelMode("login");
                     return showToast("Bu hesab bloklanıb. Adminlə əlaqə saxlayın.");
                 }
+                rememberAuthEmail();
                 s.authUser=data.user; s.profile=s.authUser; s.accountAuthResolved=true; s.accountOrdersFetched=false; s.accountOrdersLoadError=false;
                 if (isAuthDiagnosticEnabled()) {
                     console.info("[AUTH DIAGNOSTIC] Session and account state updated", {
@@ -433,6 +528,9 @@ export function initAuth() {
     sendPasswordResetEmail,
     openPasswordRecovery,
     updatePasswordFromRecovery,
+    toggleAuthPassword,
+    rememberAuthEmail,
+    resendConfirmationEmail,
     registerAccount,
     loginAccount,
     logoutProfile,
