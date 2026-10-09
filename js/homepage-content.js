@@ -81,7 +81,7 @@ export function applyHomepageContent(raw){
     reviewsSectionTitle:c.reviewsSectionTitle, reviewsFormTitle:c.reviewsFormTitle,
     faqSectionTitle:c.faqSectionTitle,
     aboutSectionTitle:c.aboutSectionTitle, aboutHoursLabel:c.aboutHoursLabel, aboutMapTitle:c.aboutMapTitle, aboutMapDescription:c.aboutMapDescription, aboutMapButton:c.aboutMapButton, aboutWhatsappNote:c.aboutWhatsappNote,
-    footerDescription:c.footerDescription, footerStatus:c.footerStatus, footerLinksTitle:c.footerLinksTitle, footerHome:c.footerHome, footerProducts:c.footerProducts, footerFaq:c.footerFaq, footerContact:c.footerContact,
+    footerDescription:c.footerDescription, footerStatus:c.footerStatus, footerLinksTitle:c.footerLinksTitle, footerHome:c.footerHome, footerProducts:c.footerProducts, footerFaq:c.footerFaq, footerContact:'Ünvan',
     footerStoreTitle:c.footerStoreTitle, footerAllProducts:c.footerAllProducts, footerNewProducts:c.footerNewProducts, footerPopularProducts:c.footerPopularProducts, footerCategories:c.footerCategories,
     footerHelpTitle:c.footerHelpTitle, footerFaqLink:c.footerFaqLink, footerOrderRule:c.footerOrderRule, footerDelivery:c.footerDelivery, footerContactLink:c.footerContactLink,
     footerOrderTitle:c.footerOrderTitle, footerWhatsAppText:c.footerOrderText, footerCopyright:c.footerCopyright
@@ -108,7 +108,7 @@ function fillAdminHomepageContent(c=s.homepageContent || DEFAULT_HOMEPAGE_CONTEN
     adminHomeNewsletterTitle:c.newsletterTitle, adminHomeNewsletterDesc:c.newsletterDescription, adminHomeNewsletterPlaceholder:c.newsletterPlaceholder, adminHomeNewsletterButton:c.newsletterButton,
     adminHomeReviewsTitle:c.reviewsSectionTitle, adminHomeReviewsFormTitle:c.reviewsFormTitle, adminHomeFaqTitle:c.faqSectionTitle,
     adminHomeAboutTitle:c.aboutSectionTitle, adminHomeAboutHoursLabel:c.aboutHoursLabel, adminHomeMapTitle:c.aboutMapTitle, adminHomeMapDescription:c.aboutMapDescription, adminHomeMapButton:c.aboutMapButton, adminHomeWhatsappNote:c.aboutWhatsappNote,
-    adminHomeFooterDescription:c.footerDescription, adminHomeFooterStatus:c.footerStatus, adminHomeFooterLinksTitle:c.footerLinksTitle, adminHomeFooterHome:c.footerHome, adminHomeFooterProducts:c.footerProducts, adminHomeFooterFaq:c.footerFaq, adminHomeFooterContact:c.footerContact,
+    adminHomeFooterDescription:c.footerDescription, adminHomeFooterStatus:c.footerStatus, adminHomeFooterLinksTitle:c.footerLinksTitle, adminHomeFooterHome:c.footerHome, adminHomeFooterProducts:c.footerProducts, adminHomeFooterFaq:c.footerFaq, adminHomeFooterContact:'Ünvan',
     adminHomeFooterStoreTitle:c.footerStoreTitle, adminHomeFooterAllProducts:c.footerAllProducts, adminHomeFooterNewProducts:c.footerNewProducts, adminHomeFooterPopular:c.footerPopularProducts, adminHomeFooterCategories:c.footerCategories,
     adminHomeFooterHelpTitle:c.footerHelpTitle, adminHomeFooterFaqLink:c.footerFaqLink, adminHomeFooterOrderRule:c.footerOrderRule, adminHomeFooterDelivery:c.footerDelivery, adminHomeFooterContactLink:c.footerContactLink,
     adminHomeFooterOrderTitle:c.footerOrderTitle, adminHomeFooterOrderText:c.footerOrderText, adminHomeFooterCopyright:c.footerCopyright
