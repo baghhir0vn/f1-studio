@@ -4,27 +4,51 @@ import { CONFIG } from './config.js';
 import { siteSettingsService } from './services/site-settings-service.js';
 import { state as s, ctx } from './state.js';
 export function initSiteSettings() {
+    let siteSettingsLoadPromise = null;
+    let siteSettingsLoadState = 'idle';
+    function updateProductWhatsAppAvailability() {
+        ctx.updateProductWhatsAppAvailability?.(siteSettingsLoadState);
+    }
+
     function ensureCatalogReady(){
         if(s.serverCatalogReady) return true;
         showToast("Məhsullar serverdən yüklənməyib. Səhifəni yeniləyin.");
         return false;
     }
-    async function loadSiteSettings(silent=false){
-        try{
-            const data=await siteSettingsService.get();
-            if(data){
-                CONFIG.whatsappNumber=data.whatsapp_number||"";
-                CONFIG.instagram=safeHttpUrl(data.instagram_url)||CONFIG.instagram;
-                CONFIG.tiktok=safeHttpUrl(data.tiktok_url)||CONFIG.tiktok;
-                CONFIG.delivery={pickup:Number(data.delivery_pickup)||0,ganja:Number(data.delivery_ganja)||0,region:Number(data.delivery_region)||0};
-                CONFIG.giftWrap=Number(data.gift_wrap)||0;
-                ctx.applySiteSettingsToPage(data);
-                if(ctx.isAdminUser()) ctx.fillAdminSiteSettings(data);
-                if(!silent) ctx.setSiteSettingsStatus("✅ Ayarlar yükləndi.");
-            }else if(!silent){ ctx.setSiteSettingsStatus("ℹ️ Ayar sətri hələ yaradılmayıb."); }
-        }catch(e){
-            if(!silent) ctx.setSiteSettingsStatus(`⚠️ Ayarlar yüklənmədi: ${safeUserError(e)}`);
-        }
+    function loadSiteSettings(silent=false){
+        if(siteSettingsLoadPromise) return siteSettingsLoadPromise;
+        siteSettingsLoadState='loading';
+        updateProductWhatsAppAvailability();
+        const request=(async()=>{
+            try{
+                const data=await siteSettingsService.get();
+                if(data){
+                    CONFIG.whatsappNumber=data.whatsapp_number||"";
+                    CONFIG.instagram=safeHttpUrl(data.instagram_url)||CONFIG.instagram;
+                    CONFIG.tiktok=safeHttpUrl(data.tiktok_url)||CONFIG.tiktok;
+                    CONFIG.delivery={pickup:Number(data.delivery_pickup)||0,ganja:Number(data.delivery_ganja)||0,region:Number(data.delivery_region)||0};
+                    CONFIG.giftWrap=Number(data.gift_wrap)||0;
+                    ctx.applySiteSettingsToPage(data);
+                    if(ctx.isAdminUser()) ctx.fillAdminSiteSettings(data);
+                    siteSettingsLoadState='ready';
+                    if(!silent) ctx.setSiteSettingsStatus("✅ Ayarlar yükləndi.");
+                }else{
+                    CONFIG.whatsappNumber="";
+                    siteSettingsLoadState='empty';
+                    if(!silent) ctx.setSiteSettingsStatus("ℹ️ Ayar sətri hələ yaradılmayıb.");
+                }
+                return siteSettingsLoadState;
+            }catch(e){
+                siteSettingsLoadState='error';
+                if(!silent) ctx.setSiteSettingsStatus(`⚠️ Ayarlar yüklənmədi: ${safeUserError(e)}`);
+                return siteSettingsLoadState;
+            }finally{
+                updateProductWhatsAppAvailability();
+                siteSettingsLoadPromise=null;
+            }
+        })();
+        siteSettingsLoadPromise=request;
+        return request;
     }
     function setSiteSettingsStatus(text){ const el=document.getElementById("siteSettingsStatus"); if(el) el.textContent=text; }
     function fillAdminSiteSettings(data){
@@ -149,6 +173,8 @@ export function initSiteSettings() {
         try { data=await siteSettingsService.save(payload); } catch(error) { ctx.setSiteSettingsStatus(`❌ Yadda saxlanmadı: ${safeUserError(error)}`); showToast("Ayarlar yadda saxlanmadı."); return; }
         ctx.applySiteSettingsToPage(data);
         CONFIG.whatsappNumber=data.whatsapp_number||""; CONFIG.instagram=safeHttpUrl(data.instagram_url)||""; CONFIG.tiktok=safeHttpUrl(data.tiktok_url)||""; CONFIG.delivery={pickup:Number(data.delivery_pickup)||0,ganja:Number(data.delivery_ganja)||0,region:Number(data.delivery_region)||0}; CONFIG.giftWrap=Number(data.gift_wrap)||0;
+        siteSettingsLoadState='ready';
+        updateProductWhatsAppAvailability();
         ctx.setSiteSettingsStatus("✅ Ayarlar yadda saxlanıldı."); showToast("Sayt ayarları yeniləndi.");
     }
     function buildWhatsAppUrl(baseNumber, orderCode){
@@ -176,6 +202,7 @@ export function initSiteSettings() {
     updateProductStructuredData,
     applySiteSettingsToPage,
     saveSiteSettings,
+    getSiteSettingsLoadState: () => siteSettingsLoadState,
     buildWhatsAppUrl
     });
 }

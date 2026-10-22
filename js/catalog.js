@@ -1,14 +1,95 @@
 import { safeHttpUrl, safeResourceUrl } from './security.js';
 import { persist, escapeHTML, money, normalizeText, showToast } from './ui.js';
 import { state as s, ctx } from './state.js';
+import { CONFIG } from './config.js';
+import { buildProductCustomizationWhatsAppLink, buildPublicProductUrl, normalizeProductWhatsAppNumber } from './product-whatsapp.js?v=2';
+const WHATSAPP_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.2-4.6A8.5 8.5 0 1 1 20.5 11.5Z"></path><path d="M8.5 8.3c.3-.6.6-.6 1-.6h.4l1 2.3-.8.8c.7 1.3 1.5 2.1 2.8 2.7l.8-.8 2.2 1c.1.4 0 .8-.2 1.1-.4.5-1 .8-1.7.7-2.5-.4-5.7-3.3-6.3-5.7-.2-.6.1-1.2.8-1.5Z"></path></svg>';
+function setProductWhatsAppButton(button, product) {
+    button.classList.add('product-whatsapp-btn');
+    button.classList.remove('add', 'product-add-btn');
+    button.dataset.productId = String(product.id ?? '');
+    button.setAttribute('aria-label', `${product.name} üçün WhatsApp-da fərdiləşdirmə sorğusu göndər`);
+    button.innerHTML = `${WHATSAPP_ICON}<span>WhatsApp-da fərdiləşdir</span>`;
+}
 export function initCatalog() {
     s.showAllProducts = s.showAllProducts === true;
+    let productDeepLinkHandled = false;
+    let productWhatsAppSettingsState = ctx.getSiteSettingsLoadState?.() || 'idle';
     const synonymMap = {
         "lipa":[1,2], "nömrə":[1,2], "nomre":[1,2], "alışqan":[3], "domino":[4], "taxta":[4,5,6,12],
         "lazer":[4,5,6,12], "masaüstü":[6], "saat":[7,8], "qol saatı":[8], "şəkil":[9], "3x4":[9],
         "foto":[9], "banner":[10], "vinil":[10], "stiker":[11], "brelok":[11], "maket":[12]
     };
     function getProduct(id){ return s.products.find(p => p.id === Number(id)); }
+    function applyProductWhatsAppAvailability(button, product) {
+        const outOfStock = button.dataset.productOutOfStock === 'true';
+        button.removeAttribute('aria-busy');
+        button.removeAttribute('title');
+        if (outOfStock) {
+            button.disabled = true;
+            button.innerHTML = '<span>Stokda yoxdur</span>';
+            button.setAttribute('aria-label', `${product.name}: stokda yoxdur`);
+            return;
+        }
+
+        if (productWhatsAppSettingsState === 'idle' || productWhatsAppSettingsState === 'loading') {
+            button.disabled = true;
+            button.setAttribute('aria-busy', 'true');
+            button.title = 'Mağazanın WhatsApp nömrəsi yüklənir.';
+            button.setAttribute('aria-label', `${product.name} üçün WhatsApp nömrəsi yüklənir`);
+            button.innerHTML = `${WHATSAPP_ICON}<span>Yüklənir…</span>`;
+            return;
+        }
+
+        const phone = normalizeProductWhatsAppNumber(CONFIG.whatsappNumber);
+        if (productWhatsAppSettingsState !== 'ready' || !phone) {
+            const message = productWhatsAppSettingsState === 'error'
+                ? 'WhatsApp ayarlarını yükləmək mümkün olmadı. Yenidən yoxlamaq üçün düyməyə basın.'
+                : productWhatsAppSettingsState === 'empty' || !CONFIG.whatsappNumber
+                    ? 'Mağazanın WhatsApp nömrəsi təyin edilməyib.'
+                    : 'Mağazanın WhatsApp nömrəsi düzgün formatda deyil.';
+            button.disabled = false;
+            button.title = message;
+            button.setAttribute('aria-label', `${product.name} üçün WhatsApp hazır deyil. ${message}`);
+            button.innerHTML = `${WHATSAPP_ICON}<span>WhatsApp hazır deyil</span>`;
+            return;
+        }
+
+        button.disabled = false;
+        button.setAttribute('aria-label', `${product.name} üçün WhatsApp-da fərdiləşdirmə sorğusu göndər`);
+        button.innerHTML = `${WHATSAPP_ICON}<span>WhatsApp-da fərdiləşdir</span>`;
+    }
+    function updateProductWhatsAppAvailability(state) {
+        productWhatsAppSettingsState = state || 'error';
+        document.querySelectorAll('.product-whatsapp-btn[data-product-id]').forEach(button => {
+            const product = getProduct(button.dataset.productId);
+            if (product) applyProductWhatsAppAvailability(button, product);
+        });
+    }
+    function clearProductDeepLink() {
+        const url = new URL(window.location.href);
+        if (!url.searchParams.has('product')) return;
+        url.searchParams.delete('product');
+        window.history.replaceState(window.history.state, '', url.href);
+    }
+    function openProductFromDeepLink() {
+        if (productDeepLinkHandled || !s.serverCatalogReady) return;
+        const url = new URL(window.location.href);
+        const productId = url.searchParams.get('product');
+        if (productId === null) {
+            productDeepLinkHandled = true;
+            return;
+        }
+
+        productDeepLinkHandled = true;
+        const product = getProduct(productId);
+        if (!product) {
+            clearProductDeepLink();
+            showToast('Bu məhsul hazırda tapılmadı. Kataloqu yeniləyib yenidən cəhd edin.');
+            return;
+        }
+        openProductModal(product.id);
+    }
     function renderCatalogSkeleton() {
         const grid = document.getElementById("grid");
         if (!grid) return;
@@ -52,6 +133,7 @@ export function initCatalog() {
                 ctx.updateProductStructuredData(s.products);
                 ctx.render();
                 ctx.updateAboutMetrics?.();
+                openProductFromDeepLink();
             }else{
                 s.serverCatalogReady=false;
                 if(status){
@@ -109,14 +191,24 @@ export function initCatalog() {
         const actions = document.getElementById("productModalActions");
         const outOfStock=p.stockQuantity!=null && Number(p.stockQuantity)<=0;
         btn.disabled=outOfStock;
+        btn.dataset.productOutOfStock=String(outOfStock);
         btn.style.opacity=outOfStock?".55":"1";
         btn.style.cursor=outOfStock?"not-allowed":"pointer";
-        btn.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l1.6 10.2a2 2 0 0 0 2 1.8h7.9a2 2 0 0 0 1.9-1.5L20 8H6"></path><circle cx="9" cy="19" r="1"></circle><circle cx="17" cy="19" r="1"></circle></svg><span>Səbətə at</span>';
-        btn.onclick = () => {
-            if(outOfStock) return;
-            ctx.closeProductModal();
-            ctx.add(p.id, { skipCustomization: true });
-        };
+        if(p.customizable){
+            setProductWhatsAppButton(btn,p);
+            applyProductWhatsAppAvailability(btn,p);
+            btn.onclick = () => openProductWhatsApp(p, btn);
+        }else{
+            btn.classList.remove("product-whatsapp-btn");
+            delete btn.dataset.productId;
+            delete btn.dataset.productOutOfStock;
+            btn.removeAttribute("aria-busy");
+            btn.removeAttribute("title");
+            btn.classList.add("add");
+            btn.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l1.6 10.2a2 2 0 0 0 2 1.8h7.9a2 2 0 0 0 1.9-1.5L20 8H6"></path><circle cx="9" cy="19" r="1"></circle><circle cx="17" cy="19" r="1"></circle></svg><span>Səbətə at</span>';
+            btn.setAttribute("aria-label",`${p.name} səbətə əlavə et`);
+            btn.onclick=()=>{if(outOfStock)return;ctx.closeProductModal();ctx.add(p.id,{skipCustomization:true});};
+        }
         customizeBtn.hidden=!p.customizable;
         customizeBtn.disabled=outOfStock;
         customizeBtn.setAttribute("aria-hidden",String(!p.customizable));
@@ -128,7 +220,60 @@ export function initCatalog() {
         actions?.classList.toggle("product-modal-only-cart",!p.customizable);
         ctx.openDialog("productModal", ".close");
     }
-    function closeProductModal() { ctx.closeDialog("productModal"); }
+    function closeProductModal() {
+        ctx.closeDialog("productModal");
+        clearProductDeepLink();
+    }
+    function openProductWhatsApp(product, trigger) {
+        if (!product || !String(product.name || '').trim()) {
+            showToast("Məhsul məlumatı tapılmadı.");
+            return false;
+        }
+        if (trigger?.disabled || trigger?.dataset.whatsappBusy === "true") return false;
+
+        if (productWhatsAppSettingsState === 'error') {
+            showToast('WhatsApp ayarlarını yükləmək mümkün olmadı. Yenidən cəhd edilir; hazır olduqda düyməyə yenidən basın.');
+            ctx.loadSiteSettings?.(true);
+            return false;
+        }
+        if (productWhatsAppSettingsState !== 'ready') {
+            showToast(productWhatsAppSettingsState === 'empty'
+                ? 'Mağazanın WhatsApp nömrəsi təyin edilməyib.'
+                : 'WhatsApp ayarları hələ hazır deyil. Bir az sonra yenidən cəhd edin.');
+            return false;
+        }
+        if (!normalizeProductWhatsAppNumber(CONFIG.whatsappNumber)) {
+            showToast(CONFIG.whatsappNumber
+                ? 'Mağazanın WhatsApp nömrəsi düzgün formatda deyil.'
+                : 'Mağazanın WhatsApp nömrəsi təyin edilməyib.');
+            return false;
+        }
+
+        const productUrl = buildPublicProductUrl(product, CONFIG.siteUrl);
+        if (!productUrl) {
+            showToast("Məhsul linki hazırda qurulmayıb. Sayt ünvanı konfiqurasiyasını yoxlayın.");
+            return false;
+        }
+        const link = buildProductCustomizationWhatsAppLink(product, CONFIG.whatsappNumber, productUrl);
+        if (!link) {
+            showToast(CONFIG.whatsappNumber ? "WhatsApp nömrəsi düzgün konfiqurasiya edilməyib." : "WhatsApp nömrəsi hazırda təyin edilməyib.");
+            return false;
+        }
+
+        // Keep the user's click as the direct activation for the universal WhatsApp URL.
+        window.open(link.url, "_blank", "noopener,noreferrer");
+
+        if (trigger) {
+            trigger.dataset.whatsappBusy = "true";
+            trigger.disabled = true;
+            window.setTimeout(() => {
+                if (!trigger.isConnected) return;
+                delete trigger.dataset.whatsappBusy;
+                trigger.disabled = false;
+            }, 900);
+        }
+        return true;
+    }
     function renderProductMedia(box, p, large=false) {
         box.innerHTML="";
         const gallery=(Array.isArray(p.images)&&p.images.length?p.images:[p.image]).map(url=>safeResourceUrl(url,{allowData:false,allowBlob:false,allowRelative:true})).filter(Boolean).slice(0,6);
@@ -428,7 +573,23 @@ export function initCatalog() {
             const price=document.createElement("div"); price.className="price"; price.textContent=money(p.price); info.appendChild(price);
             const outOfStock=p.stockQuantity!=null && Number(p.stockQuantity)<=0;
             const cardActions=document.createElement("div"); cardActions.className="product-card-actions";
-            const addBtn=document.createElement("button"); addBtn.className="add product-add-btn"; addBtn.type="button"; addBtn.disabled=outOfStock; addBtn.style.opacity=outOfStock?".55":"1"; addBtn.style.cursor=outOfStock?"not-allowed":"pointer"; addBtn.textContent=outOfStock?"Stokda yoxdur":"🛒 Səbətə at"; addBtn.setAttribute("aria-label",outOfStock?`${p.name}: stokda yoxdur`:`${p.name} səbətə əlavə et`); addBtn.onclick=e=>{e.stopPropagation();if(outOfStock)return;ctx.add(p.id,{skipCustomization:true})}; cardActions.appendChild(addBtn); info.appendChild(cardActions);
+            const addBtn=document.createElement("button");
+            addBtn.type="button";
+            addBtn.disabled=outOfStock;
+            addBtn.style.opacity=outOfStock?".55":"1";
+            addBtn.style.cursor=outOfStock?"not-allowed":"pointer";
+            if(p.customizable){
+                setProductWhatsAppButton(addBtn,p);
+                addBtn.dataset.productOutOfStock=String(outOfStock);
+                applyProductWhatsAppAvailability(addBtn,p);
+                addBtn.onclick=e=>{e.stopPropagation();openProductWhatsApp(p,addBtn)};
+            }else{
+                addBtn.className="add product-add-btn";
+                addBtn.textContent=outOfStock?"Stokda yoxdur":"🛒 Səbətə at";
+                addBtn.setAttribute("aria-label",outOfStock?`${p.name}: stokda yoxdur`:`${p.name} səbətə əlavə et`);
+                addBtn.onclick=e=>{e.stopPropagation();if(!outOfStock)ctx.add(p.id,{skipCustomization:true})};
+            }
+            cardActions.appendChild(addBtn); info.appendChild(cardActions);
             article.appendChild(info); grid.appendChild(article);
         });
     }
@@ -473,6 +634,8 @@ export function initCatalog() {
     updateCategoryCounts,
     drawGrid,
     add,
+    openProductWhatsApp,
+    updateProductWhatsAppAvailability,
     saveCart,
     updateCount
     });

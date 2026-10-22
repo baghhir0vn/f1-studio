@@ -1,0 +1,104 @@
+.product-card-actions .product-whatsapp-btn,
+.product-modal-actions .product-whatsapp-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 7px !important;
+  min-width: 0 !important;
+  min-height: 40px !important;
+  margin: 0 !important;
+  padding: 7px 12px !important;
+  border: 1px solid #c92f2f !important;
+  border-radius: 9px !important;
+  background: #c92f2f !important;
+  color: #fff !important;
+  font: 750 10px/1.2 Inter, ui-sans-serif, system-ui, sans-serif !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  white-space: normal !important;
+  cursor: pointer !important;
+  transition: background-color .18s ease, border-color .18s ease, transform .18s ease !important;
+}
+
+.product-card-actions .product-whatsapp-btn {
+  flex: 1 1 100% !important;
+  width: 100% !important;
+}
+
+.product-modal-actions .product-whatsapp-btn {
+  flex: 1 1 auto !important;
+  width: 100% !important;
+}
+
+.product-whatsapp-btn svg {
+  flex: 0 0 17px !important;
+  width: 17px !important;
+  height: 17px !important;
+  fill: none !important;
+  stroke: currentColor !important;
+  stroke-width: 1.7 !important;
+  stroke-linecap: round !important;
+  stroke-linejoin: round !important;
+}
+
+.product-whatsapp-btn span {
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+
+.product-whatsapp-btn:hover:not(:disabled) {
+  transform: translateY(-1px) !important;
+  border-color: #aa2020 !important;
+  background: #aa2020 !important;
+}
+
+.product-whatsapp-btn:focus-visible {
+  outline: 3px solid rgba(201, 47, 47, .3) !important;
+  outline-offset: 2px !important;
+}
+
+.product-whatsapp-btn:disabled {
+  opacity: .55 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+html[data-theme="dark"] .product-card-actions .product-whatsapp-btn,
+html[data-theme="dark"] .product-modal-actions .product-whatsapp-btn {
+  border-color: #71896a !important;
+  background: #71896a !important;
+  color: #fff !important;
+}
+
+html[data-theme="dark"] .product-whatsapp-btn:hover:not(:disabled) {
+  border-color: #849c7d !important;
+  background: #849c7d !important;
+}
+
+@media (max-width: 520px) {
+  .product-card-actions .product-whatsapp-btn {
+    min-height: 34px !important;
+    padding: 6px 7px !important;
+    gap: 5px !important;
+    font-size: 8.5px !important;
+  }
+
+  .product-card-actions .product-whatsapp-btn svg {
+    flex-basis: 15px !important;
+    width: 15px !important;
+    height: 15px !important;
+  }
+
+  .product-modal-actions .product-whatsapp-btn {
+    min-height: 42px !important;
+    font-size: 10px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .product-card-actions .product-whatsapp-btn {
+    padding-inline: 5px !important;
+    font-size: 8px !important;
+  }
+}
+
