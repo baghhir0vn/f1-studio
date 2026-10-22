@@ -96,7 +96,7 @@ async function hydrateAdminCustomerDesignLinks(){
             const safeUrl=/^https:\/\/rfkqxiwbicjsszjbdhzd\.supabase\.co\//i.test(url)?url:'';
             if(!safeUrl) throw new Error('DESIGN_SIGNED_URL_FAILED');
             link.href=safeUrl;
-            link.textContent='📎 Dizayn faylını aç';
+            link.textContent=`📎 ${link.dataset.designLabel||'Dizayn faylını aç'}`;
             link.style.pointerEvents='auto';
             link.style.opacity='1';
             link.setAttribute('aria-disabled','false');
@@ -143,9 +143,13 @@ function renderAdminOrders(){
         const items=(order.items||[]).map(item=>{
             const c=item.customization||{};
             const custom=[c.text?`Yazı: ${c.text}`:'',c.color?`Rəng: ${c.color}`:'',c.size?`Ölçü: ${c.size}${c.sizeValue?` (${c.sizeValue})`:''}`:'',c.font?`Şrift: ${c.font}`:'',c.note?`Qeyd: ${c.note}`:'',c.imageName?`Dizayn: ${c.imageName}`:'',c.layout?`Studio: ${c.layout.version===3?'layout v3':'layout'}`:''].filter(Boolean).join(' · ');
-            const design=c.imagePath && isSafeCustomerDesignPath(c.imagePath) && order.customer?.userId
-                ? `<div style="margin-top:7px"><a class="admin-design-link" href="#" data-design-path="${escapeHTML(c.imagePath)}" data-owner-id="${escapeHTML(order.customer.userId)}" target="_blank" rel="noopener noreferrer">⏳ Dizayn hazırlanır...</a></div>`
-                : '';
+            const savedUploads=Array.isArray(c.uploads)&&c.uploads.length?c.uploads:(c.imagePath?[{path:c.imagePath,name:c.imageName,purpose:c.imageType==='application/pdf'?'attachment':'image'}]:[]);
+            const uniqueUploads=[...new Map(savedUploads.filter(upload=>upload?.path&&isSafeCustomerDesignPath(upload.path)&&order.customer?.userId&&isCustomerDesignPathOwnedBy(upload.path,order.customer.userId)).map(upload=>[upload.path,upload])).values()];
+            const designs=uniqueUploads.map(upload=>{
+                const label=String(upload.name|| (upload.purpose==='attachment'?'Sifariş əlavəsi':'Dizayn faylı')).slice(0,100);
+                return `<a class="admin-design-link" href="#" data-design-path="${escapeHTML(upload.path)}" data-owner-id="${escapeHTML(order.customer.userId)}" data-design-label="${escapeHTML(label)}" target="_blank" rel="noopener noreferrer">⏳ ${escapeHTML(label)} hazırlanır...</a>`;
+            }).join('');
+            const design=designs?`<div class="admin-order-design-links" style="margin-top:7px;display:grid;gap:5px">${designs}</div>`:'';
             return `<div class="admin-pill"><b>${escapeHTML(item.name||`Məhsul #${item.productId||'?'}`)} ×${Number(item.qty)||1}</b>${custom?`<div class="admin-muted" style="margin-top:5px">${escapeHTML(custom)}</div>`:''}${design}</div>`;
         }).join('');
         const argsFor=(id,status)=>`[${Number(id||0)},${JSON.stringify(status)}]`;

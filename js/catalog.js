@@ -171,6 +171,7 @@ export function initCatalog() {
         if(!ctx.ensureCatalogReady()) return;
         if (e && e.target.closest("button")) return;
         const p = ctx.getProduct(id); if (!p) return;
+        closeProductSearch();
         document.getElementById("modalProdTitle").textContent = p.name;
         document.getElementById("modalProdDesc").textContent = p.desc;
         document.getElementById("modalProdPrice").textContent = money(p.price);
@@ -214,8 +215,16 @@ export function initCatalog() {
         customizeBtn.setAttribute("aria-hidden",String(!p.customizable));
         customizeBtn.onclick=()=>{
             if(outOfStock || !p.customizable) return;
-            ctx.closeProductModal();
-            ctx.openCustomization(p.id);
+            try { ctx.openCustomization(p); }
+            catch (error) {
+                console.error("F1 Studio product customization failed to open", error);
+                showToast("Fərdiləşdirmə açıla bilmədi. Səhifəni yeniləyib yenidən cəhd edin.");
+                return;
+            }
+            // Keep the product context visible until the editor confirms it has
+            // opened. If catalog/session state blocks the transition, the
+            // customer stays on the product instead of landing on the homepage.
+            if(document.getElementById("customModal")?.classList.contains("open")) ctx.closeProductModal();
         };
         actions?.classList.toggle("product-modal-only-cart",!p.customizable);
         ctx.openDialog("productModal", ".close");

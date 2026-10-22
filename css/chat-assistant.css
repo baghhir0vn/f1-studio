@@ -309,3 +309,9 @@ html[data-theme="dark"] body.f1-home .chat-trigger{
   .chat-box .chat-brand small{font-size:9px!important}
   .chat-box .chat-body{padding:9px 10px!important}
 }
+
+/* Keep the floating assistant clear of the Design Studio action bar. */
+body.f1-home.f1-custom-modal-open .chat-trigger,
+body.f1-custom-modal-open #chatBox.chat-box{
+  display:none!important;
+}

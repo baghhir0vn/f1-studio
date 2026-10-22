@@ -1,5 +1,6 @@
 import { sb } from '../config.js';
 import { isSafeCustomerAvatarPath, isSafeCustomerDesignPath, isSafeProductImagePath } from '../security.js';
+import { inspectDesignFile, normalizeDesignFile } from './design-file-validation.js';
 const ALLOWED_BUCKETS = new Set(['customer-designs', 'product-images']);
 const CUSTOMER_FILE_TYPES = new Set(['image/png','image/jpeg','image/webp','application/pdf']);
 const PRODUCT_FILE_TYPES = new Set(['image/jpeg','image/png','image/webp','image/gif','image/avif']);
@@ -9,15 +10,17 @@ function assertBucket(bucket) {
 export const storageService = {
     async uploadCustomerDesign(path, file) {
         if (!isSafeCustomerDesignPath(path)) throw new Error('INVALID_DESIGN_PATH');
-        if (!file || !CUSTOMER_FILE_TYPES.has(String(file.type || '')) || Number(file.size) > 10 * 1024 * 1024) throw new Error('DESIGN_FILE_TYPE');
-        const { error } = await sb.storage.from('customer-designs').upload(path, file, {
-            cacheControl: '3600', upsert: false, contentType: file.type
+        const inspected = await inspectDesignFile(file);
+        if (!CUSTOMER_FILE_TYPES.has(inspected.type)) throw new Error('DESIGN_FILE_TYPE');
+        const normalized = normalizeDesignFile(file, inspected.type);
+        const { error } = await sb.storage.from('customer-designs').upload(path, normalized, {
+            cacheControl: '3600', upsert: false, contentType: inspected.type
         });
         if (error) throw new Error('DESIGN_UPLOAD_FAILED');
-        return { path, name: file.name, type: file.type, size: file.size };
+        return { path, name: file.name, type: inspected.type, size: file.size };
     },
     async removeCustomerDesigns(paths = []) {
-        const clean = paths.filter(isSafeCustomerDesignPath);
+        const clean = [...new Set(paths.filter(isSafeCustomerDesignPath))];
         if (!clean.length) return;
         const { error } = await sb.storage.from('customer-designs').remove(clean);
         if (error) throw error;
@@ -28,6 +31,12 @@ export const storageService = {
         const { data, error } = await sb.storage.from('customer-designs').createSignedUrl(path, ttl);
         if (error || !data?.signedUrl) throw new Error('DESIGN_SIGNED_URL_FAILED');
         return data.signedUrl;
+    },
+    async downloadCustomerDesign(path) {
+        if (!isSafeCustomerDesignPath(path)) throw new Error('INVALID_DESIGN_PATH');
+        const { data, error } = await sb.storage.from('customer-designs').download(path);
+        if (error || !data) throw new Error('DESIGN_DOWNLOAD_FAILED');
+        return data;
     },
     async uploadCustomerAvatar(path, file, userId) {
         if (!isSafeCustomerAvatarPath(path, userId)) throw new Error('INVALID_AVATAR_PATH');

@@ -189,8 +189,15 @@ function renderOrderRows() {
         const qty = items.reduce((sum, item) => sum + Math.max(1, Number(item.qty) || 1), 0);
         const status = orderStatus(order.status);
         const itemRows = items.map(item => `<div class="ac-order-product">${imageForOrderItem(item)}<span class="ac-order-product-copy"><b>${escapeHTML(item.name || 'Məhsul')}</b><small>${Math.max(1, Number(item.qty) || 1)} məhsul</small>${customDetails(item)}</span><span class="ac-order-product-price">${money(Number(item.price) * Math.max(1, Number(item.qty) || 1))}</span></div>`).join('');
-        const designs = items.flatMap(item => item.customization?.imagePath && isCustomerDesignPathOwnedBy(item.customization.imagePath, s.authUser?.id)
-            ? [`<button type="button" class="ac-text-link" data-action="openCustomerDesign" data-action-args='${escapeHTML(JSON.stringify([item.customization.imagePath]))}'>Dizayn faylına bax</button>`] : []).join('');
+        const designs = items.flatMap(item => {
+            const customization=item.customization||{};
+            const uploads=Array.isArray(customization.uploads)&&customization.uploads.length?customization.uploads:(customization.imagePath?[{path:customization.imagePath,name:customization.imageName,purpose:customization.imageType==='application/pdf'?'attachment':'image'}]:[]);
+            const uniqueUploads=[...new Map(uploads.filter(upload=>upload?.path&&isCustomerDesignPathOwnedBy(upload.path,s.authUser?.id)).map(upload=>[upload.path,upload])).values()];
+            return uniqueUploads.map(upload=>{
+                const label=upload.purpose==='attachment'?'Sifariş əlavəsinə bax':'Dizayn faylına bax';
+                return `<button type="button" class="ac-text-link" data-action="openCustomerDesign" data-action-args='${escapeHTML(JSON.stringify([upload.path]))}'>${label}</button>`;
+            });
+        }).join('');
         return `<details class="ac-order-row"><summary><span class="ac-order-leading">${imageForOrderItem(items[0] || {})}<span><b>Sifariş #${code}</b><small>${date} · ${qty} məhsul</small></span></span><span class="ac-order-status ac-status-${status.className}">${escapeHTML(status.label)}</span><b class="ac-order-total">${money((Number(order.total_cents) || 0) / 100)}</b>${icon('chevron', 'ac-order-chevron')}</summary><div class="ac-order-detail">${itemRows || '<span class="ac-muted">Məhsul məlumatı yoxdur.</span>'}<div class="ac-order-detail-footer">${designs}<button type="button" class="ac-text-link" data-action="openOrderWhatsApp" data-action-args='${escapeHTML(JSON.stringify([order.orderCode || order.order_code || '']))}'>Sifariş barədə soruş</button></div></div></details>`;
     }).join('');
     return rows;

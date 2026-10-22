@@ -1,6 +1,6 @@
 import { sb } from '../config.js';
 import { fetchAllRows } from './query-utils.js';
-import { isAllowedOrderStatus, isSafeCustomerDesignPath, sanitizeDesignLayout } from '../security.js';
+import { isAllowedOrderStatus, isSafeCustomerDesignPath, sanitizeCustomizationProductContext, sanitizeDesignLayout, sanitizeDesignPreview, sanitizeDesignUploads } from '../security.js';
 export function mapOrderRow(o) {
     return {
         id: o.id,
@@ -49,6 +49,7 @@ export const orderService = {
             if (item?.customization && typeof item.customization === 'object' && !Array.isArray(item.customization)) {
                 const c = item.customization;
                 customization = {
+                    productContext: sanitizeCustomizationProductContext(c.productContext, productId),
                     text: String(c.text || '').trim().slice(0, 500),
                     color: String(c.color || '').trim().slice(0, 40),
                     size: String(c.size || '').trim().slice(0, 80),
@@ -58,8 +59,10 @@ export const orderService = {
                     imagePath: isSafeCustomerDesignPath(c.imagePath || '') ? String(c.imagePath).trim() : '',
                     imageType: String(c.imageType || '').trim().slice(0, 80),
                     imageSize: Number.isFinite(Number(c.imageSize)) ? Math.max(0, Math.min(10 * 1024 * 1024, Number(c.imageSize))) : 0,
+                    uploads: sanitizeDesignUploads(c.uploads, c),
                     note: String(c.note || '').trim().slice(0, 1000),
-                    layout: sanitizeDesignLayout(c.layout)
+                    layout: sanitizeDesignLayout(c.layout),
+                    previewData: sanitizeDesignPreview(c.previewData)
                 };
             }
             return { productId, qty, customization };

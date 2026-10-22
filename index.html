@@ -57,7 +57,7 @@
     <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
     <link rel="icon" type="image/png" href="f1-logo.png?v=128">
     <link rel="apple-touch-icon" href="f1-logo.png?v=128">
-    <link rel="stylesheet" href="css/styles.css?v=143">
+    <link rel="stylesheet" href="css/styles.css?v=149">
     <link rel="stylesheet" href="css/admin-scroll.css?v=1">
     <link rel="stylesheet" href="css/order-delivery-info.css?v=1">
     <link rel="stylesheet" href="css/f1-reference-refresh.css?v=1">
@@ -683,120 +683,184 @@
 <!-- FƏRDİ SİFARİŞ KONFİQURATORU -->
 <div class="modal-center" id="customModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="customModalTitle">
     <div class="dialog custom-dialog">
-        <div class="head">
-            <h2 id="customModalTitle">✨ Fərdi sifariş</h2>
-            <button class="close" type="button" data-action="closeCustomModal" aria-label="Fərdi sifarişi bağla">×</button>
-        </div>
-        <div id="customProductName" class="custom-product-name"></div>
-        <div class="custom-layout">
-          <div class="design-studio-box">
-            <div class="design-studio-head">
-              <div><b>🎨 F1 Design Studio</b><small>Canlı önbaxış</small></div>
-              <span>Elementi tutub hərəkət etdirə bilərsən · mobil-də iki barmaqla ölçünü dəyiş</span>
+        <header class="ds-topbar">
+            <div class="ds-brand"><span class="ds-brand-mark">F1</span><span><b>F1 DESIGN STUDIO</b><small>FƏRDİ HƏDİYYƏLƏR</small></span></div>
+            <div class="ds-document"><strong id="customModalTitle">Yeni dizayn</strong><span id="customProductName" class="custom-product-name"></span><small id="designProductMeta" class="ds-product-meta"></small></div>
+            <div class="ds-top-actions">
+                <span class="ds-save-state" id="designSaveState" role="status">Qaralama hazırdır</span>
+                <button type="button" class="ds-top-button" data-action="undoDesign" aria-label="Geri al" title="Geri al (Ctrl+Z)">↶</button>
+                <button type="button" class="ds-top-button" data-action="redoDesign" aria-label="Yenidən et" title="Yenidən et (Ctrl+Y)">↷</button>
+                <button type="button" class="ds-top-button ds-secondary-action" data-action="exportDesignPreview">Önizləmə PNG</button>
+                <button type="button" class="ds-top-button ds-secondary-action" data-action="saveDesignLayout">Yadda saxla</button>
+                <button type="button" class="close ds-close" data-action="closeCustomModal" aria-label="Fərdi sifarişi bağla">×</button>
             </div>
-            <div class="design-canvas-stage">
-              <span class="canvas-chip canvas-chip-top">ÇAP ÖNBAXIŞI</span>
-              <canvas id="designCanvas" width="300" height="240" aria-label="F1 Design Studio önbaxış sahəsi"></canvas>
-              <span class="canvas-chip canvas-chip-bottom">300 × 240 · kətan</span>
-            </div>
-            <div class="design-studio-status" id="designSelectionStatus">Şəkil seçilib · əlavə edilməyib</div>
-            <div class="design-tool-section">
-              <div class="design-tool-label">Element əlavə et / idarə et</div>
-              <div class="design-tools design-tools-main">
-                <button type="button" class="design-tool-primary" data-action="addDesignText">＋ Mətn əlavə et</button>
-                <button type="button" class="design-tool-primary" data-action="addDesignImage">＋ Şəkil əlavə et</button>
-                <button type="button" data-action="selectPrevDesignElement">← Element</button>
-                <button type="button" data-action="selectNextDesignElement">Element →</button>
-                <button type="button" data-action="deleteDesignElement">🗑 Sil</button>
-                <button type="button" data-action="zoomDesign" data-action-args="[-0.1]">− Ölçü</button>
-                <button type="button" data-action="zoomDesign" data-action-args="[0.1]">＋ Ölçü</button>
-                <button type="button" data-action="centerDesignElement">⊙ Mərkəz</button>
-                <button type="button" data-action="fitDesignElementToPrint">📐 Çapa sığdır</button>
-                <button type="button" data-action="rotateDesign" data-action-args="[-15]">↶ 15°</button>
-                <button type="button" data-action="rotateDesign" data-action-args="[15]">↷ 15°</button>
-              </div>
-            </div>
-            <div class="design-tool-section">
-              <div class="design-tool-label">Tarixçə və qatlar</div>
-              <div class="design-tools design-tools-main">
-                <button type="button" data-action="undoDesign">↩️ Geri</button>
-                <button type="button" data-action="redoDesign">↪️ İrəli</button>
-                <button type="button" data-action="sendDesignElementBackward">⬇️ Qatı geri</button>
-                <button type="button" data-action="bringDesignElementForward">⬆️ Qatı irəli</button>
-                <button type="button" data-action="resetDesignStudio">Sıfırla</button>
-                <button type="button" data-action="discardDesignDraft">🗑 Qaralamanı sil</button>
-                <button type="button" data-action="saveDesignLayout">💾 Yadda saxla</button>
-                <button type="button" data-action="exportDesignPreview">PNG önizləmə</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="custom-details">
-            <div class="custom-preview" id="customPreview">
-              <span>Fərdi dizaynınızı burada seçin</span>
-            </div>
-            <div class="custom-grid">
-              <label class="custom-field custom-full">
-                <span>Üstündə yazılacaq mətn</span>
-                <input id="customText" type="text" maxlength="80" placeholder="Məs: 10-AA-123 və ya Elvin &amp; Aysel">
-                <small class="design-selection-hint">💡 Mətn və şəkli kətanda ayrıca seçib hərəkət etdirə bilərsən.</small>
-              </label>
-              <label class="custom-field">
-                <span>Rəng</span>
-                <select id="customColor">
-                    <option value="Qara">⚫ Qara</option>
-                    <option value="Ağ">⚪ Ağ</option>
-                    <option value="Qızılı">🟡 Qızılı</option>
-                    <option value="Gümüşü">⚙️ Gümüşü</option>
-                    <option value="Digər">🎨 Digər / operatorla dəqiqləşdiriləcək</option>
-                </select>
-              </label>
-              <label class="custom-field">
-                <span>Ölçü</span>
-                <select id="customSize" data-change-action="toggleCustomSizeValue">
-                    <option value="Standart">Standart</option>
-                    <option value="Kiçik">Kiçik</option>
-                    <option value="Orta">Orta</option>
-                    <option value="Böyük">Böyük</option>
-                    <option value="Xüsusi ölçü">Xüsusi ölçü</option>
-                </select>
-                <input id="customSizeValue" type="text" maxlength="40" placeholder="Məs: 25 × 8 sm" style="display:none;" aria-label="Xüsusi ölçü">
-              </label>
-              <label class="custom-field">
-                <span>Şrift</span>
-                <select id="customFont">
-                    <option value="Klassik">Klassik</option>
-                    <option value="Modern">Modern</option>
-                    <option value="Qalın">Qalın</option>
-                    <option value="Əlyazma">Əlyazma</option>
-                    <option value="Operatorla seçim">Operatorla seçim</option>
-                </select>
-              </label>
-              <label class="custom-field">
-                <span>Mətn ölçüsü <b id="customFontSizeValue">28px</b></span>
-                <input id="customFontSize" type="range" min="12" max="72" step="1" value="28" aria-label="Mətn ölçüsü">
-              </label>
-              <label class="custom-field">
-                <span>Mətn hizalanması</span>
-                <select id="customTextAlign">
-                    <option value="left">Sola</option>
-                    <option value="center" selected>Mərkəzə</option>
-                    <option value="right">Sağa</option>
-                </select>
-              </label>
-              <label class="custom-field custom-full file-field">
-                <span>Şəkil / logo yüklə <small>(PNG, JPG, WEBP, PDF)</small></span>
-                <input id="customImage" type="file" accept="image/png,image/jpeg,image/webp,application/pdf" data-change-action="handleCustomImage" data-change-args='[{&quot;$&quot;: &quot;this&quot;}]'>
-                <small id="customImageName" class="file-name">Fayl seçilməyib</small>
-              </label>
-              <label class="custom-field custom-full">
-                <span>Əlavə qeyd</span>
-                <textarea id="customNote" maxlength="300" placeholder="Məs: Yazı mərkəzdə olsun, ürək işarəsi əlavə edilsin və s."></textarea>
-              </label>
-            </div>
-            <div class="notice custom-note">🔒 Dizayn faylı təhlükəsiz, private Storage-da saxlanılır. Fayl yükləmək üçün hesabınıza daxil olun; operator faylı admin paneldən müvəqqəti təhlükəsiz linklə aça bilər.</div>
-            <button class="add custom-submit" id="customSubmitBtn" type="button" data-action="confirmCustomization">🛒 Fərdiləşdir və səbətə əlavə et</button>
-          </div>
+        </header>
+        <div class="ds-main">
+            <nav class="ds-toolrail" aria-label="Dizayn alətləri">
+                <button type="button" class="is-active" data-action="showDesignLibrary" data-action-args='["elements"]' title="Elementlər">◇<small>Elementlər</small></button>
+                <button type="button" data-action="showDesignLibrary" data-action-args='["templates"]' title="Şablonlar">▦<small>Şablonlar</small></button>
+                <button type="button" data-action="addDesignText" title="Mətn əlavə et">T<small>Mətn</small></button>
+                <button type="button" data-action="addDesignImage" title="Şəkil yüklə">▧<small>Şəkil</small></button>
+                <button type="button" data-action="addDesignOrnament" data-action-args='["heart"]' title="Ürək əlavə et">♡<small>Dekor</small></button>
+            </nav>
+            <aside class="ds-library" aria-label="Element kitabxanası">
+                <div class="ds-panel-heading"><div><small>İŞ SAHƏSİ</small><h2 id="designLibraryTitle">Elementlər</h2></div><span>F1</span></div>
+                <div class="ds-library-scroll" id="designElementsPanel">
+                    <div class="ds-mode-switch" role="group" aria-label="Dizayn rejimi">
+                        <button type="button" data-action="setDesignMode" data-action-args='["free"]' aria-pressed="false">Sərbəst dizayn</button>
+                        <button type="button" data-action="setDesignMode" data-action-args='["product"]' aria-pressed="false">Məhsul şablonları</button>
+                    </div>
+                    <section class="ds-library-section ds-blank-design-action">
+                        <h3>SƏRBƏST KƏTAN</h3>
+                        <p class="ds-hint">Rejimi dəyişmək mövcud dizaynı saxlayır. Tam boş kətan yalnız bu düymə ilə başladılır.</p>
+                        <button type="button" class="ds-upload-tile" data-action="applyDesignTemplate" data-action-args='["free"]'>
+                            <b>＋</b><span>Boş kətan yarat</span><small>Mövcud dizayn varsa, əvvəl təsdiq istəyəcəyik</small>
+                        </button>
+                    </section>
+                    <section class="ds-library-section"><h3>MƏTN</h3><div class="ds-add-grid">
+                        <button type="button" data-action="addDesignText"><b>＋</b><span>Mətn əlavə et</span></button>
+                        <button type="button" data-action="addDesignDate"><b>▦</b><span>Tarix əlavə et</span></button>
+                    </div></section>
+                    <section class="ds-library-section"><h3>DEKORATİV ELEMENTLƏR</h3><div class="ds-ornament-grid">
+                        <button type="button" data-action="addDesignOrnament" data-action-args='["heart"]' aria-label="Ürək əlavə et">♡</button>
+                        <button type="button" data-action="addDesignOrnament" data-action-args='["star"]' aria-label="Ulduz əlavə et">✧</button>
+                        <button type="button" data-action="addDesignOrnament" data-action-args='["flower"]' aria-label="Gül əlavə et">❀</button>
+                        <button type="button" data-action="addDesignOrnament" data-action-args='["divider"]' aria-label="Dekorativ xətt əlavə et">〰</button>
+                    </div></section>
+                    <section class="ds-library-section"><h3>ŞƏKİL / LOGO</h3>
+                        <button type="button" class="ds-upload-tile" data-action="addDesignImage"><b>＋</b><span>Şəkillər əlavə et</span><small>Ən çox 8 PNG, JPG və ya WEBP · hərəsi 10 MB-dək</small></button>
+                        <p class="ds-hint">PNG, JPG və WEBP kətana ayrıca redaktə olunan qat kimi əlavə edilir. PDF yalnız sifariş əlavəsidir, kətanda redaktə olunmur.</p>
+                    </section>
+                    <section class="ds-library-section"><h3>ƏSAS FORMALAR</h3><div class="ds-add-grid">
+                        <button type="button" data-action="addDesignShape" data-action-args='["rectangle"]'><b>□</b><span>Düzbucaqlı</span></button>
+                        <button type="button" data-action="addDesignShape" data-action-args='["circle"]'><b>○</b><span>Dairə</span></button>
+                        <button type="button" data-action="addDesignShape" data-action-args='["line"]'><b>／</b><span>Xətt</span></button>
+                        <button type="button" data-action="addDesignShape" data-action-args='["border"]'><b>▣</b><span>Çərçivə</span></button>
+                    </div></section>
+                    <section class="ds-library-section"><h3>FON VƏ TEKSTURA</h3><div class="ds-add-grid">
+                        <button type="button" data-action="addDesignBackground" data-action-args='["solid"]'><b>▤</b><span>Açıq fon</span></button>
+                        <button type="button" data-action="addDesignBackground" data-action-args='["dots"]'><b>⠿</b><span>Nöqtəli fon</span></button>
+                        <button type="button" data-action="addDesignBackground" data-action-args='["lines"]'><b>▥</b><span>Xətli fon</span></button>
+                    </div><p class="ds-hint">Fon kətan qatıdır; material və istehsal uyğunluğu təsdiqi deyil.</p></section>
+                    <section class="ds-library-section"><h3>QR KOD</h3>
+                        <button type="button" class="ds-upload-tile" data-action="addDesignQr"><b>▦</b><span>QR kod əlavə et</span><small>Sonra faktiki linki və ya mətni yazın</small></button>
+                        <p class="ds-hint">Kod daxil etdiyiniz məzmundan yaradılır. Qaranlıq rəng və açıq fon skan etməyi asanlaşdırır.</p>
+                    </section>
+                    <section class="ds-library-section ds-size-note"><h3>MƏHSUL</h3><p>Dizayn kətanı ümumi önizləmədir. Dəqiq çap ölçüsü seçilmiş məhsul üçün sifariş zamanı təsdiqlənir.</p></section>
+                </div>
+                <div class="ds-library-scroll" id="designTemplatesPanel" hidden>
+                    <div class="ds-mode-switch" role="group" aria-label="Dizayn rejimi">
+                        <button type="button" data-action="setDesignMode" data-action-args='["free"]' aria-pressed="false">Sərbəst dizayn</button>
+                        <button type="button" data-action="setDesignMode" data-action-args='["product"]' aria-pressed="true">Məhsula uyğun</button>
+                    </div>
+                    <section class="ds-library-section"><h3>ŞABLON KİTABXANASI</h3><p class="ds-hint">Yalnız açıq məhsula uyğun, qatları redaktə olunan şablonlar göstərilir.</p>
+                        <label class="ds-template-search"><span>Axtar</span><input id="designTemplateSearch" type="search" maxlength="60" placeholder="Ad, kateqoriya və ya mövzu" autocomplete="off"></label>
+                        <label class="ds-template-search"><span>Kateqoriya</span><select id="designTemplateCategory"><option value="">Bütün kateqoriyalar</option></select></label>
+                        <div class="ds-template-compatibility" id="designTemplateCompatibility" role="status"></div>
+                        <div class="ds-template-list" id="designTemplateList" aria-live="polite"></div>
+                        <p class="ds-template-empty" id="designTemplateEmpty" hidden></p>
+                        <section class="ds-template-preview" id="designTemplatePreview" hidden aria-live="polite">
+                            <canvas id="designTemplatePreviewCanvas" width="300" height="240" aria-label="Şablonun obyekt qatları ilə önizləməsi"></canvas>
+                            <div><b id="designTemplatePreviewTitle"></b><small id="designTemplatePreviewDescription"></small><span id="designTemplatePreviewLayers"></span></div>
+                            <button type="button" data-action="startDesignTemplatePreview">Şablondan başla</button>
+                        </section>
+                        <button type="button" class="ds-blank-template" data-action="applyDesignTemplate" data-action-args='["free"]'>＋ Boş kətan yarat <small>Seçilmiş məhsul üçün ümumi redaktor</small></button>
+                    </section>
+                </div>
+            </aside>
+            <main class="ds-center">
+                <div class="ds-canvas-toolbar">
+                    <div class="ds-tool-group"><button type="button" data-action="zoomDesign" data-action-args="[-0.1]" title="Kiçilt">−</button><span id="designZoomValue">100%</span><button type="button" data-action="zoomDesign" data-action-args="[0.1]" title="Böyüt">＋</button><i></i><button type="button" data-action="centerDesignElement">Mərkəzlə</button><button type="button" data-action="fitDesignElementToPrint">Çap sahəsinə sığdır</button></div>
+                    <label class="ds-snap-control"><input type="checkbox" id="designSnap" checked> Snap</label>
+                </div>
+                <div class="ds-canvas-viewport">
+                    <div class="ds-product-reference" id="designProductReference" hidden>
+                        <img id="designProductThumb" alt="" loading="eager" decoding="async" hidden>
+                        <span><small id="designProductReferenceLabel">MƏHSUL NÜMUNƏSİ · KƏTANDAN AYRICA</small><strong id="designProductReferenceName"></strong><em id="designProductFallback" hidden>Məhsul fotosu kataloqda yoxdur</em></span>
+                    </div>
+                    <div class="ds-canvas-caption"><span>CANLI ÖNİZLƏMƏ</span><span id="designSelectionStatus" role="status">Element seçilməyib</span></div>
+                    <div class="design-canvas-stage"><canvas id="designCanvas" width="1200" height="960" aria-label="F1 Design Studio dizayn kətanı. Elementləri seçib sürüşdürün."></canvas></div>
+                    <div class="ds-canvas-disclaimer">Nümunə iş sahəsi · məhsulun fiziki ölçüsü və çap sərhədi kataloqda müəyyən edilməyib</div>
+                    <div class="ds-output-switch" role="tablist" aria-label="Dizayn önizləmə növü">
+                        <button type="button" role="tab" aria-selected="true" data-action="showDesignOutput" data-action-args='["canvas"]'>Redaktə kətanı</button>
+                        <button type="button" role="tab" aria-selected="false" data-action="showDesignOutput" data-action-args='["mockup"]'>Məhsul simulyasiyası</button>
+                        <button type="button" role="tab" aria-selected="false" data-action="showDesignOutput" data-action-args='["artwork"]'>Artwork PNG</button>
+                    </div>
+                    <section class="ds-output-panel" id="designMockupPanel" hidden aria-label="Məhsulun təxmini vizual simulyasiyası">
+                        <div class="ds-mockup-stage" id="designMockupStage">
+                            <img id="designMockupImage" alt="" loading="lazy" decoding="async" hidden>
+                            <div class="ds-mockup-fallback" id="designMockupFallback">Bu məhsul üçün kataloq fotosu yoxdur.</div>
+                            <div class="ds-mockup-print-area"><canvas id="designMockupCanvas" width="1024" height="784" aria-label="Məhsul fotosu üzərində təxmini dizayn yerləşməsi"></canvas></div>
+                        </div>
+                        <p>Yerləşmə simulyasiyasıdır; real çap sahəsi və məhsul ölçüsü kimi qəbul edilməməlidir.</p>
+                    </section>
+                    <section class="ds-output-panel ds-artwork-panel" id="designArtworkPanel" hidden aria-label="Şəffaf fonlu artwork PNG çıxışı">
+                        <canvas id="designArtworkCanvas" width="1024" height="784" aria-label="Şəffaf fonlu, redaktə olunan qatların PNG artwork önizləməsi"></canvas>
+                        <p>Şəffaf artwork · 4× piksel önizləməsi. Fiziki ölçü və istehsal spesifikasiyası təsdiqlənməyib.</p>
+                        <button type="button" data-action="exportDesignArtwork">Şəffaf PNG-ni endir</button>
+                    </section>
+                    <div id="customPreview" class="custom-preview" hidden></div>
+                </div>
+                <section class="ds-layers-panel" aria-label="Dizayn qatları">
+                    <div class="ds-layers-header"><div><small>LAYERS</small><h2>Qatlar <span id="designLayerCount">0</span></h2></div><div class="ds-layer-actions"><button type="button" data-action="bringDesignElementForward" title="Qatı irəli">↑</button><button type="button" data-action="sendDesignElementBackward" title="Qatı geri">↓</button><button type="button" data-action="duplicateDesignElement" title="Qatı çoxalt">⧉</button><button type="button" data-action="toggleDesignLayerLock" title="Kilidi dəyiş">⌑</button><button type="button" data-action="deleteDesignElement" title="Seçilmiş qatı sil">⌫</button></div></div>
+                    <div class="ds-layer-list" id="designLayersList" role="list" aria-label="Dizayn layları"><div class="ds-empty-layers">Başlamaq üçün mətn, şəkil və ya dekor əlavə edin.</div></div>
+                </section>
+            </main>
+            <aside class="ds-inspector" aria-label="Seçilmiş elementin xüsusiyyətləri">
+                <div class="ds-inspector-tabs"><button class="is-active" type="button" data-action="showInspectorTab" data-action-args='["properties"]'>XÜSUSİYYƏTLƏR</button><button type="button" data-action="showInspectorTab" data-action-args='["style"]'>STİL</button></div>
+                <div class="ds-inspector-body" id="designInspectorProperties">
+                    <div class="ds-selected-name"><small>SEÇİLMİŞ ELEMENT</small><strong id="designSelectedName">Heç nə seçilməyib</strong></div>
+                    <div class="custom-grid ds-property-grid">
+                        <label class="custom-field custom-full"><span>Mətn</span><input id="customText" type="text" maxlength="80" placeholder="Məs: Elvin &amp; Aysel"></label>
+                        <label class="custom-field custom-full" id="designQrContentField" hidden><span>QR məzmunu</span><textarea id="designQrContent" maxlength="512" placeholder="Link və ya qısa mətn daxil edin"></textarea><small id="designQrStatus">Məzmun daxil olduqda QR kod yaradılır.</small></label>
+                        <label class="custom-field custom-full" id="designShapeKindField" hidden><span>Forma</span><select id="designShapeKind"><option value="rectangle">Düzbucaqlı</option><option value="circle">Dairə</option><option value="line">Xətt</option><option value="border">Çərçivə</option></select></label>
+                        <label class="custom-field" id="designElementWidthField" hidden><span>En (px)</span><input id="designElementWidth" type="number" min="8" max="256" step="1" value="80"></label>
+                        <label class="custom-field" id="designElementHeightField" hidden><span>Hündürlük (px)</span><input id="designElementHeight" type="number" min="8" max="196" step="1" value="52"></label>
+                        <label class="custom-field" id="designShapeFillField" hidden><span>İç rəngi</span><select id="designShapeFill"><option value="true">Doldurulmuş</option><option value="false">Kontur</option></select></label>
+                        <label class="custom-field" id="designShapeStrokeField" hidden><span>Kontur (px)</span><input id="designShapeStrokeWidth" type="number" min="1" max="12" step="1" value="2"></label>
+                        <label class="custom-field custom-full" id="designBackgroundPatternField" hidden><span>Tekstura</span><select id="designBackgroundPattern"><option value="none">Sadə</option><option value="dots">Nöqtələr</option><option value="lines">Xətlər</option></select></label>
+                        <label class="custom-field" id="designElementColorField" hidden><span id="designElementColorLabel">Element rəngi</span><input id="designElementColor" type="color" value="#30251a"></label>
+                        <label class="custom-field" id="designElementAccentField" hidden><span id="designElementAccentLabel">İkinci rəng</span><input id="designElementAccentColor" type="color" value="#ffffff"></label>
+                        <label class="custom-field"><span>Şrift</span><select id="customFont"><option value="Klassik">Klassik</option><option value="Modern">Modern</option><option value="Qalın">Qalın</option><option value="Əlyazma">Əlyazma</option><option value="Operatorla seçim">Operatorla seçim</option></select></label>
+                        <label class="custom-field"><span>Rəng</span><select id="customColor"><option value="Qara">Qara</option><option value="Ağ">Ağ</option><option value="Qızılı">Qızılı</option><option value="Gümüşü">Gümüşü</option><option value="Digər">Digər / dəqiqləşdiriləcək</option></select></label>
+                        <label class="custom-field custom-full"><span>Mətn ölçüsü <b id="customFontSizeValue">28px</b></span><input id="customFontSize" type="range" min="12" max="72" step="1" value="28" aria-label="Mətn ölçüsü"></label>
+                        <label class="custom-field"><span>Qalınlıq</span><select id="customFontWeight"><option value="400">Normal</option><option value="500">Orta</option><option value="600">Yarımqalın</option><option value="700" selected>Qalın</option><option value="800">Çox qalın</option></select></label>
+                        <label class="custom-field"><span>Hizalama</span><select id="customTextAlign"><option value="left">Sola</option><option value="center" selected>Mərkəzə</option><option value="right">Sağa</option></select></label>
+                        <label class="custom-field"><span>Şaquli hizalama</span><select id="customTextVerticalAlign"><option value="top">Yuxarı</option><option value="middle" selected>Ortaya</option><option value="bottom">Aşağı</option></select></label>
+                        <label class="custom-field"><span>Sətir hündürlüyü</span><input id="customTextLineHeight" type="number" min="0.8" max="2" step="0.1" value="1.2"></label>
+                        <label class="custom-field"><span>Hərf aralığı (px)</span><input id="customTextLetterSpacing" type="number" min="-2" max="10" step="0.5" value="0"></label>
+                        <label class="custom-field"><span>Mətn qutusu eni</span><input id="customTextBoxWidth" type="number" min="30" max="256" step="1" value="220"></label>
+                        <label class="custom-field"><span>Mətn qutusu hündürlüyü</span><input id="customTextBoxHeight" type="number" min="20" max="196" step="1" value="48"></label>
+                        <label class="custom-field"><span>X mövqeyi</span><input id="designElementX" type="number" min="0" max="300" step="1" value="150"></label>
+                        <label class="custom-field"><span>Y mövqeyi</span><input id="designElementY" type="number" min="0" max="240" step="1" value="120"></label>
+                        <label class="custom-field custom-full"><span>Şəffaflıq <b id="designElementOpacityValue">100%</b></span><input id="designElementOpacity" type="range" min="0" max="100" step="1" value="100"></label>
+                        <label class="custom-field custom-full" id="designImageCropField" hidden><span>Şəkil kəsimi <b id="designImageCropValue">0%</b></span><input id="designImageCrop" type="range" min="0" max="40" step="1" value="0" aria-label="Şəklin kənarlarından kəsmə"></label>
+                        <div class="ds-transform-row custom-full" id="designImageReplaceField" hidden><button type="button" data-action="replaceDesignImage">Seçilmiş şəkli əvəz et</button></div>
+                        <div class="ds-transform-row custom-full"><button type="button" data-action="rotateDesign" data-action-args='[-15]'>↶ 15°</button><button type="button" data-action="rotateDesign" data-action-args='[15]'>↷ 15°</button><button type="button" data-action="zoomDesign" data-action-args='[-0.1]'>− Ölçü</button><button type="button" data-action="zoomDesign" data-action-args='[0.1]'>＋ Ölçü</button></div>
+                    </div>
+                </div>
+                <div class="ds-inspector-body" id="designInspectorStyle" hidden>
+                    <section class="ds-text-effects" aria-labelledby="dsTextEffectsTitle">
+                        <div class="ds-effect-heading"><b id="dsTextEffectsTitle">Mətn üslubu</b><small>Qat seçiləndə aktiv olur</small></div>
+                        <div class="ds-effect-toggles">
+                            <label><input id="customTextBold" type="checkbox" checked><span>Qalın</span></label>
+                            <label><input id="customTextItalic" type="checkbox"><span>Maili</span></label>
+                            <label><input id="customTextUnderline" type="checkbox"><span>Altxətli</span></label>
+                        </div>
+                        <div class="ds-effect-fields">
+                            <label class="custom-field"><span>Effekt</span><select id="customTextEffect"><option value="none">Yoxdur</option><option value="shadow">Kölgə</option><option value="outline">Kontur</option></select></label>
+                            <label class="custom-field"><span>Effekt rəngi</span><input id="customTextEffectColor" type="color" value="#3b2114" aria-label="Mətn effekti rəngi"></label>
+                        </div>
+                    </section>
+                    <label class="custom-field custom-full"><span>Məhsul ölçüsü / tələb</span><select id="customSize" data-change-action="toggleCustomSizeValue"><option value="Standart">Standart</option><option value="Kiçik">Kiçik</option><option value="Orta">Orta</option><option value="Böyük">Böyük</option><option value="Xüsusi ölçü">Ölçü tələbi · operatorla təsdiqlənəcək</option></select><input id="customSizeValue" type="text" maxlength="120" placeholder="Ölçü istəyinizi yazın · operatorla təsdiqlənəcək" style="display:none;" aria-label="Operatorla təsdiqlənəcək ölçü tələbi"></label>
+                    <div class="custom-field custom-full file-field"><span>Şəkil və ya sifariş faylı <small>8 şəkilədək, PNG, JPG, WEBP; 1 PDF əlavəsi</small></span><input id="customImage" type="file" multiple aria-label="Şəkillər və ya sifariş əlavəsi yüklə" accept="image/png,image/jpeg,image/webp,application/pdf" data-change-action="handleCustomImage" data-change-args='[{&quot;$&quot;: &quot;this&quot;}]'><small id="customImageName" class="file-name" role="status" aria-live="polite">Fayl seçilməyib</small><button class="ds-reset-button" type="button" data-action="removeDesignUpload">Yüklənmiş faylları sil</button></div>
+                    <label class="custom-field custom-full"><span>Əlavə qeyd</span><textarea id="customNote" maxlength="300" placeholder="İstehsal üçün əlavə istəyinizi yazın"></textarea></label>
+                    <div class="notice custom-note">Fayl hesabınızın şəxsi Storage sahəsində saxlanır və sifarişlə əlaqələndirilir. Kətandakı görünüş istehsal ölçüsü barədə dəqiq təsdiq deyil.</div>
+                    <button type="button" class="ds-reset-button" data-action="resetDesignFromUser">Bütün dizaynı sıfırla</button>
+                    <button type="button" class="ds-reset-button" data-action="discardDesignDraft">Bu məhsulun qaralamasını sil</button>
+                </div>
+                <div class="ds-inspector-footer"><span>Qısayol: Ctrl+Z · Del · ox düymələri</span><button class="add custom-submit" id="customSubmitBtn" type="button" data-action="confirmCustomization">Fərdiləşdir və səbətə əlavə et <b>→</b></button></div>
+            </aside>
         </div>
     </div>
 </div>
@@ -1463,8 +1527,9 @@
 <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
+<script defer src="js/vendor/qrcode-generator-2.0.4.js"></script>
 <noscript><div style="padding:16px;background:#fff1f2;color:#7f1d1d;text-align:center;font-family:system-ui">Bu saytın sifariş və məhsul funksiyaları üçün JavaScript aktiv olmalıdır.</div></noscript>
-    <script type="module" src="js/app.js?v=144"></script>
+    <script type="module" src="js/app.js?v=145"></script>
     <script type="module" src="js/reference-mobile-dock.js?v=1"></script>
 </body>
 </html>

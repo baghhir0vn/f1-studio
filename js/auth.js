@@ -512,7 +512,12 @@ export function initAuth() {
             const activeIndex=stages.indexOf(o.status);
             const progress=(o.status==='pending_confirmation') ? 0 : (o.status==='cancelled' ? 0 : Math.max(0,Math.min(5,activeIndex+1)));
             const steps=stages.map((stage,idx)=>`<span class="customer-step ${o.status==='cancelled'?'cancelled':idx<progress?'done':idx===progress-1?'current':''}" title="${escapeHTML(customerOrderStatusLabel(stage))}"></span>`).join('');
-            const designLinks=(o.items||[]).flatMap(i=>{const path=i.customization?.imagePath;if(!path||!isCustomerDesignPathOwnedBy(path,s.authUser?.id))return [];return [`<button type="button" class="order-design-link" data-action="openCustomerDesign" data-action-args='${JSON.stringify([path])}'>🎨 Dizayn faylına bax</button>`];}).join('');
+            const designLinks=(o.items||[]).flatMap(i=>{
+                const customization=i.customization||{};
+                const uploads=Array.isArray(customization.uploads)&&customization.uploads.length?customization.uploads:(customization.imagePath?[{path:customization.imagePath,purpose:customization.imageType==='application/pdf'?'attachment':'image'}]:[]);
+                const uniqueUploads=[...new Map(uploads.filter(upload=>upload?.path&&isCustomerDesignPathOwnedBy(upload.path,s.authUser?.id)).map(upload=>[upload.path,upload])).values()];
+                return uniqueUploads.map(upload=>`<button type="button" class="order-design-link" data-action="openCustomerDesign" data-action-args='${JSON.stringify([upload.path])}'>🎨 ${upload.purpose==='attachment'?'Sifariş əlavəsinə bax':'Dizayn faylına bax'}</button>`);
+            }).join('');
             return `<article class="order-row customer-order-card"><div class="customer-order-top"><div><b>${code}</b><div class="customer-order-date">${date}</div></div><span class="customer-order-status ${o.status==='cancelled'?'is-cancelled':o.status==='completed'?'is-complete':''}">${escapeHTML(customerOrderStatusLabel(o.status))}</span></div><div class="customer-order-progress">${steps}</div><div class="customer-order-items">${items||'Məhsul məlumatı yoxdur'}</div><div class="customer-order-bottom"><b>${money((Number(o.total_cents)||0)/100)}</b><div class="customer-order-actions">${designLinks}<button type="button" class="order-wa-btn" data-action="openOrderWhatsApp" data-action-args='${JSON.stringify([o.orderCode||o.order_code||''])}'>💬 WhatsApp</button></div></div></article>`;
         }).join('');
         ctx.renderAccountDashboard?.();

@@ -1,9 +1,8 @@
 import { persist, escapeHTML, money, isValidPhone, showToast } from './ui.js';
-import { sanitizeStoredCart } from './security.js';
+import { safeUserError, sanitizeDesignPreview, sanitizeStoredCart } from './security.js';
 import { CONFIG } from './config.js';
 import { storageService } from './services/storage-service.js';
 import { state as s, ctx } from './state.js';
-import { safeUserError } from './security.js';
 export function initCart() {
     function normalizeCartLines(){
         const before = JSON.stringify(s.cart);
@@ -39,14 +38,33 @@ export function initCart() {
             const unit=document.createElement("div"); unit.style.cssText="color:var(--accent);font-weight:600;margin:4px 0;"; unit.textContent=money(p.price); info.appendChild(unit);
             if(i.customization){
                 const c=i.customization;
+                const previewData=sanitizeDesignPreview(c.previewData);
+                if(previewData){
+                    const previewWrap=document.createElement("div"); previewWrap.className="cart-design-preview";
+                    const previewLabel=document.createElement("small"); previewLabel.textContent="Dizayn önizləməsi"; previewWrap.appendChild(previewLabel);
+                    const preview=document.createElement("img"); preview.className="cart-design-preview-image"; preview.alt=`${p.name} üçün dizayn önizləməsi`; preview.src=previewData;
+                    preview.onerror=()=>previewWrap.remove();
+                    previewWrap.appendChild(preview); info.appendChild(previewWrap);
+                }
                 const custom=document.createElement("div"); custom.className="cart-custom";
                 const details=[];
+                if(c.productContext?.variantId) details.push(`<b>Variant:</b> ${escapeHTML(c.productContext.variantId)}`);
+                else if(c.productContext?.sku) details.push(`<b>SKU:</b> ${escapeHTML(c.productContext.sku)}`);
                 if(c.text) details.push(`<b>Yazı:</b> ${escapeHTML(c.text)}`);
                 if(c.color) details.push(`<b>Rəng:</b> ${escapeHTML(c.color)}`);
                 if(c.size) details.push(`<b>Ölçü:</b> ${escapeHTML(c.sizeValue?`${c.size} (${c.sizeValue})`:c.size)}`);
                 if(c.font) details.push(`<b>Şrift:</b> ${escapeHTML(c.font)}`);
                 if(c.imageName) details.push(`<b>Şəkil:</b> ${escapeHTML(c.imageName)}`);
+                if(Array.isArray(c.uploads)&&c.uploads.length>1) details.push(`<b>Fayllar:</b> ${c.uploads.length} fayl`);
                 if(c.note) details.push(`<b>Qeyd:</b> ${escapeHTML(c.note)}`);
+                if(c.layout){
+                    const layers=Array.isArray(c.layout.layers)?c.layout.layers:null;
+                    const hasText=layers?layers.some(layer=>layer.type==='text'&&layer.visible!==false&&String(layer.text||'').trim()):String(c.layout.text?.text||'').trim();
+                    const hasImage=!!c.imageName&&c.layout.image?.visible!==false;
+                    const hasDecor=!!layers?.some(layer=>layer.type==='ornament'&&layer.visible!==false);
+                    const parts=[hasText?'mətn':'',hasImage?(c.imageType==='application/pdf'?'fayl':'şəkil'):'',hasDecor?'dekor':''].filter(Boolean);
+                    details.push(`<b>Design Studio:</b> ${parts.length?escapeHTML(parts.join(' + ')):'quruluş yadda saxlanılıb'}`);
+                }
                 custom.innerHTML=details.join("<br>");
                 info.appendChild(custom);
                 const edit=document.createElement("button"); edit.className="cart-edit"; edit.type="button"; edit.textContent="✏️ Fərdiləşdirməni dəyiş"; edit.onclick=()=>ctx.openCustomization(p.id,i.lineId); info.appendChild(edit);
@@ -92,15 +110,15 @@ export function initCart() {
         }
         item.qty += d;
         if(item.qty<=0){
-            const path=item.customization?.imagePath||"";
+            const paths=[item.customization?.imagePath,...(item.customization?.uploads||[]).map(upload=>upload?.path)].filter(Boolean);
             s.cart=s.cart.filter(i=>i.lineId!==lineId);
-            if(path) storageService.removeCustomerDesigns([path]).catch(()=>{});
+            if(paths.length) storageService.removeCustomerDesigns([...new Set(paths)]).catch(()=>{});
         }
         ctx.saveCart(); ctx.renderCart();
     }
     function clearCart(){
         if(!s.cart.length) return;
-        const paths=s.cart.map(i=>i.customization?.imagePath).filter(Boolean);
+        const paths=s.cart.flatMap(i=>[i.customization?.imagePath,...(i.customization?.uploads||[]).map(upload=>upload?.path)]).filter(Boolean);
         s.cart=[]; ctx.saveCart();
         if(paths.length) storageService.removeCustomerDesigns(paths).catch(()=>{});
         document.getElementById("orderForm").style.display="none";
@@ -137,6 +155,8 @@ export function initCart() {
                 lines.push(`${idx+1}. ${p.name} × ${i.qty} — ${money(p.price*i.qty)}`);
                 const c=i.customization;
                 if(c){
+                    if(c.productContext?.variantId) lines.push(`   • Variant: ${c.productContext.variantId}`);
+                    else if(c.productContext?.sku) lines.push(`   • SKU: ${c.productContext.sku}`);
                     if(c.text) lines.push(`   • Yazı: ${c.text}`);
                     if(c.color) lines.push(`   • Rəng: ${c.color}`);
                     if(c.size) lines.push(`   • Ölçü: ${c.size}${c.sizeValue?` (${c.sizeValue})`:""}`);
