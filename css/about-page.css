@@ -333,35 +333,40 @@ body.f1-home #aboutPageView .about-faq-accordion .faq-container{
 }
 
 
-/* Compact primary navigation: keep only the seven requested destinations visible. */
-body.f1-home #announcementBar,
-body.f1-home>header .brand-logo,
-body.f1-home>header #mainPrimaryNav,
-body.f1-home>header .actions,
-body.f1-home>header #mobileNav{
-  display:none!important;
-}
-body.f1-home>header{
-  border-top:1px solid #f21c24!important;
-}
+/* Keep the full storefront header while showing the seven requested central links. */
+body.f1-home>header #mainPrimaryNav{display:none!important}
+body.f1-home>header{border-top:1px solid #f21c24!important}
 body.f1-home>header .nav{
   display:flex!important;
+  flex-wrap:nowrap!important;
   align-items:center!important;
-  justify-content:center!important;
-  width:100%!important;
-  min-height:64px!important;
+  justify-content:space-between!important;
+  box-sizing:border-box!important;
+  width:min(100%,var(--f1-max))!important;
+  min-height:72px!important;
   height:auto!important;
-  margin:0!important;
-  padding:0 20px!important;
-  gap:0!important;
-  overflow:hidden!important;
+  margin:0 auto!important;
+  padding:10px clamp(12px,1.8vw,24px)!important;
+  gap:clamp(8px,1.2vw,18px)!important;
+  overflow:visible!important;
+}
+body.f1-home>header .brand-logo{
+  display:flex!important;
+  flex:0 1 auto!important;
+  min-width:clamp(150px,14vw,218px)!important;
+}
+body.f1-home>header .actions{
+  display:flex!important;
+  flex:0 0 auto!important;
+  align-items:center!important;
+  margin-left:0!important;
 }
 body.f1-home>header .about-route-main-nav{
   display:flex!important;
-  flex:0 1 auto!important;
+  flex:1 1 auto!important;
   align-items:center!important;
   justify-content:center!important;
-  gap:clamp(16px,2.2vw,32px)!important;
+  gap:clamp(8px,1.1vw,18px)!important;
   width:auto!important;
   min-width:0!important;
   min-height:64px!important;
@@ -401,39 +406,45 @@ body.f1-home:not(.f1-about-route)>header .about-route-main-nav a[aria-current="p
   color:inherit!important;
   font-weight:550!important;
 }
-body.f1-home:not(.f1-about-route)>header .about-route-main-nav a[aria-current="page"]::after{
-  display:none!important;
-}
-@media(max-width:700px){
+body.f1-home:not(.f1-about-route)>header .about-route-main-nav a[aria-current="page"]::after{display:none!important}
+@media(max-width:900px){
   body.f1-home>header .nav{
-    justify-content:flex-start!important;
-    min-height:58px!important;
-    padding:0 10px!important;
+    flex-wrap:wrap!important;
+    justify-content:space-between!important;
+    min-height:0!important;
+    padding:7px 12px 0!important;
+    gap:0!important;
+  }
+  body.f1-home>header .brand-logo{
+    flex:0 1 auto!important;
+    min-width:0!important;
+  }
+  body.f1-home>header .actions{
+    flex:0 0 auto!important;
+    margin-left:auto!important;
   }
   body.f1-home>header .about-route-main-nav{
-    flex:1 1 auto!important;
+    order:3!important;
+    flex:0 0 100%!important;
     justify-content:flex-start!important;
-    gap:clamp(10px,2.6vw,16px)!important;
-    min-height:58px!important;
+    gap:clamp(12px,2.6vw,20px)!important;
+    min-height:46px!important;
     overflow-x:auto!important;
     overflow-y:hidden!important;
     scrollbar-width:none!important;
   }
-  body.f1-home>header .about-route-main-nav::-webkit-scrollbar{
-    display:none!important;
-  }
+  body.f1-home>header .about-route-main-nav::-webkit-scrollbar{display:none!important}
   body.f1-home>header .about-route-main-nav a{
-    min-height:58px!important;
-    font-size:10px!important;
+    min-height:46px!important;
+    font-size:11px!important;
   }
 }
-html[data-theme="dark"] body.f1-home>header{
-  border-top-color:#ff6268!important;
+@media(max-width:700px){
+  body.f1-home>header .about-route-main-nav{gap:clamp(12px,3vw,16px)!important}
+  body.f1-home>header .about-route-main-nav a{font-size:10px!important}
 }
-html[data-theme="dark"] body.f1-home>header .about-route-main-nav a:hover{
-  color:#ff8589!important;
-}
+html[data-theme="dark"] body.f1-home>header{border-top-color:#ff6268!important}
+html[data-theme="dark"] body.f1-home>header .about-route-main-nav a:hover{color:#ff8589!important}
 
-/* Keep the compact navigation visible on mobile despite the legacy header hide rule. */
+/* The legacy stylesheet hides all header navs on mobile; keep the replacement links visible. */
 body.f1-home>header .nav nav#aboutRouteMainNav{display:flex!important}
-body.f1-home .mobile-search-trigger-wrap{display:none!important}
