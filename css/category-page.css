@@ -182,3 +182,9 @@ body.f1-home #home .product .info > h3,
 .product .info > h3{
   flex:0 0 auto!important;
 }
+
+/* Slightly emphasize the custom-made marker while preserving the description size. */
+.product .info .product-category-row > .custom-pill{
+  font-size:8px!important;
+  line-height:1.25!important;
+}
