@@ -448,3 +448,82 @@ html[data-theme="dark"] body.f1-home>header .about-route-main-nav a:hover{color:
 
 /* The legacy stylesheet hides all header navs on mobile; keep the replacement links visible. */
 body.f1-home>header .nav nav#aboutRouteMainNav{display:flex!important}
+
+/* Mobile: keep the brand/actions on one clear row and the requested links below it. */
+@media(max-width:900px){
+  body.f1-home>header .nav{
+    position:relative!important;
+    display:block!important;
+    width:100%!important;
+    max-width:none!important;
+    min-height:0!important;
+    height:auto!important;
+    margin:0!important;
+    padding:0 8px!important;
+    overflow:visible!important;
+  }
+  body.f1-home>header .brand-logo{
+    position:absolute!important;
+    top:7px!important;
+    left:50%!important;
+    z-index:2!important;
+    display:flex!important;
+    width:110px!important;
+    min-width:110px!important;
+    flex:none!important;
+    justify-content:center!important;
+    transform:translateX(-50%)!important;
+  }
+  body.f1-home>header .actions{position:static!important;display:block!important;width:auto!important;margin:0!important}
+  body.f1-home>header .actions .icon-action[aria-label="Axtar"]{display:none!important}
+  body.f1-home>header .actions .icon-action[aria-label="Sevimlilər"],
+  body.f1-home>header .actions .cart-icon,
+  body.f1-home>header .actions .icon-action[aria-label="Giriş / Profil"],
+  body.f1-home>header .actions .theme-toggle-btn{
+    position:absolute!important;
+    top:9px!important;
+    display:grid!important;
+    place-items:center!important;
+    width:30px!important;
+    height:32px!important;
+    min-width:30px!important;
+    margin:0!important;
+    padding:0!important;
+  }
+  body.f1-home>header .actions .icon-action[aria-label="Sevimlilər"]{right:116px!important}
+  body.f1-home>header .actions .cart-icon{right:80px!important}
+  body.f1-home>header .actions .icon-action[aria-label="Giriş / Profil"]{right:44px!important}
+  body.f1-home>header .actions .theme-toggle-btn{right:8px!important}
+  body.f1-home>header .actions .mobile-menu-btn{
+    position:absolute!important;
+    top:9px!important;
+    left:8px!important;
+    display:grid!important;
+    place-items:center!important;
+    width:32px!important;
+    height:32px!important;
+    margin:0!important;
+  }
+  body.f1-home>header .nav nav#aboutRouteMainNav{
+    position:relative!important;
+    order:initial!important;
+    display:flex!important;
+    flex:0 0 auto!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:46px!important;
+    height:46px!important;
+    margin:50px 0 0!important;
+    padding:0 4px!important;
+    justify-content:flex-start!important;
+    gap:clamp(12px,3vw,16px)!important;
+    overflow-x:auto!important;
+    overflow-y:hidden!important;
+    scrollbar-width:none!important;
+  }
+  body.f1-home>header .nav nav#aboutRouteMainNav::-webkit-scrollbar{display:none!important}
+  body.f1-home>header .nav nav#aboutRouteMainNav a{min-height:46px!important;font-size:10px!important}
+}
+@media(max-width:380px){
+  body.f1-home>header .brand-logo{left:calc(50% - 50px)!important}
+}
