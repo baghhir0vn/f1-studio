@@ -433,3 +433,7 @@ html[data-theme="dark"] body.f1-home>header{
 html[data-theme="dark"] body.f1-home>header .about-route-main-nav a:hover{
   color:#ff8589!important;
 }
+
+/* Keep the compact navigation visible on mobile despite the legacy header hide rule. */
+body.f1-home>header .nav nav#aboutRouteMainNav{display:flex!important}
+body.f1-home .mobile-search-trigger-wrap{display:none!important}
