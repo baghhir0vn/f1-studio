@@ -164,3 +164,14 @@ html[data-theme=dark] .category-page-view #categoryPageProducts>.product .fav-bt
   .category-page-sort{max-width:94px;font-size:8px}
 }
 
+/* Keep descriptions readable in every product card, including cards rendered later. */
+body.f1-home #home .product .product-category,
+.category-page-view #categoryPageProducts>.product .product-category,
+.product .info .product-category{
+  display:-webkit-box!important;
+  overflow:hidden!important;
+  -webkit-box-orient:vertical!important;
+  -webkit-line-clamp:2!important;
+  font-size:9px!important;
+  line-height:1.4!important;
+}
