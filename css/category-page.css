@@ -175,3 +175,10 @@ body.f1-home #home .product .product-category,
   font-size:9px!important;
   line-height:1.4!important;
 }
+
+/* Prevent flexible product titles from pushing descriptions out of alignment. */
+body.f1-home #home .product .info > h3,
+.category-page-view #categoryPageProducts>.product .info > h3,
+.product .info > h3{
+  flex:0 0 auto!important;
+}
