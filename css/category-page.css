@@ -184,6 +184,8 @@ body.f1-home #home .product .info > h3,
 }
 
 /* Slightly emphasize the custom-made marker while preserving the description size. */
+body.f1-home #home .product .info .product-category-row > .custom-pill,
+.category-page-view #categoryPageProducts>.product .info .product-category-row > .custom-pill,
 .product .info .product-category-row > .custom-pill{
   font-size:8px!important;
   line-height:1.25!important;
