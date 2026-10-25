@@ -478,7 +478,7 @@ body.f1-home>header .nav nav#aboutRouteMainNav{display:flex!important}
   body.f1-home>header .actions .icon-action[aria-label="Axtar"]{display:none!important}
   body.f1-home>header .actions .icon-action[aria-label="Sevimlilər"],
   body.f1-home>header .actions .cart-icon,
-  body.f1-home>header .actions .icon-action[aria-label="Giriş / Profil"],
+  body.f1-home>header .actions [data-action="openLogin"],
   body.f1-home>header .actions .theme-toggle-btn{
     position:absolute!important;
     top:9px!important;
@@ -492,7 +492,7 @@ body.f1-home>header .nav nav#aboutRouteMainNav{display:flex!important}
   }
   body.f1-home>header .actions .icon-action[aria-label="Sevimlilər"]{right:116px!important}
   body.f1-home>header .actions .cart-icon{right:80px!important}
-  body.f1-home>header .actions .icon-action[aria-label="Giriş / Profil"]{right:44px!important}
+  body.f1-home>header .actions [data-action="openLogin"]{right:44px!important}
   body.f1-home>header .actions .theme-toggle-btn{right:8px!important}
   body.f1-home>header .actions .mobile-menu-btn{
     position:absolute!important;
