@@ -319,9 +319,9 @@ body.f1-custom-modal-open #chatBox.chat-box{
 /* Compact open assistant panel while keeping its controls and chat behavior intact. */
 #chatBox.chat-box,
 body.f1-about-route #chatBox.chat-box{
-  width:min(420px,calc(100vw - 32px))!important;
-  height:min(520px,calc(100dvh - 120px))!important;
-  min-height:min(360px,calc(100dvh - 120px))!important;
+  width:min(380px,calc(100vw - 32px))!important;
+  height:min(480px,calc(100dvh - 120px))!important;
+  min-height:min(340px,calc(100dvh - 120px))!important;
   max-height:calc(100dvh - 120px)!important;
 }
 .chat-box .chat-header{
@@ -354,9 +354,9 @@ body:has(#chatBox.chat-box.open) .chat-trigger{display:none!important}
 @media(max-width:760px){
   #chatBox.chat-box,body.f1-about-route #chatBox.chat-box{
     inset:auto 12px calc(82px + env(safe-area-inset-bottom,0px)) auto!important;
-    width:min(380px,calc(100vw - 24px))!important;
-    height:min(440px,calc(100dvh - 160px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))!important;
-    min-height:min(320px,calc(100dvh - 160px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))!important;
+    width:min(350px,calc(100vw - 24px))!important;
+    height:min(400px,calc(100dvh - 160px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))!important;
+    min-height:min(300px,calc(100dvh - 160px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))!important;
     max-height:calc(100dvh - 160px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important;
     border-radius:17px!important;
   }
