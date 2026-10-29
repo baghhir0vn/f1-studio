@@ -86,9 +86,8 @@ export function initSiteSettings() {
     function applySiteSettingsToPage(data){
         ctx.updateLocalBusinessStructuredData(data);
         const mapLocation=document.getElementById("aboutMapLocationText");
-        if(mapLocation) mapLocation.textContent=`F1 Studio — ${String(data.address||"Gəncə şəhəri, 4 nömrəli poçtun yanı").trim()}`;
-        const mapFrame=document.getElementById("aboutMapFrame");
-        if(mapFrame && data.address) mapFrame.src=`https://www.google.com/maps?q=${encodeURIComponent(String(data.address).trim()+", Azerbaijan")}&output=embed`;
+        // Keep the verified map pin independent of the editable address label.
+        if(mapLocation) mapLocation.textContent=`F1Foto Studio — ${String(data.address||"Gəncə şəhəri, 4 nömrəli poçtun yanı").trim()}`;
         const contactNote=document.getElementById("aboutWhatsappNumber");
         if(contactNote){
             contactNote.style.setProperty("color","var(--ink)","important");

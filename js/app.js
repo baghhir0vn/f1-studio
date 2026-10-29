@@ -2,7 +2,7 @@ import { createApi } from './api.js';
 import { state, ctx } from './state.js';
 import { initTheme, initUiGlobalEvents, toggleTheme, toggleMobileMenu, closeMobileMenu, subscribeNewsletter } from './ui.js?v=134';
 import { openDialog, closeDialog, initModalManager } from './modal.js';
-import { initSiteSettings } from './site-settings.js?v=5';
+import { initSiteSettings } from './site-settings.js?v=6';
 import { initHomepageContent } from './homepage-content.js?v=2';
 import { initCatalog } from './catalog.js?v=141';
 import { initCategoryPage } from './category-page.js';
