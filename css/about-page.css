@@ -81,17 +81,17 @@ body.f1-home #aboutPageView .about-contact-form-card{min-width:0;min-height:242p
 body.f1-home #aboutPageView .about-contact-information h2,
 body.f1-home #aboutPageView .about-contact-form-card h2,
 body.f1-home #aboutPageView .about-section-heading h2{position:relative;margin:0 0 18px;color:var(--about-ink);font-size:19px;font-weight:750;line-height:1.2;letter-spacing:-.02em}
-body.f1-home #aboutPageView .about-contact-row{display:grid;grid-template-columns:36px minmax(0,1fr);gap:9px;align-items:center;margin:12px 0}
-body.f1-home #aboutPageView .about-contact-icon{display:grid;place-items:center;width:34px;height:34px;border-radius:11px;background:var(--about-soft);color:var(--about-red)}
+body.f1-home #aboutPageView .about-contact-row{display:grid;grid-template-columns:36px minmax(0,1fr);gap:9px;align-items:center;margin:9px 0}
+body.f1-home #aboutPageView .about-contact-icon{display:grid;place-items:center;width:32px;height:32px;border-radius:11px;background:var(--about-soft);color:var(--about-red)}
 body.f1-home #aboutPageView .about-contact-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-body.f1-home #aboutPageView .about-contact-row b{display:block;margin-bottom:2px;color:var(--about-ink);font-size:11px;font-weight:700}
-body.f1-home #aboutPageView .about-contact-row p{margin:0;color:var(--about-muted);font-size:10px;line-height:1.35;overflow-wrap:anywhere}
+body.f1-home #aboutPageView .about-contact-row b{display:block;margin-bottom:2px;color:var(--about-ink);font-size:12px;font-weight:700}
+body.f1-home #aboutPageView .about-contact-row p{margin:0;color:var(--about-muted);font-size:12px;line-height:1.35;overflow-wrap:anywhere}
 body.f1-home #aboutPageView .about-contact-row a{color:inherit;text-decoration:none}
 body.f1-home #aboutPageView .about-contact-row a:hover{color:var(--about-red)}
 body.f1-home #aboutPageView #aboutWhatsappNote{padding:0!important;background:transparent!important;color:var(--about-muted)!important;font-size:10px;font-weight:500!important}
 body.f1-home #aboutPageView #aboutWhatsappNote a{color:var(--about-ink)!important;font-weight:600}
-body.f1-home #aboutPageView .about-social-links{display:flex;flex-wrap:wrap;gap:6px;margin:13px 0 0}
-body.f1-home #aboutPageView .about-social-link{display:inline-flex;align-items:center;gap:6px;min-height:28px;padding:4px 8px;border:1px solid var(--about-line);border-radius:7px;color:var(--about-ink);font-size:9px;font-weight:600;text-decoration:none}
+body.f1-home #aboutPageView .about-social-links{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 0}
+body.f1-home #aboutPageView .about-social-link{display:inline-flex;align-items:center;gap:6px;min-height:30px;padding:4px 8px;border:1px solid var(--about-line);border-radius:7px;color:var(--about-ink);font-size:10px;font-weight:600;text-decoration:none}
 body.f1-home #aboutPageView .about-social-link svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
 body.f1-home #aboutPageView .about-map-card{display:flex;flex-direction:column;gap:8px;padding:0;overflow:hidden}
 body.f1-home #aboutPageView .about-sr-only{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
@@ -218,8 +218,8 @@ body.f1-home .about-page-view textarea:focus-visible{outline:2px solid color-mix
  body.f1-home #aboutPageView .about-contact-form-card h2,
  body.f1-home #aboutPageView .about-section-heading h2{font-size:17px}
  body.f1-home #aboutPageView .about-contact-row{grid-template-columns:34px minmax(0,1fr);margin:10px 0}
- body.f1-home #aboutPageView .about-contact-row b{font-size:11px}
- body.f1-home #aboutPageView .about-contact-row p{font-size:10px}
+ body.f1-home #aboutPageView .about-contact-row b{font-size:12px}
+ body.f1-home #aboutPageView .about-contact-row p{font-size:11px}
  body.f1-home #aboutPageView .about-map-card{min-height:190px}
  body.f1-home #aboutPageView .about-map-card .map-container,
  body.f1-home #aboutPageView .about-map-card iframe{min-height:180px}
