@@ -539,3 +539,15 @@ body.f1-home>header .nav nav#aboutRouteMainNav{display:flex!important}
   body.f1-home>header .nav nav#aboutRouteMainNav{gap:clamp(8px,2vw,10px)!important}
   body.f1-home>header .nav nav#aboutRouteMainNav a{padding-inline:1px!important}
 }
+
+
+/* Keep the desktop account/action icons at the viewport edge without moving search. */
+@media (min-width: 1101px) {
+  body.f1-home > header .actions [data-action="showFavorites"],
+  body.f1-home > header .actions [data-action="openCart"],
+  body.f1-home > header .actions [data-action="openLogin"],
+  body.f1-home > header .actions [data-action="toggleTheme"] {
+    position: relative !important;
+    left: max(0px, calc((100vw - var(--f1-max)) / 2 - 8px)) !important;
+  }
+}
