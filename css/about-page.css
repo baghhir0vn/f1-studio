@@ -553,13 +553,14 @@ body.f1-home>header .nav nav#aboutRouteMainNav{display:flex!important}
 }
 
 
-/* Use part of the desktop header's remaining gap while keeping search's left edge fixed. */
+/* Expand desktop search only into the gap created by the right-aligned icons. */
 @media (min-width: 1101px) {
   body.f1-home > header .actions [data-action="focusProductSearch"] {
+    --desktop-search-width: min(270px, calc(174px + max(0px, calc((100vw - var(--f1-max)) / 2 - 8px))));
     position: relative !important;
-    left: calc(clamp(230px, 16.6vw, 270px) - 174px) !important;
-    width: clamp(230px, 16.6vw, 270px) !important;
-    min-width: clamp(230px, 16.6vw, 270px) !important;
-    flex: 0 0 clamp(230px, 16.6vw, 270px) !important;
+    left: calc(var(--desktop-search-width) - 174px) !important;
+    width: var(--desktop-search-width) !important;
+    min-width: var(--desktop-search-width) !important;
+    flex: 0 0 var(--desktop-search-width) !important;
   }
 }
