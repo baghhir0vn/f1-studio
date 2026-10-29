@@ -315,3 +315,73 @@ body.f1-home.f1-custom-modal-open .chat-trigger,
 body.f1-custom-modal-open #chatBox.chat-box{
   display:none!important;
 }
+
+/* Compact open assistant panel while keeping its controls and chat behavior intact. */
+#chatBox.chat-box,
+body.f1-about-route #chatBox.chat-box{
+  width:min(420px,calc(100vw - 32px))!important;
+  height:min(520px,calc(100dvh - 120px))!important;
+  min-height:min(360px,calc(100dvh - 120px))!important;
+  max-height:calc(100dvh - 120px)!important;
+}
+.chat-box .chat-header{
+  flex-basis:56px!important;
+  min-height:56px!important;
+  padding:7px 12px 7px 14px!important;
+}
+.chat-box .chat-avatar{
+  width:34px!important;
+  height:34px!important;
+  flex-basis:34px!important;
+}
+.chat-box .chat-brand{gap:8px!important}
+.chat-box .chat-brand h4{font-size:15px!important}
+.chat-box .chat-brand small{font-size:10px!important}
+.chat-box .chat-body{padding:10px 12px!important}
+.chat-box .chat-welcome{gap:8px!important;margin-bottom:8px!important}
+.chat-box .chat-quick-chips{gap:5px!important}
+.chat-box .chat-quick-chips .chip{min-height:32px!important;padding:6px 9px!important}
+.chat-box .chat-message-row{gap:7px!important;margin:6px 0 8px!important}
+.chat-box .chat-message-avatar{width:27px!important;height:27px!important;flex-basis:27px!important}
+.chat-box .chat-msg{padding:8px 10px 6px!important;font-size:13px!important}
+.chat-box .chat-footer{gap:5px!important;padding:7px 10px 8px!important}
+.chat-box .chat-composer{min-height:44px!important;padding:4px 5px 4px 10px!important;gap:7px!important}
+.chat-box .chat-composer input{min-height:36px!important;height:36px!important;font-size:13px!important}
+.chat-box .chat-composer>button{flex-basis:36px!important;width:36px!important;min-width:36px!important;height:36px!important;min-height:36px!important}
+.chat-box .chat-footer small{font-size:9px!important}
+body:has(#chatBox.chat-box.open) .chat-trigger{display:none!important}
+
+@media(max-width:760px){
+  #chatBox.chat-box,body.f1-about-route #chatBox.chat-box{
+    inset:auto 12px calc(82px + env(safe-area-inset-bottom,0px)) auto!important;
+    width:min(380px,calc(100vw - 24px))!important;
+    height:min(440px,calc(100dvh - 160px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))!important;
+    min-height:min(320px,calc(100dvh - 160px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)))!important;
+    max-height:calc(100dvh - 160px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important;
+    border-radius:17px!important;
+  }
+  .chat-box .chat-header{
+    flex-basis:52px!important;
+    min-height:52px!important;
+    padding:6px 8px 6px 11px!important;
+    border-radius:16px 16px 0 0!important;
+  }
+  .chat-box .chat-avatar{width:32px!important;height:32px!important;flex-basis:32px!important}
+  .chat-box .chat-brand{gap:7px!important}
+  .chat-box .chat-brand h4{font-size:14px!important}
+  .chat-box .chat-brand small{font-size:9px!important}
+  .chat-box .chat-head-actions{gap:2px!important}
+  .chat-box .chat-head-actions button{width:31px!important;min-width:31px!important;height:31px!important;min-height:31px!important;font-size:22px!important}
+  .chat-box .chat-head-actions .chat-fullscreen-toggle{width:24px!important;min-width:24px!important;height:24px!important;min-height:24px!important}
+  .chat-box .chat-body{padding:8px 9px!important}
+  .chat-box .chat-quick-heading{font-size:11px!important}
+  .chat-box .chat-quick-chips{gap:5px!important}
+  .chat-box .chat-quick-chips .chip{min-height:30px!important;padding:5px 8px!important;font-size:10px!important}
+  .chat-box .chat-message-row{gap:6px!important;margin:5px 0 7px!important}
+  .chat-box .chat-message-avatar{width:24px!important;height:24px!important;flex-basis:24px!important}
+  .chat-box .chat-msg{max-width:calc(100% - 30px)!important;padding:8px 9px 6px!important;font-size:12px!important}
+  .chat-box .chat-footer{padding:6px 8px 7px!important;gap:4px!important}
+  .chat-box .chat-composer{min-height:42px!important;padding:3px 4px 3px 8px!important;gap:5px!important}
+  .chat-box .chat-composer input{min-height:34px!important;height:34px!important;font-size:12px!important}
+  .chat-box .chat-composer>button{flex-basis:34px!important;width:34px!important;min-width:34px!important;height:34px!important;min-height:34px!important;font-size:19px!important}
+}
