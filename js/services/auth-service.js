@@ -46,11 +46,11 @@ export function getAuthDiagnosticMetadata(error) {
 export const authService = {
     onAuthStateChange(callback) { return sb.auth.onAuthStateChange(callback); },
     async getUser() { return sb.auth.getUser(); },
-    async resetPassword(email) {
+    async resetPassword(email, captchaToken) {
         const cleanEmail = String(email || '').trim().toLowerCase();
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail) || cleanEmail.length > 254) throw new Error('INVALID_AUTH_INPUT');
         const redirectTo = getPasswordResetRedirect();
-        const options = redirectTo ? { redirectTo } : {};
+        const options = { ...(redirectTo ? { redirectTo } : {}), captchaToken };
         return sb.auth.resetPasswordForEmail(cleanEmail, options);
     },
     async updatePassword(password) {
@@ -67,7 +67,7 @@ export const authService = {
         if (error) throw error;
         return { ok: true };
     },
-    async register({ name, phone, email, password }) {
+    async register({ name, phone, email, password, captchaToken }) {
         const cleanEmail = String(email || '').trim().toLowerCase();
         const cleanName = String(name || '').trim().slice(0, 80);
         const cleanPhone = String(phone || '').trim().slice(0, 40);
@@ -77,7 +77,7 @@ export const authService = {
         const { data, error } = await sb.auth.signUp({
             email: cleanEmail,
             password,
-            options: { data: { name: cleanName, phone: cleanPhone } }
+            options: { data: { name: cleanName, phone: cleanPhone }, captchaToken }
         });
         if (error) throw error;
         // With email confirmation enabled, Supabase returns a user but no session.
@@ -86,7 +86,7 @@ export const authService = {
         const profile = data.session && data.user ? await getProfileForUser(data.user) : null;
         return { user: profile, session: data.session };
     },
-    async login(email, password) {
+    async login(email, password, captchaToken) {
         const cleanEmail = String(email || '').trim().toLowerCase();
         if (!cleanEmail || String(password || '').length > 128) throw new Error('INVALID_AUTH_INPUT');
         const diagnosticEnabled = isAuthDiagnosticEnabled();
@@ -94,7 +94,7 @@ export const authService = {
 
         let authResult;
         try {
-            authResult = await sb.auth.signInWithPassword({ email: cleanEmail, password });
+            authResult = await sb.auth.signInWithPassword({ email: cleanEmail, password, options: { captchaToken } });
         } catch (error) {
             if (diagnosticEnabled) {
                 console.error("[AUTH DIAGNOSTIC] Supabase request rejected", getAuthDiagnosticMetadata(error));

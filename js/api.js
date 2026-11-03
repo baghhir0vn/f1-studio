@@ -11,7 +11,7 @@ export function createApi(deps = {}) {
         const method = (options.method || 'GET').toUpperCase();
         const body = options.body ? JSON.parse(options.body) : null;
         if (path === '/api/auth/reset-password' && method === 'POST') {
-            return authService.resetPassword(body.email).then(({ error }) => {
+            return authService.resetPassword(body.email, body.captchaToken).then(({ error }) => {
                 if (error) throw error;
                 return { ok: true };
             });
@@ -22,7 +22,7 @@ export function createApi(deps = {}) {
             return { user: data.user };
         }
         if (path === '/api/auth/register' && method === 'POST') return authService.register(body);
-        if (path === '/api/auth/login' && method === 'POST') return authService.login(body.email, body.password);
+        if (path === '/api/auth/login' && method === 'POST') return authService.login(body.email, body.password, body.captchaToken);
         if (path === '/api/auth/logout' && method === 'POST') return authService.logout();
         if (path === '/api/me' && method === 'GET') return authService.getCurrentProfile();
         if (path === '/api/products' && method === 'GET') return { products: await productService.list() };

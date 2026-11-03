@@ -104,6 +104,12 @@
 #loginModal .auth-form{
   display:flex!important;flex-direction:column!important;gap:14px!important;
   margin:24px 0 0!important;padding:0!important;border:0!important;background:transparent!important;
+#loginModal .auth-captcha{display:grid!important;justify-items:start!important;gap:5px!important;min-width:0!important}
+#loginModal .auth-captcha[hidden]{display:none!important}
+#loginModal #authCaptchaWidget{min-height:65px!important;max-width:100%!important;overflow:hidden!important}
+#loginModal #authCaptchaStatus{margin:0!important;color:#74787d!important;font:450 10px/1.4 Inter,ui-sans-serif,system-ui,sans-serif!important}
+#loginModal #authCaptchaStatus[data-state="success"]{color:#267144!important}
+#loginModal #authCaptchaStatus[data-state="error"]{color:#c6252a!important}
 }
 #loginModal .auth-input-group{display:grid!important;gap:7px!important;min-width:0!important}
 #loginModal .auth-input-group[hidden]{display:none!important}
@@ -220,6 +226,9 @@ html[data-theme="dark"] #loginModal .auth-wordmark span{color:#f1f2f2!important}
 html[data-theme="dark"] #loginModal .profile-intro,
 html[data-theme="dark"] #loginModal .auth-remember,
 html[data-theme="dark"] #loginModal .auth-benefits small{color:#b7bbbe!important}
+html[data-theme="dark"] #loginModal #authCaptchaStatus{color:#b7bbbe!important}
+html[data-theme="dark"] #loginModal #authCaptchaStatus[data-state="success"]{color:#79cf94!important}
+html[data-theme="dark"] #loginModal #authCaptchaStatus[data-state="error"]{color:#ff8d91!important}
 html[data-theme="dark"] #loginModal .auth-wordmark{color:#f1f2f2!important}
 html[data-theme="dark"] #loginModal .auth-form .auth-input-group>input,
 html[data-theme="dark"] #loginModal .auth-password-control>input{background:#25292c!important;border-color:#44494d!important;color:#f2f2f2!important}

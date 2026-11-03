@@ -5,6 +5,7 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, 
 });
 const CONFIG = {
     siteUrl: "https://f1studio-nine.vercel.app",
+    turnstileSiteKey: "0x4AAAAAAFbyWLVOPCNWcSJj",
     instagram: "https://instagram.com/f1_studio",
     tiktok: "https://tiktok.com/@f1_studio",
     whatsappNumber: "",

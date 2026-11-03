@@ -12,7 +12,7 @@
 <meta name="robots" content="index,follow">
 <meta name="theme-color" content="#536c4d">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; connect-src 'self' https://rfkqxiwbicjsszjbdhzd.supabase.co wss://rfkqxiwbicjsszjbdhzd.supabase.co; img-src 'self' data: blob: https://rfkqxiwbicjsszjbdhzd.supabase.co https://images.pexels.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src https://www.google.com https://www.google.com/maps/; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; connect-src 'self' https://rfkqxiwbicjsszjbdhzd.supabase.co wss://rfkqxiwbicjsszjbdhzd.supabase.co; img-src 'self' data: blob: https://rfkqxiwbicjsszjbdhzd.supabase.co https://images.pexels.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src https://www.google.com https://www.google.com/maps/ https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests">
 <meta name="author" content="F1 Studio">
 <meta property="og:url" content="/">
 <meta property="og:site_name" content="F1 Studio">
@@ -68,7 +68,7 @@
 <link rel="stylesheet" href="css/chat-assistant.css?v=7">
 <link rel="stylesheet" href="css/admin-dashboard-refresh.css?v=2">
     <link rel="stylesheet" href="css/account-page.css?v=1">
-<link rel="stylesheet" href="css/auth-redesign.css?v=3">
+<link rel="stylesheet" href="css/auth-redesign.css?v=4">
     <link rel="stylesheet" href="css/product-whatsapp.css?v=1">
 </head>
 <body class="f1-home">
@@ -1018,6 +1018,10 @@
                 <button class="auth-password-toggle" type="button" data-action="toggleAuthPassword" data-action-args='["profilePassword", {"$":"this"}]' aria-label="Şifrəni göstər" aria-pressed="false">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.2-6 9.5-6 9.5 6 9.5 6-3.2 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.6"/></svg>
                 </button>
+            <div class="auth-captcha" data-auth-element="captcha" hidden>
+              <div id="authCaptchaWidget"></div>
+              <p id="authCaptchaStatus" role="status" aria-live="polite">Təhlükəsizlik yoxlaması yüklənir…</p>
+            </div>
               </div>
             </div>
             <div class="auth-options-row" data-auth-element="remember-row">
@@ -1039,7 +1043,7 @@
               <div class="password-reset-title">Şifrənizi unutmusunuz?</div>
               <div class="password-reset-help">E-poçt ünvanınızı daxil edin. Hesabınızla əlaqəlidirsə, təhlükəsiz yeniləmə keçidi göndərəcəyik.</div>
               <div class="auth-input-group"><label for="resetEmail">E-poçt ünvanı</label><input id="resetEmail" data-auth-field="reset" type="email" autocomplete="email" placeholder="E-poçt ünvanınızı daxil edin" aria-label="Şifrə sıfırlamaq üçün e-poçt"></div>
-              <button class="add auth-primary-button" type="submit">Link göndər</button>
+              <button class="add auth-primary-button" type="submit" data-auth-element="reset-submit">Link göndər</button>
               <button class="btn-login auth-secondary-button" type="button" data-action="hideForgotPassword">Girişə qayıt</button>
             </div>
 

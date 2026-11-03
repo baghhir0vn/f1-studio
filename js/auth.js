@@ -1,5 +1,5 @@
 import { escapeHTML, money, isValidPhone, showToast } from './ui.js';
-import { authService, getAuthDiagnosticMetadata, isAuthDiagnosticEnabled } from './services/auth-service.js?v=2';
+import { authService, getAuthDiagnosticMetadata, isAuthDiagnosticEnabled } from './services/auth-service.js?v=3';
 import { state as s, ctx } from './state.js';
 import { getProfileForUser } from './services/profile-service.js';
 import { CONFIG } from './config.js';
@@ -7,15 +7,124 @@ import { storageService } from './services/storage-service.js';
 import { isCustomerDesignPathOwnedBy } from './security.js';
 export function initAuth() {
     const authModes = {
-        login: ["login-submit", "register-switch", "forgot", "remember-row"],
-        register: ["register-submit", "login-switch"],
-        reset: ["reset-panel"],
+        login: ["login-submit", "register-switch", "forgot", "remember-row", "captcha"],
+        register: ["register-submit", "login-switch", "captcha"],
+        reset: ["reset-panel", "reset-submit", "captcha"],
         recovery: ["recovery-panel"],
         confirmation: ["confirmation-panel"],
         account: ["logout", "account-status", "account-history"]
     };
     let authPanelMode = "login";
     let authSubmissionInProgress = false;
+    let authCaptchaToken = "";
+    let authCaptchaWidgetId = null;
+    let authCaptchaLoadPromise = null;
+
+    function authCaptchaRequired(mode = authPanelMode) {
+        return mode === "login" || mode === "register" || mode === "reset";
+    }
+
+    function setAuthCaptchaStatus(message, state = "pending") {
+        const status = document.getElementById("authCaptchaStatus");
+        if (!status) return;
+        status.textContent = message;
+        status.dataset.state = state;
+    }
+
+    function loadTurnstileApi() {
+        if (window.turnstile?.render) return Promise.resolve(window.turnstile);
+        if (authCaptchaLoadPromise) return authCaptchaLoadPromise;
+
+        authCaptchaLoadPromise = new Promise((resolve, reject) => {
+            const script = document.createElement("script");
+            script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+            script.async = true;
+            script.defer = true;
+            script.dataset.f1AuthTurnstile = "true";
+            script.onload = () => window.turnstile?.render
+                ? resolve(window.turnstile)
+                : reject(new Error("TURNSTILE_API_UNAVAILABLE"));
+            script.onerror = () => {
+                script.remove();
+                reject(new Error("TURNSTILE_SCRIPT_LOAD_FAILED"));
+            };
+            document.head.appendChild(script);
+        }).catch(error => {
+            authCaptchaLoadPromise = null;
+            throw error;
+        });
+
+        return authCaptchaLoadPromise;
+    }
+
+    async function ensureAuthCaptcha() {
+        const wrapper = document.getElementById("authCaptchaWidget");
+        if (!wrapper || !authCaptchaRequired()) return;
+        if (!CONFIG.turnstileSiteKey) {
+            setAuthCaptchaStatus("Təhlükəsizlik yoxlaması hazır deyil. Bir az sonra yenidən cəhd edin.", "error");
+            return;
+        }
+        if (authCaptchaWidgetId !== null) return;
+
+        setAuthCaptchaStatus("Təhlükəsizlik yoxlaması yüklənir…", "loading");
+        try {
+            const turnstile = await loadTurnstileApi();
+            if (authCaptchaWidgetId !== null) return;
+            authCaptchaWidgetId = turnstile.render(wrapper, {
+                sitekey: CONFIG.turnstileSiteKey,
+                theme: "auto",
+                callback: token => {
+                    authCaptchaToken = typeof token === "string" ? token : "";
+                    setAuthCaptchaStatus(
+                        authCaptchaToken ? "Təhlükəsizlik yoxlaması tamamlandı. Davam edə bilərsiniz." : "Yoxlamanı tamamlayın.",
+                        authCaptchaToken ? "success" : "pending"
+                    );
+                },
+                "expired-callback": () => {
+                    authCaptchaToken = "";
+                    setAuthCaptchaStatus("Təsdiqin vaxtı bitdi. Yenidən təsdiqləyin.", "pending");
+                },
+                "error-callback": () => {
+                    authCaptchaToken = "";
+                    setAuthCaptchaStatus("Yoxlama yüklənmədi. İnternet bağlantısını yoxlayıb yenidən cəhd edin.", "error");
+                },
+                "timeout-callback": () => {
+                    authCaptchaToken = "";
+                    setAuthCaptchaStatus("Yoxlamanın vaxtı bitdi. Yenidən təsdiqləyin.", "pending");
+                }
+            });
+            if (authCaptchaWidgetId === undefined || authCaptchaWidgetId === null) {
+                throw new Error("TURNSTILE_WIDGET_RENDER_FAILED");
+            }
+            setAuthCaptchaStatus("Zəhmət olmasa, təhlükəsizlik yoxlamasını tamamlayın.", "pending");
+        } catch (_) {
+            authCaptchaWidgetId = null;
+            setAuthCaptchaStatus("Təhlükəsizlik yoxlaması yüklənmədi. Səhifəni yeniləyib yenidən cəhd edin.", "error");
+        }
+    }
+
+    function getAuthCaptchaToken() {
+        if (!CONFIG.turnstileSiteKey) {
+            setAuthCaptchaStatus("Təhlükəsizlik yoxlaması hazır deyil. Bir az sonra yenidən cəhd edin.", "error");
+            showToast("Təhlükəsizlik yoxlaması hazır deyil. Bir az sonra yenidən cəhd edin.");
+            return "";
+        }
+        if (!authCaptchaToken) {
+            setAuthCaptchaStatus("Davam etmək üçün təhlükəsizlik yoxlamasını tamamlayın.", "pending");
+            showToast("Zəhmət olmasa, təhlükəsizlik yoxlamasını tamamlayın.");
+            return "";
+        }
+        return authCaptchaToken;
+    }
+
+    function resetAuthCaptcha() {
+        authCaptchaToken = "";
+        if (authCaptchaWidgetId !== null && window.turnstile?.reset) {
+            try { window.turnstile.reset(authCaptchaWidgetId); } catch (_) {}
+        }
+        setAuthCaptchaStatus("Təhlükəsizlik yoxlamasını tamamlayın.", "pending");
+    }
+
     function setAuthPanelMode(mode = "login") {
         if (!Object.prototype.hasOwnProperty.call(authModes, mode)) mode = "login";
         authPanelMode = mode;
@@ -66,14 +175,17 @@ export function initAuth() {
         }
         document.getElementById("passwordResetPanel")?.classList.toggle("open", mode === "reset");
         document.getElementById("passwordRecoveryPanel")?.classList.toggle("open", mode === "recovery");
+        if (authCaptchaRequired(mode) && document.getElementById("loginModal")?.classList.contains("open")) {
+            void ensureAuthCaptcha();
+        }
     }
     function setAuthSubmissionBusy(busy) {
-        document.querySelectorAll('#loginModal [data-auth-element="register-submit"], #loginModal [data-auth-element="login-submit"]').forEach(button => {
+        document.querySelectorAll('#loginModal [data-auth-element="register-submit"], #loginModal [data-auth-element="login-submit"], #loginModal [data-auth-element="reset-submit"]').forEach(button => {
             if (busy) {
                 if (!button.dataset.authIdleLabel) button.dataset.authIdleLabel = button.textContent.trim();
                 button.disabled = true;
                 button.setAttribute("aria-busy", "true");
-                button.textContent = button.dataset.authElement === "login-submit" ? "Daxil olur..." : "Hesab yaradılır...";
+                button.textContent = button.dataset.authElement === "login-submit" ? "Daxil olur..." : button.dataset.authElement === "register-submit" ? "Hesab yaradılır..." : "Göndərilir...";
             } else {
                 button.disabled = false;
                 button.removeAttribute("aria-busy");
@@ -108,6 +220,9 @@ export function initAuth() {
 
         if (/email.?not.?confirmed|email_not_confirmed/.test(signature)) {
             return "E-poçt ünvanınız təsdiqlənməyib. Qeydiyyat e-poçtundakı keçidi açın, sonra yenidən daxil olun.";
+        if (/captcha_failed|captcha/.test(signature)) {
+            return "Təhlükəsizlik təsdiqi qəbul edilmədi və ya vaxtı bitdi. Yenidən təsdiqləyib cəhd edin.";
+        }
         }
         if (flow === "register" && /already registered|user already exists|email_exists/.test(signature)) {
             return "Bu e-poçt ilə hesab artıq mövcud ola bilər. Daxil olun və ya şifrəni sıfırlayın.";
@@ -275,8 +390,10 @@ export function initAuth() {
         }
         await ctx.renderProfile();
         ctx.openDialog("loginModal", s.authUser ? "#logoutBtn" : "#profileEmail");
+        if (!s.authUser) void ensureAuthCaptcha();
     }
     function closeLogin() {
+        resetAuthCaptcha();
         ctx.closeDialog("loginModal");
         if (!s.passwordRecoveryMode) {
             setAuthPanelMode(s.authUser ? "account" : "login");
@@ -299,14 +416,26 @@ export function initAuth() {
         requestAnimationFrame(() => document.getElementById("profileEmail")?.focus());
     }
     async function sendPasswordResetEmail(){
+        if (authSubmissionInProgress) return;
         const email=document.getElementById("resetEmail")?.value.trim();
         if(!/^\S+@\S+\.\S+$/.test(email)) return showToast("Düzgün e-poçt ünvanı daxil edin.");
+        const captchaToken = getAuthCaptchaToken();
+        if (!captchaToken) return;
+        authSubmissionInProgress = true;
+        setAuthSubmissionBusy(true);
         try{
-            await ctx.api("/api/auth/reset-password",{method:"POST",body:JSON.stringify({email})});
+            await ctx.api("/api/auth/reset-password",{method:"POST",body:JSON.stringify({email,captchaToken})});
             ctx.hideForgotPassword();
             showToast("📧 Əgər bu email hesabınıza bağlıdırsa, şifrə yeniləmə keçidi göndərildi.");
         }catch(e){
-            console.error("Password reset request error",e);        showToast("Şifrə yeniləmə emaili göndərilə bilmədi. Supabase email ayarlarını yoxlayın.");
+            console.error("Password reset request error", { code: e?.code || null, status: Number(e?.status) || null });
+            showToast(/captcha_failed|captcha/i.test(`${e?.code || ""} ${e?.message || ""}`)
+                ? getAuthFailureMessage(e, "reset")
+                : "Şifrə yeniləmə emaili göndərilə bilmədi. Bir az sonra yenidən cəhd edin.");
+        } finally {
+            authSubmissionInProgress = false;
+            setAuthSubmissionBusy(false);
+            resetAuthCaptcha();
         }
     }
     function openPasswordRecovery(){
@@ -340,11 +469,17 @@ export function initAuth() {
         if (authSubmissionInProgress) return;
         const name=document.getElementById("profileName").value.trim(), phone=document.getElementById("profilePhone").value.trim(), email=document.getElementById("profileEmail").value.trim(), password=document.getElementById("profilePassword").value;
         if(name.length<2 || !isValidPhone(phone) || !/^\S+@\S+\.\S+$/.test(email) || password.length<8) return showToast("Ad, telefon, düzgün email və ən azı 8 simvolluq şifrə daxil edin.");
+        const captchaToken = getAuthCaptchaToken();
+        if (!captchaToken) {
+            authSubmissionInProgress = false;
+            setAuthSubmissionBusy(false);
+            return;
+        }
         authSubmissionInProgress = true;
         setAuthSubmissionBusy(true);
         try {
             try {
-                const data=await ctx.api("/api/auth/register",{method:"POST",body:JSON.stringify({name,phone,email,password})});
+                const data=await ctx.api("/api/auth/register",{method:"POST",body:JSON.stringify({name,phone,email,password,captchaToken})});
                 if(data?.session && data?.user){
                     s.authUser=data.user; s.profile=s.authUser; s.accountAuthResolved=true; s.accountOrdersFetched=false; s.accountOrdersLoadError=false;
                     await ctx.renderProfile(); await ctx.startAdminRealtime();
@@ -359,6 +494,7 @@ export function initAuth() {
                 }
             } catch(e) {
                 showToast(getAuthFailureMessage(e, "register"));
+            resetAuthCaptcha();
             }
         } finally {
             authSubmissionInProgress = false;
@@ -370,11 +506,17 @@ export function initAuth() {
         if (authSubmissionInProgress) return;
         const email=document.getElementById("profileEmail").value.trim(), password=document.getElementById("profilePassword").value;
         if(!/^\S+@\S+\.\S+$/.test(email) || password.length<8) return showToast("Email və şifrəni düzgün daxil edin.");
+        const captchaToken = getAuthCaptchaToken();
+        if (!captchaToken) {
+            authSubmissionInProgress = false;
+            setAuthSubmissionBusy(false);
+            return;
+        }
         authSubmissionInProgress = true;
         setAuthSubmissionBusy(true);
         try {
             try {
-                const data=await ctx.api("/api/auth/login",{method:"POST",body:JSON.stringify({email,password})});
+                const data=await ctx.api("/api/auth/login",{method:"POST",body:JSON.stringify({email,password,captchaToken})});
                 if (isAuthDiagnosticEnabled()) {
                     console.info("[AUTH DIAGNOSTIC] Login result processed", {
                         resultKeys: Object.keys(data || {}),
@@ -403,6 +545,7 @@ export function initAuth() {
             } catch(e) {
                 showToast(getAuthFailureMessage(e, "login"));
                 showLoginAuthDiagnostic(e);
+            resetAuthCaptcha();
             }
         } finally {
             authSubmissionInProgress = false;
