@@ -3,8 +3,8 @@ import { state, ctx } from './state.js';
 import { initTheme, initUiGlobalEvents, toggleTheme, toggleMobileMenu, closeMobileMenu, subscribeNewsletter } from './ui.js?v=134';
 import { openDialog, closeDialog, initModalManager } from './modal.js';
 import { initSiteSettings } from './site-settings.js?v=6';
-import { initHomepageContent } from './homepage-content.js?v=2';
-import { initCatalog } from './catalog.js?v=141';
+import { initHomepageContent } from './homepage-content.js?v=3';
+import { initCatalog } from './catalog.js?v=142';
 import { initCategoryPage } from './category-page.js';
 import { initAuth } from './auth.js?v=142';
 import { initCustomization } from './customization.js';
@@ -40,7 +40,8 @@ ctx.api = createApi({
 initEvents();
 initAboutPage();
 initAccountPage();
-window.addEventListener('load', () => {
+// This module runs after the page markup is parsed. Start catalog loading independently of images.
+function startStorefront() {
     initTheme();
     ctx.normalizeCartLines?.();
     ctx.updateCount?.();
@@ -53,4 +54,5 @@ window.addEventListener('load', () => {
     ctx.loadServerProducts?.();
     ctx.loadServerReviews?.();
     ctx.loadSiteSettings?.(true);
-});
+}
+startStorefront();
