@@ -106,11 +106,53 @@ export function initCatalog() {
             </article>
         `).join("");
     }
+    const picker = document.getElementById("designPicker");
+    const pickerSelect = document.getElementById("designPickerProduct");
+    const pickerStart = document.getElementById("designPickerStart");
+    const pickerStatus = document.getElementById("designPickerStatus");
+    const pickerRetry = document.getElementById("designPickerRetry");
+    let catalogState = "loading";
+    function refreshDesignPicker() {
+        const previous = pickerSelect.value;
+        pickerSelect.replaceChildren();
+        const products = s.serverCatalogReady ? s.products.filter(p =>
+            p.customizable && (p.stockQuantity == null || p.stockQuantity > 0)
+        ) : [];
+        for (const product of products) {
+            pickerSelect.add(new Option(product.name + " · " + money(product.price), String(product.id)));
+        }
+        if (products.some(p => String(p.id) === previous)) pickerSelect.value = previous;
+        pickerSelect.disabled = pickerStart.disabled = !products.length;
+        pickerRetry.hidden = catalogState !== "error";
+        pickerStatus.textContent = products.length ? "" : catalogState === "error"
+            ? "Kataloqu yükləmək mümkün olmadı." : !s.serverCatalogReady
+            ? "Məhsullar yüklənir…" : "Hazırda fərdiləşdirmə üçün məhsul yoxdur.";
+    }
+    document.querySelectorAll("[data-design-picker]").forEach(link => {
+        link.addEventListener("click", event => {
+            event.preventDefault();
+            refreshDesignPicker();
+            ctx.openDialog("designPicker", pickerSelect.disabled ? ".close" : "select");
+        });
+    });
+    ctx.closeDesignPicker = () => ctx.closeDialog("designPicker");
+    pickerStart.addEventListener("click", () => {
+        const product = getProduct(pickerSelect.value);
+        if (!s.serverCatalogReady || !product?.customizable || (product.stockQuantity != null && product.stockQuantity <= 0)) {
+            refreshDesignPicker();
+            return;
+        }
+        ctx.openCustomization(product);
+        if (document.getElementById("customModal").classList.contains("open")) ctx.closeDesignPicker();
+    });
+
     function clearCatalogSkeleton() {
         const grid = document.getElementById("grid");
         grid?.classList.remove("catalog-skeleton-grid");
     }
     async function loadServerProducts(force=false) {
+        catalogState = "loading";
+        if (picker.classList.contains("open")) refreshDesignPicker();
         const status=document.getElementById("catalogStatus");
         if(status && !s.serverCatalogReady){
             status.className="notice catalog-status catalog-status-loading";
@@ -154,6 +196,9 @@ export function initCatalog() {
             }
             ctx.render();
             if(!s.catalogLoadErrorShown){s.catalogLoadErrorShown=true;console.error("F1 catalog load error",e);}
+        } finally {
+            catalogState = s.serverCatalogReady ? "ready" : "error";
+            if (picker.classList.contains("open")) refreshDesignPicker();
         }
     }
     async function loadServerReviews() {
@@ -286,6 +331,10 @@ export function initCatalog() {
     function renderProductMedia(box, p, large=false) {
         box.innerHTML="";
         const gallery=(Array.isArray(p.images)&&p.images.length?p.images:[p.image]).map(url=>safeResourceUrl(url,{allowData:false,allowBlob:false,allowRelative:true})).filter(Boolean).slice(0,6);
+        if (large) {
+            const note = box.parentElement.querySelector(".product-modal-gallery-note");
+            if (note) note.hidden = gallery.length < 2;
+        }
         if(!gallery.length){
             box.innerHTML=`<div class="product-media-fallback" style="width:100%;height:100%;"><div class="emoji">${escapeHTML(p.emoji)}</div><span>Foto faylı əlavə edilməyib</span></div>`;
             return;
@@ -525,7 +574,7 @@ export function initCatalog() {
             titleEl.innerHTML = `🎁 Seçilmiş Hədiyyələr <button data-action="clearFilters" style="margin-left:12px;font-size:13px;padding:6px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);cursor:pointer;color:var(--ink);">Bütün məhsullar</button>`;
         } else {
             list = list.filter(p => (!s.activeCat || p.cat === s.activeCat) && ctx.matchesSearch(p,q));
-            titleEl.textContent = "Seçilmiş Məhsullar";
+            titleEl.textContent = q.trim() ? "Axtarış nəticələri" : s.showAllProducts ? "Bütün məhsullar" : (s.homepageContent?.shopSectionTitle || "Seçilmiş Məhsullar");
         }
         if (!s.showAllProducts && !s.viewingFavs && !s.smartFilterActive && !s.activeTag && !s.activeCat && !q.trim()) {
             list = list.filter(p => {

@@ -74,7 +74,7 @@ export function applyHomepageContent(raw){
     heroPrimaryCta:c.heroPrimaryCta, heroSecondaryCta:c.heroSecondaryCta,
     heroBenefit1:c.heroBenefits[0], heroBenefit2:c.heroBenefits[1], heroBenefit3:c.heroBenefits[2],
     categorySectionKicker:c.categorySectionKicker, categorySectionTitle:c.categorySectionTitle,
-    shopSectionKicker:c.shopSectionKicker, sectionTitle:c.shopSectionTitle, shopViewAll:c.shopViewAll,
+    shopSectionKicker:c.shopSectionKicker, shopViewAll:c.shopViewAll,
     promoPersonalKicker:c.promoPersonalKicker, promoPersonalTitle:c.promoPersonalTitle, promoPersonalHighlight:c.promoPersonalHighlight, promoPersonalDescription:c.promoPersonalDescription, promoPersonalButton:c.promoPersonalButton,
     promoOfferKicker:c.promoOfferKicker, promoOfferTitle:c.promoOfferTitle, promoOfferHighlight:c.promoOfferHighlight, promoOfferDescription:c.promoOfferDescription, promoOfferButton:c.promoOfferButton,
     newsletterTitle:c.newsletterTitle, newsletterDescription:c.newsletterDescription, newsletterButton:c.newsletterButton,
@@ -87,6 +87,14 @@ export function applyHomepageContent(raw){
     footerOrderTitle:c.footerOrderTitle, footerWhatsAppText:c.footerOrderText, footerCopyright:c.footerCopyright
   };
   Object.entries(textMap).forEach(([id,val])=>setText(id,val));
+  if (!s.showAllProducts && !s.viewingFavs && !s.smartFilterActive && !s.activeTag && !document.getElementById('search')?.value) setText('sectionTitle',c.shopSectionTitle);
+  // Older saved footer copy names the home and catalog destinations.
+  document.getElementById('footerHome').hash = c.footerHome.trim().toLocaleLowerCase('az') === 'ana səhifə' ? 'home' : 'about';
+  const productsLink = document.getElementById('footerProducts');
+  const pointsToCatalog = ['məhsul və xidmətlər', 'məhsullar', 'kataloq'].includes(c.footerProducts.trim().toLocaleLowerCase('az'));
+  productsLink.hash = pointsToCatalog ? 'products' : 'reviews';
+  if (pointsToCatalog) productsLink.dataset.action = 'showAllProducts';
+  else delete productsLink.dataset.action;
   setPlaceholder('newsletterEmail',c.newsletterPlaceholder);
   setPlaceholder('search',c.productSearchPlaceholder);
   setText('sortDefaultLabel',c.productSortDefault); setText('sortLowLabel',c.productSortLow); setText('sortHighLabel',c.productSortHigh);

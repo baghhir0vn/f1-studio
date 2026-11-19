@@ -102,3 +102,9 @@ html[data-theme="dark"] .product-whatsapp-btn:hover:not(:disabled) {
   }
 }
 
+
+#designPicker .dialog { width: min(100%, 32rem); }
+.design-picker-fields { display: grid; gap: .75rem; padding: 1.25rem; }
+.design-picker-fields select { width: 100%; min-width: 0; padding: .7rem; font: inherit; }
+.design-picker-fields [hidden], .design-picker-fields p:empty { display: none; }
+.design-picker-fields p { margin: 0; }
