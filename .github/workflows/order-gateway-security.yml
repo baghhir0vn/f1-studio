@@ -16,6 +16,15 @@ on:
       - "tools/reviews-blocked-pg-assertions.sql"
       - "security-admin-mfa-preview.sql"
       - "tools/admin-mfa-pg-assertions.sql"
+      - "js/admin-mfa.js"
+      - "js/services/admin-mfa-service.js"
+      - "tools/admin-mfa-ui-test.mjs"
+      - "js/admin.js"
+      - "js/auth.js"
+      - "js/modal.js"
+      - "js/app.js"
+      - "index.html"
+      - "css/admin-mfa.css"
   push:
     branches: ["security/preview-order-spam-gateway-20261120"]
 
@@ -37,10 +46,19 @@ jobs:
           node --check js/services/product-service.js
           node --check js/services/order-service.js
           node --check tools/order-gateway-contract-test.mjs
+          node --check js/admin.js
+          node --check js/admin-mfa.js
+          node --check js/services/admin-mfa-service.js
+          node --check js/auth.js
+          node --check js/modal.js
+          node --check js/app.js
+          node --check tools/admin-mfa-ui-test.mjs
       - name: Run isolated gateway contract tests
         run: node --test tools/order-gateway-contract-test.mjs
       - name: Verify preview isolation and no WhatsApp handoff
         run: node --test tools/preview-isolation-test.mjs
+      - name: Verify MFA enrollment, AAL2, and admin UI wiring
+        run: node --test tools/admin-mfa-ui-test.mjs
 
   postgres-migration:
     runs-on: ubuntu-latest
