@@ -69,6 +69,15 @@ ChatGPT's hourly condition-watch monitor was created on 2026-11-21 (Asia/Baku), 
 
 Official references: [Supabase Database Backups](https://supabase.com/docs/guides/platform/backups), [Supabase Restore to a New Project](https://supabase.com/docs/guides/platform/clone-project), [Vercel Deployments](https://vercel.com/docs/deployments).
 
+### Free-plan confirmation and restore-preparation evidence (2026-11-21)
+
+- Supabase organization `F1studio` plan and tier were directly verified as `free` / `tier_free`. No automatic paid-tier daily backup entitlement was found and no independently created manual backup has been verified. **This is a production release blocker.**
+- Real production schema and Storage bucket *metadata* were inspected read-only; the full required-object baseline is in `security-backup-structure-baseline.json`. `tools/restore-structure-audit.sql` returns no personal data, and `tools/verify-restore-structure.mjs` fails on missing tables/functions, disabled RLS or an unexpectedly public customer bucket. This cannot prove actual row completeness or Storage bytes.
+- The separate existing security test Supabase is intentionally **not** a production restore and does not have every production table/bucket.
+- A real **synthetic-only** `pg_dump` → separate PostgreSQL database `pg_restore` was rehearsed in GitHub Actions, including checking the restored fictional row and RLS. Run: https://github.com/baghhir0vn/f1-studio/actions/runs/44808955025. This exercise uses **no production records** and does **not** meet the `database-restore` production evidence requirement.
+- For the manual Free-plan backup and independent full restore, see `SECURITY-FREE-PLAN-BACKUP-RECOVERY.md`. The operator must obtain verified database **and Storage object** backups, encrypt offsite, perform a controlled isolated restore, and preserve non-sensitive evidence.
+- No production dump/export, paid plan upgrade, payment, firewall enforcement, database migration or production deploy was carried out.
+
 ## 4a. Machine-checkable release evidence — CURRENTLY BLOCKED
 
 - A `security-production-release-evidence.json` manifest now records ten explicit release gates, all **unverified** until backed by reviewable evidence. It does not contain secrets or personal records.
