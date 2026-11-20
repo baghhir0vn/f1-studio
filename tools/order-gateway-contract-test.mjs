@@ -225,3 +225,57 @@ test('Invalid order shapes and quantities fail before external network requests'
   });
   assert.equal(requests,0);
 });
+
+test('Production rejects nonproduction Supabase hosts before any external request',async()=>{
+  for(const target of [
+    'https://dlwjkcqoclvlsyjmrjec.supabase.co',
+    'https://unrelated-project.supabase.co',
+    'https://rfkqxiwbicjsszjbdhzd.supabase.co.evil.example',
+    'http://rfkqxiwbicjsszjbdhzd.supabase.co',
+    'https://rfkqxiwbicjsszjbdhzd.supabase.co/other'
+  ]) {
+    env();
+    process.env.VERCEL_ENV='production';
+    process.env.SUPABASE_URL=target;
+    const res=makeRes();let outgoing=0;
+    await withFetch(async()=>{outgoing++;throw Error('No external requests permitted');},
+      ()=>handler(makeReq(),res));
+    assert.equal(res.statusCode,503,target);
+    assert.equal(res.body.error,'PREVIEW_DATABASE_NOT_ISOLATED',target);
+    assert.equal(outgoing,0,target);
+  }
+  delete process.env.VERCEL_ENV;
+});
+
+test('Production accepts only its exact Supabase host without leaking secret to other hosts',async()=>{
+  env();
+  process.env.VERCEL_ENV='production';
+  process.env.SUPABASE_URL='https://rfkqxiwbicjsszjbdhzd.supabase.co';
+  const res=makeRes();const calls=[];
+  await withFetch(async(url)=>{
+    const address=String(url);
+    calls.push(address);
+    if(address.includes('/siteverify'))return reply({
+      success:true,action:'order_checkout',hostname:host
+    });
+    if(address.includes('/rest/v1/rpc/create_order_gateway'))return reply({
+      order:{order_code:'F1-TEST-PRODUCTION-HOST-ONLY',status:'pending_confirmation',total:15}
+    });
+    throw Error('Unexpected outgoing request');
+  },()=>handler(makeReq(),res));
+  assert.equal(res.statusCode,200);
+  assert.ok(calls.some(x=>x.startsWith('https://rfkqxiwbicjsszjbdhzd.supabase.co/')));
+  assert.equal(calls.some(x=>x.includes('dlwjkcqoclvlsyjmrjec')),false);
+  delete process.env.VERCEL_ENV;
+});
+
+test('Unknown nonempty VERCEL_ENV fails closed',async()=>{
+  env();process.env.VERCEL_ENV='staging-unknown';
+  process.env.SUPABASE_URL='https://rfkqxiwbicjsszjbdhzd.supabase.co';
+  const res=makeRes();let outgoing=0;
+  await withFetch(async()=>{outgoing++;throw Error('Unexpected request');},
+    ()=>handler(makeReq(),res));
+  assert.equal(res.statusCode,503);
+  assert.equal(outgoing,0);
+  delete process.env.VERCEL_ENV;
+});
