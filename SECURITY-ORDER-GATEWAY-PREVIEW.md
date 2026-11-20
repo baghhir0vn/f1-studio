@@ -66,3 +66,36 @@ The feature remains preview-only until the above tests pass.
 ## Production release safety
 
 **Do not merge this branch directly to main.** The branch's static client configuration and CSP deliberately point to the test database. A production release must restore the production Supabase publishable URL and CSP, install production server-only secrets, apply the staged SQL migrations with an atomic cutover and verify that direct anonymous RPC is denied. Merely merging the preview branch would redirect the public site to the wrong database.
+
+## Preview status and remaining human-only setup
+
+The Vercel Preview browser uses **Cloudflare's public TEST sitekey**
+`1x00000000000000000000AA` to validate only UI rendering. This token
+offers **zero bot protection**; server checkout stays fail-closed until
+proper secrets are present. Cloudflare's official test verification response
+has `hostname: example.com` and no `action` property, so the existing
+strict hostname/action validation will REJECT dummy tokens even if you
+install a dummy secret. This is expected. Do not loosen these checks.
+
+No Cloudflare account connector is available. The Supabase connector exposes
+public/publishable keys, but not the secret key. Do not request or paste
+secret keys into chat, source code or git comments.
+
+To validate end-to-end checkout safely:
+1. In Supabase test project `dlwjkcqoclvlsyjmrjec`, go to Project
+   Settings → API Keys → Secret keys and create/copy the key into your own
+   secure environment.
+2. In Vercel project `f1_studio`, Settings → Environment Variables, set
+   branch-scoped Preview `SUPABASE_SECRET_KEY` (type: sensitive/encrypted);
+   **not** production and never the production Supabase secret.
+3. Create a Cloudflare Turnstile widget for the exact Preview hostname,
+   record its real sitekey and secret. Replace the public Preview test
+   sitekey in `js/config.js` with this Preview-specific sitekey.
+4. Set branch-scoped Preview `TURNSTILE_SECRET_KEY` in Vercel (encrypted).
+5. Redeploy this branch and run guest/authenticated checkout with
+   synthetic data. Never send test orders to a real WhatsApp number.
+6. During promotion restore the production public config and only install
+   production-specific secrets in the production environment.
+
+`SUPABASE_SECRET_KEY` is preferred; legacy `SUPABASE_SERVICE_ROLE_KEY`
+remains supported in the API server. Only the backend API reads this key.
