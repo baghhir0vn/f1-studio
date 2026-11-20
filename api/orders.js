@@ -5,6 +5,18 @@ import { isIP } from 'node:net';
 
 const getSupabaseUrl = () => String(process.env.SUPABASE_URL || '').replace(/[/]+$/, '');
 const limit = 512 * 1024;
+// Explicit destination allowlist for isolated security Preview. A typo or
+// accidental secret in the wrong environment must never cause cross-project writes.
+const PREVIEW_SUPABASE_HOST = 'dlwjkcqoclvlsyjmrjec.supabase.co';
+const validSupabaseTarget = raw => {
+  try {
+    const u = new URL(raw);
+    return u.protocol === 'https:' && !u.username && !u.password && !u.port
+      && u.pathname === '/' && !u.search && !u.hash
+      && (u.hostname.endsWith('.supabase.co'))
+      && (process.env.VERCEL_ENV !== 'preview' || u.hostname === PREVIEW_SUPABASE_HOST);
+  } catch { return false; }
+};
 const json = (res,status,body) => {
   res.setHeader('Cache-Control','no-store');
   res.setHeader('Content-Type','application/json; charset=utf-8');
@@ -68,9 +80,9 @@ export default async function handler(req,res) {
   const serviceKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
   const captchaSecret = process.env.TURNSTILE_SECRET_KEY;
   if (!serviceKey || !captchaSecret || !supabaseUrl) return fail(res,503,'CHECKOUT_NOT_CONFIGURED');
-  // A Preview with production Supabase credentials is unsafe: fail closed.
-  if (process.env.VERCEL_ENV === 'preview' &&
-      new URL(supabaseUrl).hostname === 'rfkqxiwbicjsszjbdhzd.supabase.co') {
+  // Reject malformed or unapproved Supabase origins before sending a secret.
+  // This branch has only one approved Preview database.
+  if (!validSupabaseTarget(supabaseUrl)) {
     return fail(res,503,'PREVIEW_DATABASE_NOT_ISOLATED');
   }
 
@@ -93,11 +105,31 @@ export default async function handler(req,res) {
   }
   const items = body.items;
   if (!Array.isArray(items)||!items.length||items.length>50) return fail(res,400,'INVALID_ORDER_ITEMS');
+  // Cheap input checks BEFORE any network call: the database repeats all
+  // sensitive business validation; these checks only reduce abuse cost.
+  for (const item of items) {
+    if (!item || typeof item !== 'object' || Array.isArray(item)
+      || !Number.isSafeInteger(item.productId) || item.productId <= 0
+      || !Number.isInteger(item.qty) || item.qty < 1 || item.qty > 100
+      || (item.customization != null
+        && (typeof item.customization !== 'object' || Array.isArray(item.customization)))) {
+      return fail(res,400,'INVALID_ORDER_ITEMS');
+    }
+  }
+  if (!['pickup','ganja','region'].includes(body.delivery || 'pickup')) {
+    return fail(res,400,'INVALID_ORDER');
+  }
+  if (body.delivery !== 'pickup' && body.delivery != null
+    && body.addressUnknown !== true && !String(body.address || '').trim()) {
+    return fail(res,400,'INVALID_ORDER');
+  }
   const customer = body.customer;
   if (!customer || typeof customer !== 'object'||Array.isArray(customer)) return fail(res,400,'INVALID_ORDER');
   const name = String(customer.name||'').trim();
   const phone = String(customer.phone||'').trim();
-  if (name.length<2||name.length>120||phone.length>40) return fail(res,400,'INVALID_ORDER');
+  const phoneDigits = phone.replace(/\\D/g,'');
+  if (name.length<2||name.length>120||phone.length>40
+      || phoneDigits.length<9||phoneDigits.length>15) return fail(res,400,'INVALID_ORDER');
   const authHeader = req.headers.authorization || '';
   try {
     const userId = await verifiedUserId(authHeader,serviceKey,supabaseUrl);
