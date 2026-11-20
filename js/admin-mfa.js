@@ -40,6 +40,7 @@ export function initAdminMfa() {
     function renderStage(next) {
         stage = next;
         show('adminMfaSetup', next === 'setup');
+        show('adminMfaStart', next === 'setup');
         show('adminMfaChallenge', next === 'challenge');
         show('adminMfaSecured', next === 'secured');
         show('adminMfaRetry', next === 'error');
@@ -58,7 +59,7 @@ export function initAdminMfa() {
         ctx.closeDialog?.('adminMfaModal');
     }
     async function checkAdminMfa({ prompt = true } = {}) {
-        if (!CONFIG.securityPreview) return;
+        if (CONFIG.adminMfaEnabled !== true) return;
         const userId = s.authUser?.id || null;
         const version = ++checkVersion;
         accountId = userId;
@@ -110,13 +111,13 @@ export function initAdminMfa() {
         }
     }
     async function openAdminMfaManager() {
-        if (!CONFIG.securityPreview || !isAdminProfile()) return;
+        if (CONFIG.adminMfaEnabled !== true || !isAdminProfile()) return;
         managed = true;
         ctx.openDialog?.('adminMfaModal', '#adminMfaClose');
         await checkAdminMfa({ prompt: false });
     }
     async function promptAdminMfa() {
-        if (!CONFIG.securityPreview || !isAdminProfile()) return;
+        if (CONFIG.adminMfaEnabled !== true || !isAdminProfile()) return;
         managed = false;
         ctx.closeDialog?.('loginModal');
         ctx.openDialog?.('adminMfaModal', '#adminMfaClose');
