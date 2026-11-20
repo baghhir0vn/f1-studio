@@ -127,7 +127,7 @@ export default async function handler(req,res) {
   if (!customer || typeof customer !== 'object'||Array.isArray(customer)) return fail(res,400,'INVALID_ORDER');
   const name = String(customer.name||'').trim();
   const phone = String(customer.phone||'').trim();
-  const phoneDigits = phone.replace(/\\D/g,'');
+  const phoneDigits = phone.replace(/[^0-9]/g,'');
   if (name.length<2||name.length>120||phone.length>40
       || phoneDigits.length<9||phoneDigits.length>15) return fail(res,400,'INVALID_ORDER');
   const authHeader = req.headers.authorization || '';
