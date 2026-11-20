@@ -7,8 +7,8 @@ const CONFIG = {
     // TEST BRANCH ONLY: suppress real WhatsApp handoff for synthetic orders.
     securityPreview: true,
     siteUrl: window.location.origin,
-    // ONLY for isolated Preview visual testing; dummy token has no real security.
-    turnstileSiteKey: "1x00000000000000000000AA",
+    // Cloudflare widget restricted to the isolated security Preview hostname.
+    turnstileSiteKey: "0x4AAAAAAGKpifK9AkrYwRjU",
     instagram: "https://instagram.com/f1_studio",
     tiktok: "https://tiktok.com/@f1_studio",
     whatsappNumber: "",
