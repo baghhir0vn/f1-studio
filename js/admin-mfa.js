@@ -1,0 +1,205 @@
+import { CONFIG } from './config.js';
+import { state as s, ctx } from './state.js';
+import { showToast } from './ui.js';
+import { adminMfaService } from './services/admin-mfa-service.js';
+
+const isAdminProfile = () => s.authUser?.role === 'admin' && s.authUser?.blocked !== true;
+const byId = id => document.getElementById(id);
+const show = (id, visible) => { const el = byId(id); if (el) el.hidden = !visible; };
+const setStatus = (text, isError = false) => {
+    const el = byId('adminMfaStatus');
+    if (el) { el.textContent = text; el.dataset.error = isError ? 'true' : 'false'; }
+};
+
+export function initAdminMfa() {
+    let pendingFactorId = null;
+    let stage = 'loading';
+    let busy = false;
+    let accountId = null;
+    let managed = false;
+
+    function resetSensitiveUi() {
+        pendingFactorId = null;
+        const qr = byId('adminMfaQr');
+        if (qr) { qr.removeAttribute('src'); qr.hidden = true; }
+        const secret = byId('adminMfaSecret');
+        if (secret) secret.textContent = '';
+        const code = byId('adminMfaCode');
+        if (code) code.value = '';
+        show('adminMfaSetupDetails', false);
+        show('adminMfaCodeRow', false);
+    }
+    function setBusy(value) {
+        busy = value;
+        ['adminMfaStart', 'adminMfaSubmit', 'adminMfaAddBackup'].forEach(id => {
+            const button = byId(id);
+            if (button) button.disabled = value;
+        });
+    }
+    function renderStage(next) {
+        stage = next;
+        show('adminMfaSetup', next === 'setup');
+        show('adminMfaChallenge', next === 'challenge');
+        show('adminMfaSecured', next === 'secured');
+        show('adminMfaRetry', next === 'error');
+        if (next !== 'enrolling') show('adminMfaCodeRow', next === 'challenge');
+    }
+    function refreshAdminControls(assured) {
+        s.adminMfaAssured = Boolean(assured && isAdminProfile());
+        ctx.updateAdminButton?.();
+        if (!s.adminMfaAssured) ctx.stopAdminRealtime?.();
+    }
+    function closeAdminMfa() {
+        // Closing the prompt NEVER grants admin access.
+        // The DB AAL2 policy will enforce MFA when the release is approved.
+        resetSensitiveUi();
+        ctx.closeDialog?.('adminMfaModal');
+    }
+    async function checkAdminMfa({ prompt = true } = {}) {
+        if (!CONFIG.securityPreview) return;
+        const userId = s.authUser?.id || null;
+        accountId = userId;
+        resetSensitiveUi();
+        if (!isAdminProfile()) {
+            refreshAdminControls(false);
+            ctx.closeDialog?.('adminMfaModal');
+            return;
+        }
+        refreshAdminControls(false);
+        renderStage('loading');
+        setStatus('İkinci mərhələ yoxlanılır...');
+        try {
+            const [assurance, verifiedFactors] = await Promise.all([
+                adminMfaService.assurance(), adminMfaService.factors()
+            ]);
+            if (accountId !== s.authUser?.id) return; // Don't reuse a previous account's MFA result.
+            if (assurance.currentLevel === 'aal2' && verifiedFactors.length) {
+                refreshAdminControls(true);
+                renderStage('secured');
+                setStatus('Admin iki mərhələli təsdiqdən keçib.');
+                if (!managed) ctx.closeDialog?.('adminMfaModal');
+                await ctx.startAdminRealtime?.();
+                return;
+            }
+            refreshAdminControls(false);
+            if (verifiedFactors.length) {
+                const select = byId('adminMfaFactor');
+                if (select) {
+                    select.replaceChildren(...verifiedFactors.map((factor, i) => {
+                        const option = document.createElement('option');
+                        option.value = factor.id;
+                        option.textContent = factor.friendly_name || `Təsdiqləyici cihaz ${i + 1}`;
+                        return option;
+                    }));
+                }
+                renderStage('challenge');
+                setStatus('Authenticator tətbiqinizdəki 6 rəqəmli kodu daxil edin.');
+            } else {
+                renderStage('setup');
+                setStatus('Admin girişini qorumaq üçün authenticator tətbiqi qoşun.');
+            }
+            if (prompt) ctx.openDialog?.('adminMfaModal', '#adminMfaStart');
+        } catch {
+            refreshAdminControls(false);
+            renderStage('error');
+            setStatus('MFA vəziyyəti yoxlanılmadı. Yenidən cəhd edin.', true);
+            if (prompt) ctx.openDialog?.('adminMfaModal', '#adminMfaRetryButton');
+        }
+    }
+    async function openAdminMfaManager() {
+        if (!CONFIG.securityPreview || !isAdminProfile()) return;
+        managed = true;
+        ctx.openDialog?.('adminMfaModal', '#adminMfaClose');
+        await checkAdminMfa({ prompt: false });
+    }
+    async function promptAdminMfa() {
+        if (!CONFIG.securityPreview || !isAdminProfile()) return;
+        managed = false;
+        ctx.closeDialog?.('loginModal');
+        ctx.openDialog?.('adminMfaModal', '#adminMfaClose');
+        await checkAdminMfa({ prompt: false });
+    }
+    async function startAdminMfaEnrollment() {
+        if (!isAdminProfile() || busy) return;
+        // Once a factor is pending, do not create additional unused secrets on repeated clicks.
+        if (pendingFactorId) return;
+        setBusy(true);
+        try {
+            const result = await adminMfaService.startEnrollment();
+            if (accountId !== s.authUser?.id) return;
+            pendingFactorId = result.factorId;
+            const qr = byId('adminMfaQr');
+            if (qr) {
+                // Supabase returns a data: SVG QR image; never interpolate SVG into HTML.
+                if (!/^data:image\\/svg\\+xml[;,]/i.test(result.qr)) throw new Error('MFA_QR_INVALID');
+                qr.src = result.qr;
+                qr.hidden = false;
+            }
+            const secret = byId('adminMfaSecret');
+            if (secret) secret.textContent = result.secret;
+            show('adminMfaSetup', true);
+            show('adminMfaSetupDetails', true);
+            show('adminMfaCodeRow', true);
+            show('adminMfaStart', false);
+            stage = 'enrolling';
+            setStatus('QR-ni telefonunuzdakı authenticator tətbiqi ilə skan edin. Sonra 6 rəqəmli kodu daxil edin.');
+            byId('adminMfaCode')?.focus();
+        } catch {
+            resetSensitiveUi();
+            show('adminMfaStart', true);
+            setStatus('QR yaradılmadı. Yenidən cəhd edin.', true);
+        } finally { setBusy(false); }
+    }
+    async function submitAdminMfaCode() {
+        if (!isAdminProfile() || busy) return;
+        const code = (byId('adminMfaCode')?.value || '').trim();
+        if (!/^[0-9]{6}$/.test(code)) {
+            setStatus('Tam 6 rəqəmli təsdiq kodu daxil edin.', true);
+            return;
+        }
+        const factorId = stage === 'enrolling'
+            ? pendingFactorId : byId('adminMfaFactor')?.value;
+        if (!factorId) return setStatus('MFA cihazı seçilməyib.', true);
+        setBusy(true);
+        try {
+            await adminMfaService.verify(factorId, code);
+            if (accountId !== s.authUser?.id) return;
+            resetSensitiveUi();
+            refreshAdminControls(true);
+            renderStage('secured');
+            setStatus('İki mərhələli təsdiq uğurla tamamlandı. Admin girişi aktivdir.');
+            await ctx.startAdminRealtime?.();
+            showToast('🔐 Admin MFA təsdiqləndi.');
+            if (!managed) closeAdminMfa();
+        } catch {
+            const el = byId('adminMfaCode');
+            if (el) el.value = '';
+            setStatus('Kod qəbul edilmədi və ya vaxtı bitdi. Yeni kodla təkrar yoxlayın.', true);
+        } finally { setBusy(false); }
+    }
+    async function addAdminMfaBackup() {
+        if (!isAdminProfile() || !s.adminMfaAssured || busy) return;
+        // Requires already-verified MFA. Use a DIFFERENT device for redundancy.
+        resetSensitiveUi();
+        renderStage('setup');
+        show('adminMfaStart', true);
+        setStatus('İkinci, ayrıca cihaz əlavə edin. Hər iki cihazı bir yerdə saxlamayın.');
+    }
+    function resetAdminMfaState() {
+        accountId = null;
+        managed = false;
+        resetSensitiveUi();
+        refreshAdminControls(false);
+        ctx.closeDialog?.('adminMfaModal');
+    }
+    Object.assign(ctx, {
+        checkAdminMfa,
+        promptAdminMfa,
+        openAdminMfaManager,
+        closeAdminMfa,
+        startAdminMfaEnrollment,
+        submitAdminMfaCode,
+        addAdminMfaBackup,
+        resetAdminMfaState
+    });
+}
