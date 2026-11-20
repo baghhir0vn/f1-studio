@@ -15,7 +15,7 @@ test('all static client configuration and CSP use test Supabase only',()=>{
  const config=read('js/config.js');
  assert.equal(config.includes(testHost),true);
  assert.match(config,/securityPreview:\s*true/);
- assert.match(config,/turnstileSiteKey:\s*"1x00000000000000000000AA"/);
+ assert.match(config,/turnstileSiteKey:\s*"0x4AAAAAAGKpifK9AkrYwRjU"/);
  assert.match(read('index.html'),/<meta name="robots" content="noindex,nofollow">/);
 });
 test('synthetic preview checkout does not attempt WhatsApp message',()=>{
