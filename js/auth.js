@@ -362,6 +362,26 @@ export function initAuth() {
             s.passwordRecoveryMode = true;
             setTimeout(() => { ctx.openPasswordRecovery(); }, 0);
         }
+        // Cross-tab sign-out must invalidate the locally visible admin gate.
+        if(event === "SIGNED_OUT" && CONFIG.adminMfaEnabled === true){
+            setTimeout(() => {
+                s.authUser=null; s.profile=null; s.adminMfaAssured=false; s.orders=[];
+                ctx.resetAdminMfaState?.();
+                ctx.closeAdmin?.();
+                ctx.stopAdminRealtime?.();
+                void ctx.renderProfile?.();
+            }, 0);
+        }
+        // If the token's AAL is refreshed/downgraded, re-check before
+        // offering admin actions. Avoid interrupting an active MFA dialog.
+        if(event === "TOKEN_REFRESHED" && CONFIG.adminMfaEnabled === true){
+            setTimeout(() => {
+                if(s.authUser?.role === "admin"
+                    && !document.getElementById('adminMfaModal')?.classList.contains('open')) {
+                    void ctx.checkAdminMfa?.({prompt:false});
+                }
+            }, 0);
+        }
     });
     async function openLogin() {
         if (s.authUser && typeof ctx.openAccountPage === "function") {
