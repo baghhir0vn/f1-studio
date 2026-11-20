@@ -179,6 +179,64 @@ export function initCart() {
         }catch(_){ return baseUrl; }
     }
     function customerNameSafe(){return document.getElementById("name").value.trim();}
+    // Dedicated checkout CAPTCHA: authentication CAPTCHA tokens must not be reused.
+    let checkoutCaptchaToken = "";
+    let checkoutCaptchaId = null;
+    let checkoutCaptchaLoading = null;
+    async function ensureCheckoutCaptcha(){
+        const container = document.getElementById("checkoutCaptchaWidget");
+        const status = document.getElementById("checkoutCaptchaStatus");
+        if (!container || checkoutCaptchaId !== null) return;
+        if (!checkoutCaptchaLoading) {
+            checkoutCaptchaLoading = new Promise((resolve,reject)=>{
+                if (window.turnstile?.render) return resolve(window.turnstile);
+                const script = document.createElement("script");
+                script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+                script.async = true;
+                script.onload = () => window.turnstile?.render
+                    ? resolve(window.turnstile) : reject(new Error("CAPTCHA_UNAVAILABLE"));
+                script.onerror = () => reject(new Error("CAPTCHA_UNAVAILABLE"));
+                document.head.appendChild(script);
+            }).catch(error=>{checkoutCaptchaLoading=null;throw error;});
+        }
+        if(status) status.textContent="Təhlükəsizlik yoxlaması yüklənir...";
+        try {
+            const api=await checkoutCaptchaLoading;
+            if(checkoutCaptchaId !== null) return;
+            checkoutCaptchaId=api.render(container,{
+                sitekey:CONFIG.turnstileSiteKey,
+                action:"order_checkout",
+                theme:"auto",
+                callback:token=>{
+                    checkoutCaptchaToken=typeof token==="string"?token:"";
+                    if(status) status.textContent=checkoutCaptchaToken
+                        ?"Təhlükəsizlik yoxlaması tamamlandı.":"Yoxlamanı tamamlayın.";
+                },
+                "expired-callback":()=>{
+                    checkoutCaptchaToken="";
+                    if(status) status.textContent="Yoxlamanın vaxtı bitdi. Yenidən təsdiqləyin.";
+                },
+                "error-callback":()=>{
+                    checkoutCaptchaToken="";
+                    if(status) status.textContent="Təhlükəsizlik yoxlaması alınmadı. Səhifəni yeniləyin.";
+                }
+            });
+            if(checkoutCaptchaId === null || checkoutCaptchaId === undefined){
+                throw new Error("CAPTCHA_UNAVAILABLE");
+            }
+            if(status) status.textContent="Sifarişdən əvvəl təhlükəsizlik yoxlamasını tamamlayın.";
+        } catch {
+            checkoutCaptchaId=null;
+            checkoutCaptchaToken="";
+            if(status) status.textContent="Təhlükəsizlik yoxlaması hazır deyil. Səhifəni yeniləyin.";
+        }
+    }
+    function resetCheckoutCaptcha(){
+        checkoutCaptchaToken="";
+        if(checkoutCaptchaId !== null && window.turnstile?.reset){
+            try{window.turnstile.reset(checkoutCaptchaId);}catch(_){}
+        }
+    }
     async function checkout(){
         if(!ctx.ensureCatalogReady()) return;
         if(!s.cart.length) return showToast("Səbətiniz boşdur.");
@@ -187,9 +245,14 @@ export function initCart() {
             form.style.display="grid";
             if(s.authUser){document.getElementById("name").value=s.authUser.name||"";document.getElementById("phone").value=s.authUser.phone||"";}
             ctx.handleDeliveryChange();
+            void ensureCheckoutCaptcha();
             return;
         }
         const error=ctx.validateOrder(); if(error) return showToast(error);
+        if(!checkoutCaptchaToken){
+            void ensureCheckoutCaptcha();
+            return showToast("Sifariş üçün təhlükəsizlik yoxlamasını tamamlayın.");
+        }
         if(!String(CONFIG.whatsappNumber||"").replace(/\D/g,"")) return showToast("WhatsApp nömrəsi hələ təyin edilməyib. Admin paneldə Sayt Ayarlarından əlavə edin.");
         const button=document.querySelector('button[data-action="checkout"]');
         if(button?.disabled) return;
@@ -221,7 +284,8 @@ export function initCart() {
             const result=await ctx.api("/api/orders",{method:"POST",body:JSON.stringify({
                 items:s.cart.map(i=>({productId:Number(i.id),qty:Number(i.qty),customization:i.customization||null})),
                 customer:{name:customerName,phone:customerPhone,email:s.authUser?.email||""},
-                delivery,address,addressUnknown:unknown,giftWrap:isWrap
+                delivery,address,addressUnknown:unknown,giftWrap:isWrap,
+                captchaToken:checkoutCaptchaToken
             })});
             const whatsappUrl=ctx.buildWhatsAppUrl(CONFIG.whatsappNumber,result.order?.orderCode||"");
             if(!whatsappUrl){
@@ -240,10 +304,11 @@ export function initCart() {
         } catch(e) {
             popup.close();
             const raw = safeUserError(e, "Sifariş göndərilmədi.");
-            const messages={WHATSAPP_NOT_CONFIGURED:"WhatsApp nömrəsi serverdə hələ təyin edilməyib.",OUT_OF_STOCK:"Məhsul stokda kifayət qədər yoxdur. Səbəti yeniləyin.",PRODUCT_NOT_FOUND:"Məhsul artıq mövcud deyil. Səbəti yeniləyin.",ADDRESS_REQUIRED:"Çatdırılma ünvanını daxil edin.",INVALID_ORDER:"Sifariş məlumatlarını düzgün daxil edin.",INVALID_ORDER_ITEMS:"Sifariş məlumatları düzgün deyil.",AUTH_REQUIRED:"Hesaba giriş etmək lazımdır.",ORDER_RATE_LIMITED:"Çox sayda sifariş cəhdi oldu. Bir az sonra yenidən cəhd edin."};
+            const messages={WHATSAPP_NOT_CONFIGURED:"WhatsApp nömrəsi serverdə hələ təyin edilməyib.",OUT_OF_STOCK:"Məhsul stokda kifayət qədər yoxdur. Səbəti yeniləyin.",PRODUCT_NOT_FOUND:"Məhsul artıq mövcud deyil. Səbəti yeniləyin.",ADDRESS_REQUIRED:"Çatdırılma ünvanını daxil edin.",INVALID_ORDER:"Sifariş məlumatlarını düzgün daxil edin.",INVALID_ORDER_ITEMS:"Sifariş məlumatları düzgün deyil.",AUTH_REQUIRED:"Hesaba giriş etmək lazımdır.",ORDER_RATE_LIMITED:"Çox sayda sifariş cəhdi oldu. Bir az sonra yenidən cəhd edin.",CAPTCHA_REQUIRED:"Təhlükəsizlik yoxlamasını tamamlayın.",CAPTCHA_FAILED:"Təhlükəsizlik yoxlaması keçmədi. Yenidən təsdiqləyin.",CHECKOUT_NOT_CONFIGURED:"Sifariş sistemi hələ təhlükəsiz serverə qoşulmayıb.",CHECKOUT_TEMPORARILY_UNAVAILABLE:"Sifariş sistemi müvəqqəti əlçatan deyil."};
             showToast(messages[String(e?.code || e?.message || "")] || raw);
             console.error("F1 order error", e);
         } finally {
+            resetCheckoutCaptcha();
             if(button){button.disabled=false;button.textContent=oldText||"WhatsApp ilə Sifariş Et";}
         }
     }
