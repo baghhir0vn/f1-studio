@@ -542,7 +542,7 @@ export function initAuth() {
                 s.adminMfaAssured = false;
                 await ctx.renderProfile();
                 closeLogin();
-                if (s.authUser?.role === "admin") {
+                if (CONFIG.adminMfaEnabled === true && s.authUser?.role === "admin") {
                     await ctx.promptAdminMfa?.();
                 } else {
                     await ctx.startAdminRealtime();
