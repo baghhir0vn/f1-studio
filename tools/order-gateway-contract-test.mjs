@@ -159,3 +159,69 @@ test('new Supabase secret key is accepted by the server-only gateway',async()=>{
   assert.equal('Authorization' in rpc.headers,false,'Never send sb_secret as an Authorization Bearer token');
   delete process.env.SUPABASE_SECRET_KEY;
 });
+
+test('Preview rejects every Supabase origin except isolated test project',async()=>{
+  const rejected=[
+    'https://other-test.supabase.co',
+    'https://rfkqxiwbicjsszjbdhzd.supabase.co',
+    'https://dlwjkcqoclvlsyjmrjec.supabase.co.evil.test',
+    'http://dlwjkcqoclvlsyjmrjec.supabase.co',
+    'https://dlwjkcqoclvlsyjmrjec.supabase.co/unsafe',
+    'https://user:password@dlwjkcqoclvlsyjmrjec.supabase.co'
+  ];
+  for(const endpoint of rejected){
+    env();
+    process.env.VERCEL_ENV='preview';
+    process.env.SUPABASE_URL=endpoint;
+    const res=makeRes();
+    let calls=0;
+    await withFetch(async()=>{calls++;throw Error('Unexpected network call');},()=>handler(makeReq(),res));
+    assert.equal(res.statusCode,503,endpoint);
+    assert.equal(res.body.error,'PREVIEW_DATABASE_NOT_ISOLATED',endpoint);
+    assert.equal(calls,0,endpoint);
+  }
+  delete process.env.VERCEL_ENV;
+});
+test('Preview allows exact isolated Supabase origin with valid Cloudflare verification',async()=>{
+  env();
+  process.env.VERCEL_ENV='preview';
+  process.env.SUPABASE_URL='https://dlwjkcqoclvlsyjmrjec.supabase.co';
+  const res=makeRes();let rpcCount=0;
+  await withFetch(async url=>{
+    const address=String(url);
+    if(address.includes('/siteverify'))return reply({success:true,action:'order_checkout',hostname:host});
+    if(address.includes('/rpc/create_order_gateway')){
+      rpcCount++;
+      return reply({order:{order_code:'F1-ISOLATED',status:'pending_confirmation',total:7.5}});
+    }
+    throw Error('Unrecognized destination');
+  },()=>handler(makeReq(),res));
+  assert.equal(res.statusCode,200);
+  assert.equal(res.body.order.orderCode,'F1-ISOLATED');
+  assert.equal(rpcCount,1);
+  delete process.env.VERCEL_ENV;
+});
+test('Invalid order shapes and quantities fail before external network requests',async()=>{
+  env();
+  const originals=makeReq().body;
+  const badBodies=[
+    {...originals,items:[{productId:'7',qty:1}]},
+    {...originals,items:[{productId:7,qty:0}]},
+    {...originals,items:[{productId:7,qty:101}]},
+    {...originals,items:[{productId:7,qty:1.5}]},
+    {...originals,items:[{productId:7,qty:1,customization:[]}]},
+    {...originals,delivery:'teleport'},
+    {...originals,delivery:'ganja',addressUnknown:false,address:''},
+    {...originals,customer:{name:'Test Buyer',phone:'123'}},
+  ];
+  let requests=0;
+  await withFetch(async()=>{requests++;throw Error('Invalid payload must not cause a network request');},async()=>{
+    for(const body of badBodies){
+      const res=makeRes();
+      await handler(makeReq({body}),res);
+      assert.equal(res.statusCode,400,JSON.stringify(body));
+      assert.ok(['INVALID_ORDER','INVALID_ORDER_ITEMS'].includes(res.body.error));
+    }
+  });
+  assert.equal(requests,0);
+});
