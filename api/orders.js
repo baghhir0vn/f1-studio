@@ -3,7 +3,7 @@
 // Never expose them in js/config.js or the browser. Deployment is fail-closed.
 import { isIP } from 'node:net';
 
-const supabaseUrl = String(process.env.SUPABASE_URL || '').replace(/\\/+$/,'');
+const supabaseUrl = String(process.env.SUPABASE_URL || '').replace(/[/]+$/, '');
 const limit = 512 * 1024;
 const json = (res,status,body) => {
   res.setHeader('Cache-Control','no-store');
