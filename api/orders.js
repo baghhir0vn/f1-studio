@@ -3,7 +3,7 @@
 // Never expose them in js/config.js or the browser. Deployment is fail-closed.
 import { isIP } from 'node:net';
 
-const supabaseUrl = 'https://rfkqxiwbicjsszjbdhzd.supabase.co';
+const supabaseUrl = String(process.env.SUPABASE_URL || '').replace(/\\/+$/,'');
 const limit = 512 * 1024;
 const json = (res,status,body) => {
   res.setHeader('Cache-Control','no-store');
@@ -66,7 +66,12 @@ export default async function handler(req,res) {
   }
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const captchaSecret = process.env.TURNSTILE_SECRET_KEY;
-  if (!serviceKey || !captchaSecret) return fail(res,503,'CHECKOUT_NOT_CONFIGURED');
+  if (!serviceKey || !captchaSecret || !supabaseUrl) return fail(res,503,'CHECKOUT_NOT_CONFIGURED');
+  // A Preview with production Supabase credentials is unsafe: fail closed.
+  if (process.env.VERCEL_ENV === 'preview' &&
+      new URL(supabaseUrl).hostname === 'rfkqxiwbicjsszjbdhzd.supabase.co') {
+    return fail(res,503,'PREVIEW_DATABASE_NOT_ISOLATED');
+  }
 
   const reportedLength = Number(req.headers['content-length']||0);
   if (reportedLength > limit) return fail(res,413,'ORDER_TOO_LARGE');
