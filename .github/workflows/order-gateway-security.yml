@@ -6,6 +6,9 @@ on:
       - "api/orders.js"
       - "server/security-observability.js"
       - "tools/security-observability-test.mjs"
+      - "tools/security-release-readiness.mjs"
+      - "tools/security-release-readiness-test.mjs"
+      - "security-production-release-evidence.json"
       - "api/newsletter.js"
       - "js/services/newsletter-service.js"
       - "security-newsletter-gateway-preview.sql"
@@ -57,6 +60,8 @@ jobs:
           node --check api/orders.js
           node --check server/security-observability.js
           node --check tools/security-observability-test.mjs
+          node --check tools/security-release-readiness.mjs
+          node --check tools/security-release-readiness-test.mjs
           node --check api/newsletter.js
           node --check js/services/newsletter-service.js
           node --check tools/newsletter-gateway-contract-test.mjs
@@ -79,6 +84,10 @@ jobs:
         run: node --test tools/order-gateway-contract-test.mjs
       - name: Prevent sensitive data in API audit events
         run: node --test tools/security-observability-test.mjs
+      - name: Verify production release fails closed without backup and approval evidence
+        run: |
+          node --test tools/security-release-readiness-test.mjs
+          node tools/security-release-readiness.mjs --report
       - name: Verify server-side newsletter signup and abuse handling
         run: node --test tools/newsletter-gateway-contract-test.mjs
       - name: Verify preview isolation and no WhatsApp handoff
