@@ -5,16 +5,27 @@ import { isIP } from 'node:net';
 
 const getSupabaseUrl = () => String(process.env.SUPABASE_URL || '').replace(/[/]+$/, '');
 const limit = 512 * 1024;
-// Explicit destination allowlist for isolated security Preview. A typo or
-// accidental secret in the wrong environment must never cause cross-project writes.
+// Production and Preview MUST be pinned to separate, exact Supabase hosts.
+// This prevents a future deployment configuration mistake from silently writing
+// checkout data to a different Supabase project. No credentials in this map.
 const PREVIEW_SUPABASE_HOST = 'dlwjkcqoclvlsyjmrjec.supabase.co';
+const PRODUCTION_SUPABASE_HOST = 'rfkqxiwbicjsszjbdhzd.supabase.co';
+const expectedSupabaseHost = () => ({
+  preview: PREVIEW_SUPABASE_HOST,
+  production: PRODUCTION_SUPABASE_HOST
+})[process.env.VERCEL_ENV] || null;
 const validSupabaseTarget = raw => {
   try {
     const u = new URL(raw);
-    return u.protocol === 'https:' && !u.username && !u.password && !u.port
-      && u.pathname === '/' && !u.search && !u.hash
-      && (u.hostname.endsWith('.supabase.co'))
-      && (process.env.VERCEL_ENV !== 'preview' || u.hostname === PREVIEW_SUPABASE_HOST);
+    const expectedHost = expectedSupabaseHost();
+    const validShape = u.protocol === 'https:' && !u.username && !u.password
+      && !u.port && u.pathname === '/' && !u.search && !u.hash
+      && u.hostname.endsWith('.supabase.co');
+    // Local / CI test harnesses may omit VERCEL_ENV; deployed Vercel
+    // environments never do. Known environments always fail closed.
+    return validShape && (!process.env.VERCEL_ENV
+      ? true
+      : Boolean(expectedHost) && u.hostname === expectedHost);
   } catch { return false; }
 };
 const json = (res,status,body) => {
