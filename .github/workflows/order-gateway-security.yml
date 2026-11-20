@@ -14,6 +14,8 @@ on:
       - "tools/admin-authorization-pg-assertions.sql"
       - "security-reviews-blocked-users-preview.sql"
       - "tools/reviews-blocked-pg-assertions.sql"
+      - "security-admin-mfa-preview.sql"
+      - "tools/admin-mfa-pg-assertions.sql"
   push:
     branches: ["security/preview-order-spam-gateway-20261120"]
 
@@ -75,3 +77,5 @@ jobs:
         run: psql -X -v ON_ERROR_STOP=1 -f tools/admin-authorization-pg-assertions.sql
       - name: Assert review RLS blocks banned accounts at database layer
         run: psql -X -v ON_ERROR_STOP=1 -f tools/reviews-blocked-pg-assertions.sql
+      - name: Assert staged admin MFA needs AAL2 and role authorization
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/admin-mfa-pg-assertions.sql
