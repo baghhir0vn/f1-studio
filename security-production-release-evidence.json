@@ -1,0 +1,73 @@
+{
+  "schemaVersion": 1,
+  "productionProjectId": "rfkqxiwbicjsszjbdhzd",
+  "expectedVercelProjectId": "prj_aEmhZAJVlsXsoPsCc0KSCmwoI6BQ",
+  "intendedProductionCommit": null,
+  "ownerApproval": {
+    "approved": false,
+    "approvedAt": null,
+    "reference": null
+  },
+  "controls": {
+    "backup-freshness": {
+      "verified": false,
+      "verifiedAt": null,
+      "evidence": null,
+      "notes": "Supabase production backup existence, date and retention are not verifiable using connected tool"
+    },
+    "database-restore": {
+      "verified": false,
+      "verifiedAt": null,
+      "evidence": null,
+      "notes": "Restore to a separate project has not been demonstrated"
+    },
+    "storage-object-backup": {
+      "verified": false,
+      "verifiedAt": null,
+      "evidence": null,
+      "notes": "Supabase database backups are not proof of Storage object recovery"
+    },
+    "admin-mfa-aal2": {
+      "verified": false,
+      "verifiedAt": null,
+      "evidence": null,
+      "notes": "A real test admin TOTP/AAL2 login and recovery demonstration is outstanding"
+    },
+    "checkout-end-to-end": {
+      "verified": false,
+      "verifiedAt": null,
+      "evidence": null,
+      "notes": "Browser → Turnstile → API → isolated Supabase transaction not fully demonstrated"
+    },
+    "newsletter-end-to-end": {
+      "verified": false,
+      "verifiedAt": null,
+      "evidence": null,
+      "notes": "Production-equivalent browser POST not yet verified"
+    },
+    "authorization-negative-tests": {
+      "verified": false,
+      "verifiedAt": null,
+      "evidence": null,
+      "notes": "Synthetic role tests pass, full authenticated browser negative tests outstanding"
+    },
+    "alert-delivery": {
+      "verified": false,
+      "verifiedAt": null,
+      "evidence": null,
+      "notes": "Hourly monitor configured; initial run and actual alert delivery not verified"
+    },
+    "production-secrets-domain": {
+      "verified": false,
+      "verifiedAt": null,
+      "evidence": null,
+      "notes": "Separate production Turnstile credentials/domain, production API keys and deployment settings not yet verified"
+    },
+    "cutover-rollback": {
+      "verified": false,
+      "verifiedAt": null,
+      "evidence": null,
+      "notes": "Production SQL migration rollback and release steps have not been rehearsed"
+    }
+  }
+}
