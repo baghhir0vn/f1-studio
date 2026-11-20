@@ -1,4 +1,5 @@
 import { showToast } from './ui.js';
+import { CONFIG } from './config.js';
 import { realtimeService } from './services/realtime-service.js';
 import { state as s, ctx } from './state.js';
 import { ADMIN_API } from './admin-shared.js';
@@ -13,7 +14,7 @@ export function initAdmin() {
     initAdminOrders();
     initAdminCustomers();
     initAdminReviews();
-        function isAdminUser(){ return !!s.authUser && (s.authUser.role === "admin" || s.authUser.isAdmin === true); }
+        function isAdminUser(){ return !!s.authUser && s.authUser.role === "admin" && s.authUser.blocked !== true && (!CONFIG.securityPreview || s.adminMfaAssured === true); }
         function setAdminRealtimeStatus(state, text){
             const el=document.getElementById("adminRealtimeStatus"); if(!el)return;
             const dot=el.querySelector(".admin-realtime-dot");
@@ -125,7 +126,11 @@ export function initAdmin() {
             requestAnimationFrame(()=>window.scrollTo(0,snapshot.scrollY));
         }
         function openAdmin(){
-            if(!ctx.isAdminUser()) return showToast("Admin panelinə giriş icazəniz yoxdur.");
+            if(!ctx.isAdminUser()) {
+                if(CONFIG.securityPreview && s.authUser?.role === "admin") void ctx.promptAdminMfa?.();
+                else showToast("Admin panelinə giriş icazəniz yoxdur.");
+                return;
+            }
             const adminMain=document.querySelector("#adminModal .admin-main");
             if(adminMain && !adminMain.hasAttribute("tabindex")) adminMain.setAttribute("tabindex","0");
             lockAdminBackgroundScroll();
