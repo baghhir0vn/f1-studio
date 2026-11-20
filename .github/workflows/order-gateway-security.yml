@@ -27,6 +27,8 @@ on:
       - "css/admin-mfa.css"
       - "tools/security-baseline-test.mjs"
       - "tools/admin-mfa-controller-test.mjs"
+      - "security-waf-rate-limit-candidate.json"
+      - "tools/waf-proposal-test.mjs"
       - "vercel.json"
       - "js/config.js"
   push:
@@ -59,6 +61,7 @@ jobs:
           node --check tools/admin-mfa-ui-test.mjs
           node --check tools/security-baseline-test.mjs
           node --check tools/admin-mfa-controller-test.mjs
+          node --check tools/waf-proposal-test.mjs
       - name: Run isolated gateway contract tests
         run: node --test tools/order-gateway-contract-test.mjs
       - name: Verify preview isolation and no WhatsApp handoff
@@ -69,6 +72,8 @@ jobs:
         run: node --test tools/admin-mfa-controller-test.mjs
       - name: Scan public assets for secret leaks and validate security headers
         run: node --test tools/security-baseline-test.mjs
+      - name: Verify WAF rate-limit proposal cannot touch production
+        run: node --test tools/waf-proposal-test.mjs
 
   postgres-migration:
     runs-on: ubuntu-latest
