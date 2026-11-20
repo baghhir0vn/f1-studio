@@ -17,6 +17,7 @@ export function initAdminMfa() {
     let busy = false;
     let accountId = null;
     let managed = false;
+    let checkVersion = 0;
 
     function resetSensitiveUi() {
         pendingFactorId = null;
@@ -59,6 +60,7 @@ export function initAdminMfa() {
     async function checkAdminMfa({ prompt = true } = {}) {
         if (!CONFIG.securityPreview) return;
         const userId = s.authUser?.id || null;
+        const version = ++checkVersion;
         accountId = userId;
         resetSensitiveUi();
         if (!isAdminProfile()) {
@@ -73,7 +75,7 @@ export function initAdminMfa() {
             const [assurance, verifiedFactors] = await Promise.all([
                 adminMfaService.assurance(), adminMfaService.factors()
             ]);
-            if (accountId !== s.authUser?.id) return; // Don't reuse a previous account's MFA result.
+            if (version !== checkVersion || userId !== s.authUser?.id) return; // Reject stale account/session responses.
             if (assurance.currentLevel === 'aal2' && verifiedFactors.length) {
                 refreshAdminControls(true);
                 renderStage('secured');
@@ -124,10 +126,11 @@ export function initAdminMfa() {
         if (!isAdminProfile() || busy) return;
         // Once a factor is pending, do not create additional unused secrets on repeated clicks.
         if (pendingFactorId) return;
+        const userId = s.authUser?.id;
         setBusy(true);
         try {
             const result = await adminMfaService.startEnrollment();
-            if (accountId !== s.authUser?.id) return;
+            if (userId !== s.authUser?.id || userId !== accountId) return;
             pendingFactorId = result.factorId;
             const qr = byId('adminMfaQr');
             if (qr) {
@@ -161,10 +164,11 @@ export function initAdminMfa() {
         const factorId = stage === 'enrolling'
             ? pendingFactorId : byId('adminMfaFactor')?.value;
         if (!factorId) return setStatus('MFA cihazı seçilməyib.', true);
+        const userId = s.authUser?.id;
         setBusy(true);
         try {
             await adminMfaService.verify(factorId, code);
-            if (accountId !== s.authUser?.id) return;
+            if (userId !== s.authUser?.id || userId !== accountId) return;
             resetSensitiveUi();
             refreshAdminControls(true);
             renderStage('secured');
@@ -188,6 +192,7 @@ export function initAdminMfa() {
     }
     function resetAdminMfaState() {
         accountId = null;
+        ++checkVersion;
         managed = false;
         resetSensitiveUi();
         refreshAdminControls(false);
