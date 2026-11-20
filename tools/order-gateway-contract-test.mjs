@@ -28,6 +28,8 @@ const makeRes=()=>{
   return res;
 };
 const env=()=>{
+  process.env.SUPABASE_URL='https://isolated-test.supabase.co';
+  delete process.env.VERCEL_ENV;
   process.env.SUPABASE_SERVICE_ROLE_KEY='fake-testing-service-role-key';
   process.env.TURNSTILE_SECRET_KEY='fake-testing-captcha-secret';
 };
@@ -120,4 +122,13 @@ test('invalid JWT stops checkout before CAPTCHA or RPC',async()=>{
   },()=>handler(makeReq({headers:{...makeReq().headers,authorization:'Bearer invalid.token'}}),res));
   assert.equal(res.statusCode,401);
   assert.equal(calls,1);
+});
+
+test('preview rejects production Supabase database',async()=>{
+  env();process.env.VERCEL_ENV='preview';
+  process.env.SUPABASE_URL='https://rfkqxiwbicjsszjbdhzd.supabase.co';
+  const res=makeRes();await handler(makeReq(),res);
+  assert.equal(res.statusCode,503);
+  assert.equal(res.body.error,'PREVIEW_DATABASE_NOT_ISOLATED');
+  delete process.env.VERCEL_ENV;
 });
