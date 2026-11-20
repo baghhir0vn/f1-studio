@@ -28,6 +28,7 @@ const makeRes=()=>{
   return res;
 };
 const env=()=>{
+  delete process.env.SUPABASE_SECRET_KEY;
   process.env.SUPABASE_URL='https://isolated-test.supabase.co';
   delete process.env.VERCEL_ENV;
   process.env.SUPABASE_SERVICE_ROLE_KEY='fake-testing-service-role-key';
@@ -131,4 +132,29 @@ test('preview rejects production Supabase database',async()=>{
   assert.equal(res.statusCode,503);
   assert.equal(res.body.error,'PREVIEW_DATABASE_NOT_ISOLATED');
   delete process.env.VERCEL_ENV;
+});
+
+test('new Supabase secret key is accepted by the server-only gateway',async()=>{
+  env();
+  process.env.SUPABASE_SECRET_KEY='sb_secret_synthetic_test_only';
+  delete process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const res=makeRes();
+  const requests=[];
+  await withFetch(async(url,opts)=>{
+    const target=String(url);
+    requests.push({target,headers:opts?.headers||{}});
+    if(target.includes('siteverify')){
+      return reply({success:true,action:'order_checkout',hostname:host});
+    }
+    if(target.includes('/rpc/create_order_gateway')){
+      return reply({order:{order_code:'F1-SECRET-TEST',status:'pending_confirmation',total:7.5}});
+    }
+    throw Error('Unexpected outgoing request');
+  },()=>handler(makeReq(),res));
+  assert.equal(res.statusCode,200);
+  assert.equal(res.body.order.orderCode,'F1-SECRET-TEST');
+  const rpc=requests.find(x=>x.target.includes('/rpc/create_order_gateway'));
+  assert.ok(rpc,'RPC request must use isolated test service');
+  assert.equal(rpc.headers.apikey,'sb_secret_synthetic_test_only');
+  delete process.env.SUPABASE_SECRET_KEY;
 });
