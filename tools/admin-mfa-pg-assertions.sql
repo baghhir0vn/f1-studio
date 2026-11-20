@@ -24,11 +24,11 @@ insert into public.orders(id,user_id) values
  (2,'00000000-0000-4000-8000-000000000002');
 alter table public.orders enable row level security;
 grant select on public.orders to authenticated;
+-- Apply the staged exact SQL, not a duplicated mock.
+\i security-admin-mfa-preview.sql
 create policy "orders own read" on public.orders
   for select to authenticated
   using (user_id=(select auth.uid()) or public.is_admin());
--- Apply the staged exact SQL, not a duplicated mock.
-\i security-admin-mfa-preview.sql
 grant execute on function private.is_admin_user() to authenticated;
 
 set local role authenticated;
