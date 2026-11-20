@@ -3,7 +3,7 @@
 // Never expose them in js/config.js or the browser. Deployment is fail-closed.
 import { isIP } from 'node:net';
 
-const supabaseUrl = String(process.env.SUPABASE_URL || '').replace(/[/]+$/, '');
+const getSupabaseUrl = () => String(process.env.SUPABASE_URL || '').replace(/[/]+$/, '');
 const limit = 512 * 1024;
 const json = (res,status,body) => {
   res.setHeader('Cache-Control','no-store');
@@ -42,7 +42,7 @@ async function verifyCaptcha(token,ip,hostname,secret) {
     && result.action === 'order_checkout'
     && result.hostname?.toLowerCase() === hostname.toLowerCase();
 }
-async function verifiedUserId(authHeader,serviceKey) {
+async function verifiedUserId(authHeader,serviceKey,supabaseUrl) {
   if (!authHeader) return null;
   if (!/^Bearer [A-Za-z0-9._-]+$/.test(authHeader)) return false;
   const token = authHeader.slice(7);
@@ -64,6 +64,7 @@ export default async function handler(req,res) {
   if (!String(req.headers['content-type']||'').toLowerCase().startsWith('application/json')) {
     return fail(res,415,'UNSUPPORTED_MEDIA_TYPE');
   }
+  const supabaseUrl = getSupabaseUrl();
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const captchaSecret = process.env.TURNSTILE_SECRET_KEY;
   if (!serviceKey || !captchaSecret || !supabaseUrl) return fail(res,503,'CHECKOUT_NOT_CONFIGURED');
@@ -99,7 +100,7 @@ export default async function handler(req,res) {
   if (name.length<2||name.length>120||phone.length>40) return fail(res,400,'INVALID_ORDER');
   const authHeader = req.headers.authorization || '';
   try {
-    const userId = await verifiedUserId(authHeader,serviceKey);
+    const userId = await verifiedUserId(authHeader,serviceKey,supabaseUrl);
     if (userId===false) return fail(res,401,'AUTH_INVALID');
     const ok = await verifyCaptcha(token,ip,String(req.headers.host).split(':')[0],captchaSecret);
     if (!ok) return fail(res,403,'CAPTCHA_FAILED');
