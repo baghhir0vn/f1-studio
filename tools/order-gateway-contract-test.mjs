@@ -156,5 +156,6 @@ test('new Supabase secret key is accepted by the server-only gateway',async()=>{
   const rpc=requests.find(x=>x.target.includes('/rpc/create_order_gateway'));
   assert.ok(rpc,'RPC request must use isolated test service');
   assert.equal(rpc.headers.apikey,'sb_secret_synthetic_test_only');
+  assert.equal('Authorization' in rpc.headers,false,'Never send sb_secret as an Authorization Bearer token');
   delete process.env.SUPABASE_SECRET_KEY;
 });
