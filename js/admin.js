@@ -14,7 +14,7 @@ export function initAdmin() {
     initAdminOrders();
     initAdminCustomers();
     initAdminReviews();
-        function isAdminUser(){ return !!s.authUser && s.authUser.role === "admin" && s.authUser.blocked !== true && (!CONFIG.securityPreview || s.adminMfaAssured === true); }
+        function isAdminUser(){ return !!s.authUser && s.authUser.role === "admin" && s.authUser.blocked !== true && (CONFIG.adminMfaEnabled !== true || s.adminMfaAssured === true); }
         function setAdminRealtimeStatus(state, text){
             const el=document.getElementById("adminRealtimeStatus"); if(!el)return;
             const dot=el.querySelector(".admin-realtime-dot");
@@ -127,7 +127,7 @@ export function initAdmin() {
         }
         function openAdmin(){
             if(!ctx.isAdminUser()) {
-                if(CONFIG.securityPreview && s.authUser?.role === "admin") void ctx.promptAdminMfa?.();
+                if(CONFIG.adminMfaEnabled === true && s.authUser?.role === "admin") void ctx.promptAdminMfa?.();
                 else showToast("Admin panelinə giriş icazəniz yoxdur.");
                 return;
             }
