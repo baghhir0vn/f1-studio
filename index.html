@@ -69,6 +69,7 @@
 <link rel="stylesheet" href="css/admin-dashboard-refresh.css?v=2">
     <link rel="stylesheet" href="css/account-page.css?v=1">
 <link rel="stylesheet" href="css/auth-redesign.css?v=4">
+<link rel="stylesheet" href="css/admin-mfa.css?v=1">
     <link rel="stylesheet" href="css/product-whatsapp.css?v=2">
 </head>
 <body class="f1-home">
@@ -1100,6 +1101,56 @@
   </div>
 </div>
 
+<!-- MFA FOR SECURITY PREVIEW ADMINS: QR secret stays in memory only -->
+<div class="modal-center admin-mfa-modal" id="adminMfaModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="adminMfaTitle" aria-describedby="adminMfaStatus">
+  <div class="dialog">
+    <div class="admin-mfa-heading">
+      <div>
+        <span class="admin-mfa-eyebrow">F1 STUDIO • ADMIN TƏHLÜKƏSİZLİYİ</span>
+        <h2 id="adminMfaTitle">İki mərhələli təsdiq</h2>
+        <p class="admin-mfa-note">Admin panelinə giriş üçün telefonunuzdakı authenticator tətbiqi tələb olunur.</p>
+      </div>
+      <button class="close" type="button" id="adminMfaClose" data-action="closeAdminMfa" aria-label="MFA pəncərəsini bağla">×</button>
+    </div>
+    <p id="adminMfaStatus" class="admin-mfa-status" role="status" aria-live="polite">MFA yoxlanılır...</p>
+
+    <section id="adminMfaSetup" hidden aria-label="Təsdiqləyici cihaz qeydiyyatı">
+      <p class="admin-mfa-note">Google Authenticator, Microsoft Authenticator və ya başqa TOTP tətbiqində yeni hesab əlavə edin.</p>
+      <button type="button" id="adminMfaStart" class="admin-mfa-button" data-action="startAdminMfaEnrollment">🔐 QR kod yarat</button>
+      <div id="adminMfaSetupDetails" hidden>
+        <img id="adminMfaQr" class="admin-mfa-qr" alt="Authenticator tətbiqində skan etmək üçün şəxsi MFA QR kodu" hidden>
+        <p class="admin-mfa-note">QR-ni skan edə bilmirsinizsə, bu gizli açarı tətbiqə əl ilə yazın:</p>
+        <code id="adminMfaSecret" class="admin-mfa-secret"></code>
+        <p class="admin-mfa-warning">Bu açarı heç kimlə paylaşmayın və ekran görüntüsü göndərməyin. Pəncərə bağlananda səhifədən silinir.</p>
+      </div>
+    </section>
+
+    <section id="adminMfaChallenge" hidden aria-label="İkinci mərhələli təsdiq">
+      <label class="admin-mfa-field" for="adminMfaFactor">Təsdiqləyici cihaz
+        <select id="adminMfaFactor" aria-label="Təsdiqləyici cihaz"></select>
+      </label>
+    </section>
+
+    <div id="adminMfaCodeRow" hidden>
+      <label class="admin-mfa-field" for="adminMfaCode">Authenticator tətbiqindəki 6 rəqəmli kod
+        <input id="adminMfaCode" class="admin-mfa-code" type="text" inputmode="numeric" maxlength="6" minlength="6" pattern="[0-9]{6}" autocomplete="one-time-code" data-enter-action="submitAdminMfaCode" placeholder="000000" aria-label="Altı rəqəmli MFA kodu">
+      </label>
+      <button type="button" id="adminMfaSubmit" class="admin-mfa-button" data-action="submitAdminMfaCode">Kodu təsdiqlə</button>
+    </div>
+
+    <section id="adminMfaSecured" hidden aria-label="MFA aktivdir">
+      <p class="admin-mfa-note">✅ Admin sessiyası ikinci mərhələli təsdiqdən keçib.</p>
+      <button type="button" id="adminMfaAddBackup" class="admin-mfa-button secondary" data-action="addAdminMfaBackup">+ Ehtiyat cihaz əlavə et</button>
+      <button type="button" class="admin-mfa-button" data-action="closeAdminMfa">Davam et</button>
+      <p class="admin-mfa-warning">Ehtiyat TOTP cihazını əsas cihazdan ayrı saxlayın. Hər iki cihaz itərsə, avtomatik MFA bypass yoxdur; hesab sahibi Supabase vasitəsilə şəxsiyyətini ayrıca təsdiqləməlidir.</p>
+    </section>
+
+    <section id="adminMfaRetry" hidden>
+      <button type="button" id="adminMfaRetryButton" class="admin-mfa-button" data-action="promptAdminMfa">Yenidən yoxla</button>
+    </section>
+  </div>
+</div>
+
 <!-- ADMIN PANEL -->
 <div class="modal-center admin-modal" id="adminModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="adminModalTitle">
   <div class="dialog">
@@ -1131,6 +1182,7 @@
             <div><h2 id="adminModalTitle">İdarə Paneli</h2><div class="admin-welcome" id="adminWelcomeText">Xoş gəlmisiniz, Admin</div></div>
           </div>
           <div class="admin-top-actions">
+            <button type="button" data-action="openAdminMfaManager" class="admin-mfa-management" title="İkinci mərhələli girişi idarə et">🔐 MFA</button>
             <div class="admin-date-chip" aria-label="Bugünkü tarix"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg><time id="adminCurrentDate">—</time></div>
             <button class="admin-top-notification" id="adminTopNotification" type="button" data-action="switchAdminView" data-action-args='[&quot;orders&quot;]' aria-label="Sifariş bildirişləri"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span id="adminTopNotifBadge" class="hidden">0</span></button>
             <button class="close" type="button" data-action="closeAdmin" aria-label="Admin panelini bağla">×</button>
@@ -1553,7 +1605,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
 <script defer src="js/vendor/qrcode-generator-2.0.4.js"></script>
 <noscript><div style="padding:16px;background:#fff1f2;color:#7f1d1d;text-align:center;font-family:system-ui">Bu saytın sifariş və məhsul funksiyaları üçün JavaScript aktiv olmalıdır.</div></noscript>
-    <script type="module" src="js/app.js?v=147"></script>
+    <script type="module" src="js/app.js?v=148"></script>
     <script type="module" src="js/reference-mobile-dock.js?v=1"></script>
 </body>
 </html>
