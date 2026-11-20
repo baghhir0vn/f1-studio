@@ -10,7 +10,7 @@
 | 1. HTTPS + security headers | Preview has HSTS, CSP, nosniff, frame denial, referrer and permissions policies in `vercel.json` | Recheck production-equivalent CSP after browser flows; don't blindly enable COEP, which would break third-party widgets |
 | 2. Browser bot challenge | Real Cloudflare Turnstile sitekey, dedicated checkout action `order_checkout` | Visible in Preview; end-to-end live token acceptance not yet evidenced |
 | 3. API verification | `api/orders.js` validates Origin, request shape, length, trusted Vercel-forwarded IP, optional user JWT, one-use Turnstile response with exact action and hostname | Contract tests passed. No fallback to unverified browser RPC |
-| 4. Preview egress isolation | Only `https://dlwjkcqoclvlsyjmrjec.supabase.co` accepted by checkout in Vercel Preview; no userinfo, paths, HTTP or attacker-controlled domains | `tools/order-gateway-contract-test.mjs` passes bad destinations and valid isolated project |
+| 4. Environment-bound checkout isolation | Exact Supabase project allowlist now enforced in **both** Vercel Preview (`dlwjkcqoclvlsyjmrjec`) and Production (`rfkqxiwbicjsszjbdhzd`) by `api/orders.js`; unknown Vercel environments fail closed | Extra contract tests reject cross-project checkout writes, HTTP, credentials in URLs, arbitrary Supabase tenants, and unknown deployment environments. Production code not deployed. |
 | 5. DB role enforcement | `security-order-gateway-preview.sql` removes browser EXECUTE on original `create_order`; service-only gateway with IP-based SQL rate limiting | Applied only to TEST DB and disposable CI; production still has public old RPC |
 | 6. Review spam control | `security-reviews-blocked-users-preview.sql` adds RLS check for blocked customer accounts | Passed disposable PostgreSQL tests; not applied to production or test Supabase (no reviews schema there) |
 | 7. Admin MFA | Preview TOTP QR + six-digit challenge + optional backup-device path. AAL2 checks in `public.is_admin()` and `private.is_admin_user()` were **installed in the isolated TEST Supabase project only** via `security-admin-mfa-test-project.sql`. | Test DB has no real users/admin profiles; synthetic AAL1 and non-admin AAL2 were denied. CI real controller tests now cover canceled QR and stale responses across logout/same-account re-login. **Production has NOT enabled AAL2.** |
@@ -49,6 +49,16 @@ Official reference: https://supabase.com/docs/guides/auth/auth-mfa
 - **Next WAF change requires pricing review:** rate limiting on the endpoint can incur a bill; follow Vercel docs and observe a normal traffic baseline before setting limits. No paid rule or aggressive challenge was enabled.
 - Added CI `tools/security-baseline-test.mjs` to scan browser-delivered files for secret keys, reject production database URLs in Preview, and fail on weakened CSP/security headers.
 - Added behavior-based `tools/admin-mfa-controller-test.mjs` to reject late MFA enrollment/verification replies after cancellation, logout, and same-admin re-login. The controller increments a generation counter and fails closed on stale responses.
+
+## Next safe WAF candidate — NOT APPLIED
+
+- Candidate file: `security-waf-rate-limit-candidate.json`, verified by `tools/waf-proposal-test.mjs` in CI. It is **not** a deployed WAF rule or an activation instruction.
+- Exact scope: Preview environment **AND** dedicated security Preview host **AND** POST **AND** `/api/orders`.
+- Provisional threshold: **20 requests per IP per 60 seconds**, fixed window; initial excess action `log`, not block. This is a starting hypothesis, **not** a measured safe limit and not yet independently approved.
+- Actual WAF still has only one logging rule. No rate limiting and no new charge-eligible WAF rule has been enabled.
+- Vercel rate-limiting pricing depends on the plan and billing usage; first-time setup prompts pricing review. Official information: https://vercel.com/docs/vercel-firewall/vercel-waf/rate-limiting
+- Required first: determine normal order traffic rate, assess shared IP/NAT, review plan and billing impact, test false positives in isolation, get user approval, and retain a rollback mechanism.
+- Avoid trying to rate-limit frontend-only virtual paths like `/api/auth/login` at Vercel: login uses `sb.auth.signInWithPassword()` and reaches Supabase Auth directly. Supabase has its own auth endpoint limits; those need a separate verification.
 
 ## WAF rollout plan (rate limiting NOT applied)
 
