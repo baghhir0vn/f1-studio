@@ -28,6 +28,8 @@ jobs:
         run: |
           node --check api/orders.js
           node --check js/cart.js
+          node --check js/catalog.js
+          node --check js/services/product-service.js
           node --check js/services/order-service.js
           node --check tools/order-gateway-contract-test.mjs
       - name: Run isolated gateway contract tests
