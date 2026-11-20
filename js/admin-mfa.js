@@ -54,6 +54,7 @@ export function initAdminMfa() {
     function closeAdminMfa() {
         // Closing the prompt NEVER grants admin access.
         // The DB AAL2 policy will enforce MFA when the release is approved.
+        ++checkVersion; // Invalidate any pending enrollment/verification callbacks.
         resetSensitiveUi();
         managed = false;
         ctx.closeDialog?.('adminMfaModal');
@@ -104,6 +105,7 @@ export function initAdminMfa() {
             }
             if (prompt) ctx.openDialog?.('adminMfaModal', '#adminMfaStart');
         } catch {
+            if (version !== checkVersion || userId !== s.authUser?.id) return;
             refreshAdminControls(false);
             renderStage('error');
             setStatus('MFA vəziyyəti yoxlanılmadı. Yenidən cəhd edin.', true);
@@ -128,10 +130,11 @@ export function initAdminMfa() {
         // Once a factor is pending, do not create additional unused secrets on repeated clicks.
         if (pendingFactorId) return;
         const userId = s.authUser?.id;
+        const version = checkVersion;
         setBusy(true);
         try {
             const result = await adminMfaService.startEnrollment();
-            if (userId !== s.authUser?.id || userId !== accountId) return;
+            if (version !== checkVersion || userId !== s.authUser?.id || userId !== accountId) return;
             pendingFactorId = result.factorId;
             const qr = byId('adminMfaQr');
             if (qr) {
@@ -166,10 +169,11 @@ export function initAdminMfa() {
             ? pendingFactorId : byId('adminMfaFactor')?.value;
         if (!factorId) return setStatus('MFA cihazı seçilməyib.', true);
         const userId = s.authUser?.id;
+        const version = checkVersion;
         setBusy(true);
         try {
             await adminMfaService.verify(factorId, code);
-            if (userId !== s.authUser?.id || userId !== accountId) return;
+            if (version !== checkVersion || userId !== s.authUser?.id || userId !== accountId) return;
             resetSensitiveUi();
             refreshAdminControls(true);
             renderStage('secured');
@@ -186,6 +190,7 @@ export function initAdminMfa() {
     async function addAdminMfaBackup() {
         if (!isAdminProfile() || !s.adminMfaAssured || busy) return;
         // Requires already-verified MFA. Use a DIFFERENT device for redundancy.
+        ++checkVersion;
         resetSensitiveUi();
         renderStage('setup');
         show('adminMfaStart', true);
