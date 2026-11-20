@@ -7,6 +7,11 @@ on:
       - "server/security-observability.js"
       - "tools/security-observability-test.mjs"
       - "tools/security-release-readiness.mjs"
+      - "security-backup-structure-baseline.json"
+      - "tools/restore-structure-audit.sql"
+      - "tools/verify-restore-structure.mjs"
+      - "tools/verify-restore-structure-test.mjs"
+      - "tools/synthetic-db-restore-drill.sh"
       - "tools/security-release-readiness-test.mjs"
       - "security-production-release-evidence.json"
       - "api/newsletter.js"
@@ -61,6 +66,8 @@ jobs:
           node --check server/security-observability.js
           node --check tools/security-observability-test.mjs
           node --check tools/security-release-readiness.mjs
+          node --check tools/verify-restore-structure.mjs
+          node --check tools/verify-restore-structure-test.mjs
           node --check tools/security-release-readiness-test.mjs
           node --check api/newsletter.js
           node --check js/services/newsletter-service.js
@@ -88,6 +95,8 @@ jobs:
         run: |
           node --test tools/security-release-readiness-test.mjs
           node tools/security-release-readiness.mjs --report
+      - name: Reject missing restored schema, public customer buckets or disabled RLS
+        run: node --test tools/verify-restore-structure-test.mjs
       - name: Verify server-side newsletter signup and abuse handling
         run: node --test tools/newsletter-gateway-contract-test.mjs
       - name: Verify preview isolation and no WhatsApp handoff
@@ -144,3 +153,5 @@ jobs:
         run: psql -X -v ON_ERROR_STOP=1 -f security-newsletter-gateway-preview.sql
       - name: Verify anonymous RPC revoked and atomic per-IP newsletter rate limit
         run: psql -X -v ON_ERROR_STOP=1 -f tools/newsletter-gateway-pg-assertions.sql
+      - name: Rehearse local synthetic backup and restore into a separate database
+        run: bash tools/synthetic-db-restore-drill.sh
