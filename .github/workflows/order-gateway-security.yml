@@ -12,6 +12,8 @@ on:
       - "tools/gateway-pg-fixture.sql"
       - "tools/gateway-pg-assertions.sql"
       - "tools/admin-authorization-pg-assertions.sql"
+      - "security-reviews-blocked-users-preview.sql"
+      - "tools/reviews-blocked-pg-assertions.sql"
   push:
     branches: ["security/preview-order-spam-gateway-20261120"]
 
@@ -71,3 +73,5 @@ jobs:
         run: psql -X -v ON_ERROR_STOP=1 -f tools/gateway-pg-assertions.sql
       - name: Assert synthetic admin, customer, and blocked-role boundaries
         run: psql -X -v ON_ERROR_STOP=1 -f tools/admin-authorization-pg-assertions.sql
+      - name: Assert review RLS blocks banned accounts at database layer
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/reviews-blocked-pg-assertions.sql
