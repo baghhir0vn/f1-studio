@@ -69,13 +69,15 @@ The feature remains preview-only until the above tests pass.
 
 ## Preview status and remaining human-only setup
 
-The Vercel Preview browser uses **Cloudflare's public TEST sitekey**
-`1x00000000000000000000AA` to validate only UI rendering. This token
-offers **zero bot protection**; server checkout stays fail-closed until
-proper secrets are present. Cloudflare's official test verification response
-has `hostname: example.com` and no `action` property, so the existing
-strict hostname/action validation will REJECT dummy tokens even if you
-install a dummy secret. This is expected. Do not loosen these checks.
+The Vercel security Preview now uses the **real Cloudflare sitekey**
+`0x4AAAAAAGKpifK9AkrYwRjU` supplied by the widget owner on 2026-11-20.
+The Preview Turnstile secret is configured as branch-scoped Vercel
+`TURNSTILE_SECRET_KEY` (sensitive) and the isolated Supabase test
+secret as `SUPABASE_SECRET_KEY` (sensitive). These are not in source code.
+Cloudflare widget hostname must match the actual URL visited;
+prefer the registered stable branch alias for end-to-end browser tests.
+Token verification still requires both action `order_checkout` and exact
+hostname; a different Vercel deployment hostname is rejected intentionally.
 
 No Cloudflare account connector is available. The Supabase connector exposes
 public/publishable keys, but not the secret key. Do not request or paste
@@ -89,8 +91,7 @@ To validate end-to-end checkout safely:
    branch-scoped Preview `SUPABASE_SECRET_KEY` (type: sensitive/encrypted);
    **not** production and never the production Supabase secret.
 3. Create a Cloudflare Turnstile widget for the exact Preview hostname,
-   record its real sitekey and secret. Replace the public Preview test
-   sitekey in `js/config.js` with this Preview-specific sitekey.
+   use its real sitekey and secret. (Completed for this Preview branch.)
 4. Set branch-scoped Preview `TURNSTILE_SECRET_KEY` in Vercel (encrypted).
 5. Redeploy this branch and run guest/authenticated checkout with
    synthetic data. Never send test orders to a real WhatsApp number.
