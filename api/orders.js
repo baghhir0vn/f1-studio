@@ -2,6 +2,7 @@
 // Secrets: SUPABASE_SECRET_KEY (preferred; legacy SUPABASE_SERVICE_ROLE_KEY supported) and TURNSTILE_SECRET_KEY.
 // Never expose them in js/config.js or the browser. Deployment is fail-closed.
 import { isIP } from 'node:net';
+import { createSecurityResponder } from '../server/security-observability.js';
 
 const getSupabaseUrl = () => String(process.env.SUPABASE_URL || '').replace(/[/]+$/, '');
 const limit = 512 * 1024;
@@ -28,13 +29,6 @@ const validSupabaseTarget = raw => {
       : Boolean(expectedHost) && u.hostname === expectedHost);
   } catch { return false; }
 };
-const json = (res,status,body) => {
-  res.setHeader('Cache-Control','no-store');
-  res.setHeader('Content-Type','application/json; charset=utf-8');
-  return res.status(status).json(body);
-};
-const fail = (res,status,code) => json(res,status,{error:code});
-
 const sameOrigin = req => {
   const host = String(req.headers.host || '').toLowerCase();
   const origin = String(req.headers.origin || '');
@@ -78,44 +72,46 @@ async function verifiedUserId(authHeader,serviceKey,supabaseUrl) {
   return typeof u.id === 'string' && /^[0-9a-f-]{36}$/i.test(u.id) ? u.id : false;
 }
 export default async function handler(req,res) {
+  const respond = createSecurityResponder(res, 'checkout');
+  const fail = (status, code) => respond(status, {error: code});
   if (req.method !== 'POST') {
     res.setHeader('Allow','POST');
-    return fail(res,405,'METHOD_NOT_ALLOWED');
+    return fail(405,'METHOD_NOT_ALLOWED');
   }
   // Reject cross-origin browser submissions and requests missing Origin.
-  if (!sameOrigin(req)) return fail(res,403,'ORIGIN_REJECTED');
+  if (!sameOrigin(req)) return fail(403,'ORIGIN_REJECTED');
   if (!String(req.headers['content-type']||'').toLowerCase().startsWith('application/json')) {
-    return fail(res,415,'UNSUPPORTED_MEDIA_TYPE');
+    return fail(415,'UNSUPPORTED_MEDIA_TYPE');
   }
   const supabaseUrl = getSupabaseUrl();
   const serviceKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
   const captchaSecret = process.env.TURNSTILE_SECRET_KEY;
-  if (!serviceKey || !captchaSecret || !supabaseUrl) return fail(res,503,'CHECKOUT_NOT_CONFIGURED');
+  if (!serviceKey || !captchaSecret || !supabaseUrl) return fail(503,'CHECKOUT_NOT_CONFIGURED');
   // Reject malformed or unapproved Supabase origins before sending a secret.
   // This branch has only one approved Preview database.
   if (!validSupabaseTarget(supabaseUrl)) {
-    return fail(res,503,'PREVIEW_DATABASE_NOT_ISOLATED');
+    return fail(503,'PREVIEW_DATABASE_NOT_ISOLATED');
   }
 
   const reportedLength = Number(req.headers['content-length']||0);
-  if (reportedLength > limit) return fail(res,413,'ORDER_TOO_LARGE');
+  if (reportedLength > limit) return fail(413,'ORDER_TOO_LARGE');
   const ip = clientIp(req);
-  if (!ip) return fail(res,503,'NETWORK_VERIFICATION_UNAVAILABLE');
+  if (!ip) return fail(503,'NETWORK_VERIFICATION_UNAVAILABLE');
 
   let body;
   try {
     if (typeof req.body === 'string') body = JSON.parse(req.body);
     else body = req.body;
     if (!body || typeof body !== 'object' || Array.isArray(body)) throw Error();
-    if (Buffer.byteLength(JSON.stringify(body),'utf8')>limit) return fail(res,413,'ORDER_TOO_LARGE');
-  } catch {return fail(res,400,'INVALID_ORDER');}
+    if (Buffer.byteLength(JSON.stringify(body),'utf8')>limit) return fail(413,'ORDER_TOO_LARGE');
+  } catch {return fail(400,'INVALID_ORDER');}
 
   const token = body.captchaToken;
   if (typeof token !== 'string' || token.length<10 || token.length>4096) {
-    return fail(res,400,'CAPTCHA_REQUIRED');
+    return fail(400,'CAPTCHA_REQUIRED');
   }
   const items = body.items;
-  if (!Array.isArray(items)||!items.length||items.length>50) return fail(res,400,'INVALID_ORDER_ITEMS');
+  if (!Array.isArray(items)||!items.length||items.length>50) return fail(400,'INVALID_ORDER_ITEMS');
   // Cheap input checks BEFORE any network call: the database repeats all
   // sensitive business validation; these checks only reduce abuse cost.
   for (const item of items) {
@@ -124,29 +120,29 @@ export default async function handler(req,res) {
       || !Number.isInteger(item.qty) || item.qty < 1 || item.qty > 100
       || (item.customization != null
         && (typeof item.customization !== 'object' || Array.isArray(item.customization)))) {
-      return fail(res,400,'INVALID_ORDER_ITEMS');
+      return fail(400,'INVALID_ORDER_ITEMS');
     }
   }
   if (!['pickup','ganja','region'].includes(body.delivery || 'pickup')) {
-    return fail(res,400,'INVALID_ORDER');
+    return fail(400,'INVALID_ORDER');
   }
   if (body.delivery !== 'pickup' && body.delivery != null
     && body.addressUnknown !== true && !String(body.address || '').trim()) {
-    return fail(res,400,'INVALID_ORDER');
+    return fail(400,'INVALID_ORDER');
   }
   const customer = body.customer;
-  if (!customer || typeof customer !== 'object'||Array.isArray(customer)) return fail(res,400,'INVALID_ORDER');
+  if (!customer || typeof customer !== 'object'||Array.isArray(customer)) return fail(400,'INVALID_ORDER');
   const name = String(customer.name||'').trim();
   const phone = String(customer.phone||'').trim();
   const phoneDigits = phone.replace(/[^0-9]/g,'');
   if (name.length<2||name.length>120||phone.length>40
-      || phoneDigits.length<9||phoneDigits.length>15) return fail(res,400,'INVALID_ORDER');
+      || phoneDigits.length<9||phoneDigits.length>15) return fail(400,'INVALID_ORDER');
   const authHeader = req.headers.authorization || '';
   try {
     const userId = await verifiedUserId(authHeader,serviceKey,supabaseUrl);
-    if (userId===false) return fail(res,401,'AUTH_INVALID');
+    if (userId===false) return fail(401,'AUTH_INVALID');
     const ok = await verifyCaptcha(token,ip,String(req.headers.host).split(':')[0],captchaSecret);
-    if (!ok) return fail(res,403,'CAPTCHA_FAILED');
+    if (!ok) return fail(403,'CAPTCHA_FAILED');
 
     const rpc = await fetch(supabaseUrl+'/rest/v1/rpc/create_order_gateway',{
       method:'POST',
@@ -174,17 +170,17 @@ export default async function handler(req,res) {
         'OUT_OF_STOCK','ORDER_RATE_LIMITED','ACCOUNT_BLOCKED',
         'INVALID_DESIGN_PATH','DESIGN_FILE_NOT_FOUND']);
       const code = String(err.message||'');
-      return fail(res,code==='ORDER_RATE_LIMITED'?429:400,
+      return fail(code==='ORDER_RATE_LIMITED'?429:400,
         safe.has(code)?code:'ORDER_REJECTED');
     }
     const result = await rpc.json();
     const order = result?.order;
     if (!order || !order.order_code || typeof order.total==='undefined') {
-      return fail(res,502,'ORDER_RESPONSE_INVALID');
+      return fail(502,'ORDER_RESPONSE_INVALID');
     }
-    return json(res,200,{order:{orderCode:order.order_code,status:order.status,
+    return respond(200,{order:{orderCode:order.order_code,status:order.status,
       total_cents:Math.round(Number(order.total)*100)}});
   } catch {
-    return fail(res,503,'CHECKOUT_TEMPORARILY_UNAVAILABLE');
+    return fail(503,'CHECKOUT_TEMPORARILY_UNAVAILABLE');
   }
 }
