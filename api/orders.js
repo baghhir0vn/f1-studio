@@ -1,5 +1,5 @@
 // Vercel Node.js Function — server-verified checkout.
-// Secrets: SUPABASE_SERVICE_ROLE_KEY and TURNSTILE_SECRET_KEY.
+// Secrets: SUPABASE_SECRET_KEY (preferred; legacy SUPABASE_SERVICE_ROLE_KEY supported) and TURNSTILE_SECRET_KEY.
 // Never expose them in js/config.js or the browser. Deployment is fail-closed.
 import { isIP } from 'node:net';
 
@@ -65,7 +65,7 @@ export default async function handler(req,res) {
     return fail(res,415,'UNSUPPORTED_MEDIA_TYPE');
   }
   const supabaseUrl = getSupabaseUrl();
-  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const serviceKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
   const captchaSecret = process.env.TURNSTILE_SECRET_KEY;
   if (!serviceKey || !captchaSecret || !supabaseUrl) return fail(res,503,'CHECKOUT_NOT_CONFIGURED');
   // A Preview with production Supabase credentials is unsafe: fail closed.
