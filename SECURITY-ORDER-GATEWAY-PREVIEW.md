@@ -50,3 +50,19 @@ REVOKE before deploying the Function will break checkout. Releasing the
 Function before migration will also make it fail until the gateway exists.
 
 The feature remains preview-only until the above tests pass.
+
+## Actual isolated Supabase validation — 2026-11-20
+
+- Free project `F1 Studio Security Test` (`dlwjkcqoclvlsyjmrjec`) was created at quoted $0/month in `F1studio`. Its database is separate from production (`rfkqxiwbicjsszjbdhzd`).
+- The test project has a minimal checkout/catalog schema, test product records, and no copied customer data.
+- Applied the original production `create_order()` to the test project, then the gateway restriction migration. Initial guest checkout found two existing PL/pgSQL ambiguities (`ON CONFLICT (rate_key)` and `item` alias). Applied a corrected source **to the TEST database only**; the correction is staged separately in `security-create-order-ambiguity-fix.sql`.
+- Test checkout scenarios under a transaction with rollback: guest order, authoritative price despite fake frontend price, disabled product, invalid quantity, per-IP rate limit 8 in 10 minutes; passed. PostgreSQL code and privilege contract tests passed in GitHub CI.
+- After rollback: **0 test orders, 0 test order items, 0 rate-limit entries**, three test products.
+- Branch Preview `js/config.js`, HTML CSP, `vercel.json` CSP and asset URL checks now use only the test Supabase URL. The production branch was not changed.
+- A branch-scoped Vercel Preview `SUPABASE_URL` points to the separate test project. **Do not put a production Supabase service-role key into this Preview.**
+- Outstanding: configure matching **test** `SUPABASE_SERVICE_ROLE_KEY` and `TURNSTILE_SECRET_KEY` as encrypted/sensitive Preview environment variables, register or verify Preview hostname with the Cloudflare widget, then test full browser-to-server-to-Supabase checkout with that isolated project.
+- Full application may show missing ancillary tables such as reviews/newsletter until the test schema is expanded; the isolation is intentionally focused on order checkout first.
+
+## Production release safety
+
+**Do not merge this branch directly to main.** The branch's static client configuration and CSP deliberately point to the test database. A production release must restore the production Supabase publishable URL and CSP, install production server-only secrets, apply the staged SQL migrations with an atomic cutover and verify that direct anonymous RPC is denied. Merely merging the preview branch would redirect the public site to the wrong database.
