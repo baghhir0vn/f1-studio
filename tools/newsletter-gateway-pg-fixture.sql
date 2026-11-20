@@ -15,7 +15,16 @@ declare
   count_inserted integer := 0;
 begin
   if length(clean_email)<5 or length(clean_email)>254
-    or clean_email !~ '^[^[:space:]@]+@[^[:space:]@]+\\.[^[:space:]@]+$'
+    or clean_email !~ '^[^[:space:]@]+@[^[:space:]@]+\.[^[:space:]@]+
+  then raise exception 'INVALID_NEWSLETTER_EMAIL'; end if;
+  insert into public.newsletter_subscribers(email) values(clean_email)
+  on conflict(email) do nothing;
+  get diagnostics count_inserted = row_count;
+  return jsonb_build_object('ok',true,'subscribed',true,
+    'already_subscribed',count_inserted=0);
+end $function$;
+grant execute on function public.subscribe_newsletter(text) to anon,authenticated,service_role;
+
   then raise exception 'INVALID_NEWSLETTER_EMAIL'; end if;
   insert into public.newsletter_subscribers(email) values(clean_email)
   on conflict(email) do nothing;
