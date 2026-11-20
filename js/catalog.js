@@ -2,6 +2,7 @@ import { safeHttpUrl, safeResourceUrl } from './security.js';
 import { persist, escapeHTML, money, normalizeText, showToast } from './ui.js';
 import { state as s, ctx } from './state.js';
 import { CONFIG } from './config.js';
+import { productService } from './services/product-service.js';
 import { buildProductCustomizationWhatsAppLink, buildPublicProductUrl, normalizeProductWhatsAppNumber } from './product-whatsapp.js?v=2';
 const WHATSAPP_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 11.5a8.5 8.5 0 0 1-12.6 7.4L3 20l1.2-4.6A8.5 8.5 0 1 1 20.5 11.5Z"></path><path d="M8.5 8.3c.3-.6.6-.6 1-.6h.4l1 2.3-.8.8c.7 1.3 1.5 2.1 2.8 2.7l.8-.8 2.2 1c.1.4 0 .8-.2 1.1-.4.5-1 .8-1.7.7-2.5-.4-5.7-3.3-6.3-5.7-.2-.6.1-1.2.8-1.5Z"></path></svg>';
 function setProductWhatsAppButton(button, product) {
@@ -167,9 +168,11 @@ export function initCatalog() {
         }
         if (!s.serverCatalogReady) renderCatalogSkeleton();
         try {
-            const data = await ctx.api("/api/products");
-            if(Array.isArray(data.products) && data.products.length){
-                s.products=data.products;
+            // Public catalog is read directly from the isolated Supabase project under RLS.
+            // This preview does not have a /api/products endpoint.
+            const products = await productService.list();
+            if(Array.isArray(products) && products.length){
+                s.products=products;
                 s.serverCatalogReady=true;
                 if(status){status.style.display="none";status.setAttribute("aria-busy","false");status.innerHTML="";status.className="notice catalog-status";}
                 ctx.updateProductStructuredData(s.products);
@@ -579,7 +582,8 @@ export function initCatalog() {
         if (!s.showAllProducts && !s.viewingFavs && !s.smartFilterActive && !s.activeTag && !s.activeCat && !q.trim()) {
             list = list.filter(p => {
                 const sources = [...(Array.isArray(p.images) ? p.images : []), p.image];
-                return sources.some(source => !!safeResourceUrl(source, {allowData:false, allowBlob:false, allowRelative:true}));
+                // In security Preview, show synthetic products even without photos.
+                return CONFIG.securityPreview || sources.some(source => !!safeResourceUrl(source, {allowData:false, allowBlob:false, allowRelative:true}));
             }).slice(0, 5);
         }
         if (sort === "low") list.sort((a,b) => a.price-b.price);
