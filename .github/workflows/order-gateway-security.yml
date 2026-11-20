@@ -4,6 +4,12 @@ on:
   pull_request:
     paths:
       - "api/orders.js"
+      - "api/newsletter.js"
+      - "js/services/newsletter-service.js"
+      - "security-newsletter-gateway-preview.sql"
+      - "tools/newsletter-gateway-pg-fixture.sql"
+      - "tools/newsletter-gateway-pg-assertions.sql"
+      - "tools/newsletter-gateway-contract-test.mjs"
       - "tools/order-gateway-contract-test.mjs"
       - "js/cart.js"
       - "js/services/order-service.js"
@@ -47,6 +53,9 @@ jobs:
       - name: Validate JavaScript syntax
         run: |
           node --check api/orders.js
+          node --check api/newsletter.js
+          node --check js/services/newsletter-service.js
+          node --check tools/newsletter-gateway-contract-test.mjs
           node --check js/cart.js
           node --check js/catalog.js
           node --check js/services/product-service.js
@@ -64,6 +73,8 @@ jobs:
           node --check tools/waf-proposal-test.mjs
       - name: Run isolated gateway contract tests
         run: node --test tools/order-gateway-contract-test.mjs
+      - name: Verify server-side newsletter signup and abuse handling
+        run: node --test tools/newsletter-gateway-contract-test.mjs
       - name: Verify preview isolation and no WhatsApp handoff
         run: node --test tools/preview-isolation-test.mjs
       - name: Verify MFA enrollment, AAL2, and admin UI wiring
@@ -112,3 +123,9 @@ jobs:
         run: psql -X -v ON_ERROR_STOP=1 -f tools/reviews-blocked-pg-assertions.sql
       - name: Assert staged admin MFA needs AAL2 and role authorization
         run: psql -X -v ON_ERROR_STOP=1 -f tools/admin-mfa-pg-assertions.sql
+      - name: Create synthetic newsletter signup fixture
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/newsletter-gateway-pg-fixture.sql
+      - name: Apply isolated newsletter gateway migration
+        run: psql -X -v ON_ERROR_STOP=1 -f security-newsletter-gateway-preview.sql
+      - name: Verify anonymous RPC revoked and atomic per-IP newsletter rate limit
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/newsletter-gateway-pg-assertions.sql
