@@ -107,7 +107,9 @@ export default async function handler(req,res) {
 
     const rpc = await fetch(supabaseUrl+'/rest/v1/rpc/create_order_gateway',{
       method:'POST',
-      headers:{apikey:serviceKey,Authorization:'Bearer '+serviceKey,'Content-Type':'application/json'},
+      // New sb_secret_* keys identify the trusted backend via apikey only;
+      // sending them as Bearer tokens breaks PostgREST JWT verification.
+      headers:{apikey:serviceKey,'Content-Type':'application/json'},
       body:JSON.stringify({
         p_items:items,
         p_customer_name:name,
