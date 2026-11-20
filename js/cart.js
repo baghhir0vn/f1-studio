@@ -253,12 +253,12 @@ export function initCart() {
             void ensureCheckoutCaptcha();
             return showToast("Sifariş üçün təhlükəsizlik yoxlamasını tamamlayın.");
         }
-        if(!String(CONFIG.whatsappNumber||"").replace(/\D/g,"")) return showToast("WhatsApp nömrəsi hələ təyin edilməyib. Admin paneldə Sayt Ayarlarından əlavə edin.");
+        if(!CONFIG.securityPreview && !String(CONFIG.whatsappNumber||"").replace(/\D/g,"")) return showToast("WhatsApp nömrəsi hələ təyin edilməyib. Admin paneldə Sayt Ayarlarından əlavə edin.");
         const button=document.querySelector('button[data-action="checkout"]');
         if(button?.disabled) return;
         const oldText=button?.textContent;
         if(button){button.disabled=true;button.textContent="⏳ Sifariş yoxlanılır...";}
-        const popup=window.open("about:blank","_blank");
+        const popup=CONFIG.securityPreview ? { close(){}, document:{title:""}, location:"" } : window.open("about:blank","_blank");
         if(!popup){
             if(button){button.disabled=false;button.textContent=oldText||"WhatsApp ilə Sifariş Et";}
             return showToast("WhatsApp pəncərəsi brauzer tərəfindən bloklandı. Sayt üçün popup icazəsi verin.");
@@ -287,20 +287,22 @@ export function initCart() {
                 delivery,address,addressUnknown:unknown,giftWrap:isWrap,
                 captchaToken:checkoutCaptchaToken
             })});
-            const whatsappUrl=ctx.buildWhatsAppUrl(CONFIG.whatsappNumber,result.order?.orderCode||"");
-            if(!whatsappUrl){
-                popup.close();
-                showToast("Sifariş yaradıldı, amma WhatsApp keçidi hazırlana bilmədi. Adminlə əlaqə saxlayın.");
-                return;
+            if(!CONFIG.securityPreview){
+                const whatsappUrl=ctx.buildWhatsAppUrl(CONFIG.whatsappNumber,result.order?.orderCode||"");
+                if(!whatsappUrl){
+                    popup.close();
+                    showToast("Sifariş yaradıldı, amma WhatsApp keçidi hazırlana bilmədi. Adminlə əlaqə saxlayın.");
+                    return;
+                }
+                popup.location=whatsappUrl;
             }
-            popup.location=whatsappUrl;
             s.cart=[]; ctx.saveCart();
             document.getElementById("orderForm").style.display="none";
             document.getElementById("giftWrap").checked=false;
             ["name","phone","address"].forEach(id=>document.getElementById(id).value="");
             await ctx.renderOrderHistory();
             ctx.closeCart();
-            showToast(`Sifariş ${result.order.orderCode} yaradıldı. WhatsApp açıldı.`);
+            showToast(CONFIG.securityPreview ? `TEST sifarişi ${result.order.orderCode} yaradıldı. WhatsApp-a göndərilmədi.` : `Sifariş ${result.order.orderCode} yaradıldı. WhatsApp açıldı.`);
         } catch(e) {
             popup.close();
             const raw = safeUserError(e, "Sifariş göndərilmədi.");
