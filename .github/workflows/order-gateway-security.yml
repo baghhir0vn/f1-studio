@@ -1,0 +1,32 @@
+name: Order gateway security tests
+
+on:
+  pull_request:
+    paths:
+      - "api/orders.js"
+      - "tools/order-gateway-contract-test.mjs"
+      - "js/cart.js"
+      - "js/services/order-service.js"
+      - "security-order-gateway-preview.sql"
+      - ".github/workflows/order-gateway-security.yml"
+  push:
+    branches: ["security/preview-order-spam-gateway-20261120"]
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Validate JavaScript syntax
+        run: |
+          node --check api/orders.js
+          node --check js/cart.js
+          node --check js/services/order-service.js
+          node --check tools/order-gateway-contract-test.mjs
+      - name: Run isolated gateway contract tests
+        run: node --test tools/order-gateway-contract-test.mjs
