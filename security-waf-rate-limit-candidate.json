@@ -1,0 +1,53 @@
+{
+  "$schema": "f1studio-internal-waf-proposal-v1",
+  "status": "PROPOSAL_ONLY_DO_NOT_APPLY",
+  "projectId": "prj_aEmhZAJVlsXsoPsCc0KSCmwoI6BQ",
+  "ruleName": "F1 Studio checkout - Preview-only rate limit (candidate)",
+  "description": "Candidate thresholds only; observe real preview request traffic and confirm plan/billing before applying",
+  "conditions": [
+    {
+      "type": "environment",
+      "op": "eq",
+      "value": "preview"
+    },
+    {
+      "type": "host",
+      "op": "eq",
+      "value": "f1studio-git-security-preview-orde-9ffb80-nurlanbagirov834-7802.vercel.app"
+    },
+    {
+      "type": "method",
+      "op": "eq",
+      "value": "POST"
+    },
+    {
+      "type": "path",
+      "op": "eq",
+      "value": "/api/orders"
+    }
+  ],
+  "rateLimitCandidate": {
+    "countingKey": "IP",
+    "algorithm": "fixed_window",
+    "windowSeconds": 60,
+    "maxRequestsPerWindow": 20,
+    "thresholdProvisional": true,
+    "initialExcessAction": "log",
+    "plannedExcessAction": "429",
+    "sharedNATReviewRequired": true
+  },
+  "activationGates": [
+    "Capture a representative Preview POST /api/orders request-rate baseline without logging credentials or customer payloads",
+    "Check Vercel project plan and pricing dialog; confirm any additional charges before enabling",
+    "Assess multiple legitimate customers sharing a NAT / VPN IP",
+    "Verify scope is the exact Preview hostname AND Vercel environment preview",
+    "Run benign tests under the threshold, then controlled synthetic burst tests with no database writes",
+    "Only after reviewing false positives, choose 429 or challenge and document a rollback rule ID",
+    "Never apply to production without explicit user approval and separate production conditions"
+  ],
+  "baseline": {
+    "available": false,
+    "comment": "Vercel active attack status returned no anomalies; this is NOT a rate distribution baseline."
+  },
+  "source": "https://vercel.com/docs/vercel-firewall/vercel-waf/rate-limiting"
+}
