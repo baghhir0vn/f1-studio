@@ -55,6 +55,7 @@ export function initAdminMfa() {
         // Closing the prompt NEVER grants admin access.
         // The DB AAL2 policy will enforce MFA when the release is approved.
         ++checkVersion; // Invalidate any pending enrollment/verification callbacks.
+        setBusy(false);
         resetSensitiveUi();
         managed = false;
         ctx.closeDialog?.('adminMfaModal');
@@ -64,6 +65,7 @@ export function initAdminMfa() {
         const userId = s.authUser?.id || null;
         const version = ++checkVersion;
         accountId = userId;
+        setBusy(false);
         resetSensitiveUi();
         if (!isAdminProfile()) {
             refreshAdminControls(false);
@@ -153,10 +155,11 @@ export function initAdminMfa() {
             setStatus('QR-ni telefonunuzdakı authenticator tətbiqi ilə skan edin. Sonra 6 rəqəmli kodu daxil edin.');
             byId('adminMfaCode')?.focus();
         } catch {
+            if (version !== checkVersion || userId !== s.authUser?.id) return;
             resetSensitiveUi();
             show('adminMfaStart', true);
             setStatus('QR yaradılmadı. Yenidən cəhd edin.', true);
-        } finally { setBusy(false); }
+        } finally { if (version === checkVersion) setBusy(false); }
     }
     async function submitAdminMfaCode() {
         if (!isAdminProfile() || busy) return;
@@ -182,10 +185,11 @@ export function initAdminMfa() {
             showToast('🔐 Admin MFA təsdiqləndi.');
             if (!managed) closeAdminMfa();
         } catch {
+            if (version !== checkVersion || userId !== s.authUser?.id) return;
             const el = byId('adminMfaCode');
             if (el) el.value = '';
             setStatus('Kod qəbul edilmədi və ya vaxtı bitdi. Yeni kodla təkrar yoxlayın.', true);
-        } finally { setBusy(false); }
+        } finally { if (version === checkVersion) setBusy(false); }
     }
     async function addAdminMfaBackup() {
         if (!isAdminProfile() || !s.adminMfaAssured || busy) return;
@@ -200,6 +204,7 @@ export function initAdminMfa() {
         accountId = null;
         ++checkVersion;
         managed = false;
+        setBusy(false);
         resetSensitiveUi();
         refreshAdminControls(false);
         ctx.closeDialog?.('adminMfaModal');
