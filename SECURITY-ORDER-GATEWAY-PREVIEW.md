@@ -18,9 +18,9 @@ route and its secrets are configured and a separate Supabase test database is re
 ## Manual environment setup (secrets must not be committed)
 
 In Vercel Project Settings -> Environment Variables, configure
-`SUPABASE_SERVICE_ROLE_KEY` and `TURNSTILE_SECRET_KEY` for Preview
-using **a separate Supabase development branch and Cloudflare Turnstile test
-or development widget**. Set production versions only at the separate,
+`SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` and `TURNSTILE_SECRET_KEY` for Preview
+using **a separate Supabase development branch (with its own URL and role key) and Cloudflare Turnstile test
+or development widget**. Preview API intentionally rejects the production F1 Studio Supabase URL. Set production versions only at the separate,
 approved production cutover. Avoid using production credentials in preview.
 
 Cloudflare Turnstile widget must allow the preview hostname; Siteverify
