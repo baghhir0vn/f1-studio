@@ -53,6 +53,7 @@ export function initAdminMfa() {
         // Closing the prompt NEVER grants admin access.
         // The DB AAL2 policy will enforce MFA when the release is approved.
         resetSensitiveUi();
+        managed = false;
         ctx.closeDialog?.('adminMfaModal');
     }
     async function checkAdminMfa({ prompt = true } = {}) {
@@ -131,7 +132,7 @@ export function initAdminMfa() {
             const qr = byId('adminMfaQr');
             if (qr) {
                 // Supabase returns a data: SVG QR image; never interpolate SVG into HTML.
-                if (!/^data:image\\/svg\\+xml[;,]/i.test(result.qr)) throw new Error('MFA_QR_INVALID');
+                if (!/^data:image\/svg\+xml[;,]/i.test(result.qr)) throw new Error('MFA_QR_INVALID');
                 qr.src = result.qr;
                 qr.hidden = false;
             }
