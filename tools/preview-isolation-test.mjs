@@ -33,3 +33,13 @@ test('test branch does not accidentally include a production secret',()=>{
    assert.equal(t.includes('SUPABASE_SERVICE_ROLE_KEY'),false,p+' contains server secret env');
  }
 });
+
+test('security Preview catalog loads products through restricted Supabase RLS',()=>{
+ const catalog=read('js/catalog.js');
+ const service=read('js/services/product-service.js');
+ assert.match(catalog,/import\s*\{\s*productService\s*\}\s*from\s*['"]\.\/services\/product-service\.js['"]/);
+ assert.match(catalog,/await\s+productService\.list\(\)/);
+ assert.doesNotMatch(catalog,/ctx\.api\(['"]\/api\/products['"]\)/);
+ assert.match(catalog,/CONFIG\.securityPreview\s*\|\|\s*sources\.some\(/);
+ assert.match(service,/sb\.from\(['"]products['"]\)\.select\(PRODUCT_COLUMNS\)/);
+});
