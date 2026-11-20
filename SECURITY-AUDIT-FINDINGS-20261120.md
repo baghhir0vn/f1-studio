@@ -40,6 +40,9 @@
 
 ## Authorization test phase — 2026-11-20
 - **Production, read-only negative test:** In a `READ ONLY` PostgreSQL transaction, simulated a nonexistent authenticated UUID and `SET LOCAL ROLE authenticated`. Assertions confirmed `public.is_admin()=false`, `public.admin_list_orders(1)` yields `ADMIN_REQUIRED`, and the role sees 0 other orders through RLS. Transaction rolled back; no production records altered or disclosed.
+- **Additional read-only production admin-RPC checks:** Under the same nonexistent synthetic authenticated UUID and PostgreSQL role, `admin_list_newsletter_subscribers(1)`, `admin_set_order_status(0,'confirmed')`, and `admin_reorder_products(array[1])` each returned `ADMIN_REQUIRED` before any data operations. All checks executed inside `READ ONLY` transaction and rolled back. This tests non-admin rejection, not real user browser sessions.
+- **Private storage isolation check:** Same read-only synthetic nonowner authenticated identity saw no `storage.objects` rows for `customer-designs` and `customer-avatars`. No object names or contents were collected. This is encouraging but is not proof of every signed URL or file access flow.
+
 - **Synthetic positive/negative matrix:** `tools/admin-authorization-pg-assertions.sql` builds disposable `profiles` and `orders` fixtures with copied relevant RLS predicates and a corresponding `is_admin()` guard. Tests show ordinary users cannot access other orders or promote their own role, blocked users cannot unblock themselves, blocked admins have no admin privileges, and active admins retain required access. These fixtures **model** production authorization; they are not live logins.
 - **Evidence:** GitHub Actions [run 68](https://github.com/baghhir0vn/f1-studio/actions/runs/44798344812) passed authorization matrix; [run 74](https://github.com/baghhir0vn/f1-studio/actions/runs/44798844325) passed authorization matrix, staged review RLS, checkout gateway, and Preview isolation tests.
 
