@@ -6,6 +6,9 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, 
 const CONFIG = {
     // TEST BRANCH ONLY: suppress real WhatsApp handoff for synthetic orders.
     securityPreview: true,
+    // Opt-in rollout flag: keep false in production until TOTP enrollment
+    // and database AAL2 enforcement are validated together.
+    adminMfaEnabled: true,
     siteUrl: window.location.origin,
     // Cloudflare widget restricted to the isolated security Preview hostname.
     turnstileSiteKey: "0x4AAAAAAGKpifK9AkrYwRjU",
