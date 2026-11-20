@@ -4,6 +4,8 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, 
     auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
 });
 const CONFIG = {
+    // TEST BRANCH ONLY: suppress real WhatsApp handoff for synthetic orders.
+    securityPreview: true,
     siteUrl: window.location.origin,
     turnstileSiteKey: "0x4AAAAAAFbyWLVOPCNWcSJj",
     instagram: "https://instagram.com/f1_studio",
