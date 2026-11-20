@@ -1,0 +1,25 @@
+# F1 Studio safety check: no deployment or DB migration happens here.
+# PRs targeting main fail until the owner documents release evidence.
+# This is only a required merge gate if main branch protection marks it required.
+name: Production security release readiness
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  release-readiness:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Test fail-closed evidence validation
+        run: node --test tools/security-release-readiness-test.mjs
+      - name: Block unapproved production release
+        env:
+          F1_RELEASE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: node tools/security-release-readiness.mjs --release
