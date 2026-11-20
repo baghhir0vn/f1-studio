@@ -16,7 +16,8 @@
 - **Location:** `public.subscribe_newsletter(text)`.
 - **Evidence:** Anonymous EXECUTE granted; `SECURITY DEFINER`; source validates email length/shape and deduplicates emails, but implements no explicit throttling or CAPTCHA verification.
 - **Impact:** Potential newsletter signup spam / unnecessary processing. This function may intentionally be public; anonymous access alone is not proof of an authorization flaw.
-- **Action:** If feature remains enabled, add independently tested rate limiting/abuse defense without breaking legitimate subscribers.
+- **Preview-only remediation tested:** `api/newsletter.js` now serves newsletter registration with same-origin validation, trusted Vercel forwarded IP, separate exact Supabase host allowlist, fail-closed errors and a private server-only RPC. `security-newsletter-gateway-preview.sql` revokes public function execution and uses an atomic IP limiter (8 attempts/15 minutes). Both unit/SQL CI and a rolled-back real isolated Supabase DB test succeeded. Production remains **unpatched** until coordinated deployment and migration. Vercel WAF's Preview-only observer records `POST /api/newsletter` without blocking.
+- **Remaining:** Positive browser POST test, baseline for shared NAT users and IP record retention; production-specific deploy/migration cutover with rollback.
 
 ### F1-S-003 — MEDIUM — Leaked-password protection disabled
 - **Evidence:** Supabase security advisor `auth_leaked_password_protection` WARN.
