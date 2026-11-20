@@ -32,6 +32,8 @@ jobs:
           node --check tools/order-gateway-contract-test.mjs
       - name: Run isolated gateway contract tests
         run: node --test tools/order-gateway-contract-test.mjs
+      - name: Verify preview isolation and no WhatsApp handoff
+        run: node --test tools/preview-isolation-test.mjs
 
   postgres-migration:
     runs-on: ubuntu-latest
