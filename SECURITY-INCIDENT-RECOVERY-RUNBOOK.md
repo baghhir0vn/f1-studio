@@ -16,7 +16,7 @@
 - Vercel WAF has exactly two **Preview-only log rules** matching `POST /api/orders` and `POST /api/newsletter`. No paid rate-limiting/blocking rule is active.
 - At inspection, 45-minute Preview runtime logs had no matching error or warning entries and no request-path counts. This **cannot** establish zero security incidents, healthy checkout, or alert delivery.
 - Supabase production and isolated test projects returned `ACTIVE_HEALTHY` via project metadata, which alone does not verify backups or data correctness.
-- **AUTOMATED ALERT DELIVERY: NOT CONFIGURED.** **BACKUP EXISTENCE, RECENCY AND RESTORE: UNVERIFIED.** Do not say the site can recover until these gates pass.
+- **ALERT MONITORING:** An hourly ChatGPT condition-watch check has now been configured to review read-only Vercel Preview logs, GitHub Actions, Supabase health, and WAF rules and notify only on confirmed meaningful anomalies. **First run and actual delivery have not yet been verified.** There is still no independently tested instant/on-call/pager alert or 24/7 continuous detector. **BACKUP EXISTENCE, RECENCY AND RESTORE: UNVERIFIED.** Do not claim data can be recovered until separate proof exists.
 
 ## 2. Monitoring: signals, tentative thresholds, and minimum response
 
@@ -32,7 +32,7 @@ These are **proposed** thresholds for the initial observation period, **not acti
 | GitHub Actions security workflow failure | Any required security job fails on release commit | **Do not promote** until fixed and a clean run completes |
 | Missing 24h backup or unrecoverable restore | Any missing proof before release | **Block production migration**; verify backup or perform a separately approved export and restore drill |
 
-Actual alert routing (e-mail/Slack/pager) must be configured by the owner in Vercel, GitHub and/or an authorized monitoring provider; this repository does not claim to send notifications.
+ChatGPT's hourly condition-watch monitor was created on 2026-11-21 (Asia/Baku), but no first-run result or delivery proof is available yet. It is not a substitute for immediate alerting or provider-native pager integration. Actual e-mail/Slack/pager routing must still be configured by the owner in Vercel, GitHub and/or another authorized monitoring provider; this repository itself does not send notifications.
 
 ### Safe log review
 
@@ -69,6 +69,15 @@ Actual alert routing (e-mail/Slack/pager) must be configured by the owner in Ver
 
 Official references: [Supabase Database Backups](https://supabase.com/docs/guides/platform/backups), [Supabase Restore to a New Project](https://supabase.com/docs/guides/platform/clone-project), [Vercel Deployments](https://vercel.com/docs/deployments).
 
+## 4a. Machine-checkable release evidence — CURRENTLY BLOCKED
+
+- A `security-production-release-evidence.json` manifest now records ten explicit release gates, all **unverified** until backed by reviewable evidence. It does not contain secrets or personal records.
+- `tools/security-release-readiness.mjs --report` prints remaining evidence. `--release` exits nonzero if the production database/project identity, exact intended release SHA, documented recent approval, current database backup, restore drill, Storage-object backup, real MFA, end-to-end checkout/newsletter, authorization, alert delivery, production keys/domains, or rollback plan is missing or stale.
+- `tools/security-release-readiness-test.mjs` verifies the validator fails closed for missing/expired backup proof, wrong targets, nonmatching commits and absent approval. Current Preview CI invokes the tests and a read-only readiness report.
+- `.github/workflows/security-production-release-gate.yml` will run the hard-fail release check for pull requests targeting `main` / manual dispatch **when GitHub recognizes the workflow**. **It is not a guaranteed merge block without required-status branch protection/rulesets.** We could not read existing `main` branch protection via the integration (403), and the repository rulesets API returned no rulesets at the time of inspection. No branch settings changed.
+- Manifest flags are attestations only, **not cryptographic evidence of backups**. Every proof must be examined by the owner; simply changing JSON flags does not actually create a backup or prove a restore worked.
+- Do not attempt an automatic production deploy based only on this manifest. Manual approval and safe production smoke checks remain mandatory.
+
 ## 5. Minimal production deployment and rollback checklist
 
 - [ ] Site owner explicitly approves the target production release.
@@ -80,7 +89,7 @@ Official references: [Supabase Database Backups](https://supabase.com/docs/guide
 - [ ] All CI security jobs pass for the **exact release commit**. Green CI does not by itself guarantee branch protection.
 - [ ] Preview browser smoke tests pass for real one-use Turnstile, order, newsletter, admin login/MFA and customer file access.
 - [ ] WAF blocking and rate-limiting plans/pricing/false-positive handling reviewed and explicitly approved.
-- [ ] Assigned alert owner and notification destination tested. **Currently not configured.**
+- [ ] Hourly ChatGPT watch's first alert delivery or equivalent provider-native notification destination tested. **Current hourly task created but delivery unverified.**
 - [ ] Rollback plan covers both code **and** database migrations.
 - [ ] Post-release smoke tests and 24-hour observation ownership established.
 
