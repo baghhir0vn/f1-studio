@@ -11,6 +11,7 @@ on:
       - ".github/workflows/order-gateway-security.yml"
       - "tools/gateway-pg-fixture.sql"
       - "tools/gateway-pg-assertions.sql"
+      - "tools/admin-authorization-pg-assertions.sql"
   push:
     branches: ["security/preview-order-spam-gateway-20261120"]
 
@@ -68,3 +69,5 @@ jobs:
         run: psql -X -v ON_ERROR_STOP=1 -f security-order-gateway-preview.sql
       - name: Assert function permissions and customer identity context
         run: psql -X -v ON_ERROR_STOP=1 -f tools/gateway-pg-assertions.sql
+      - name: Assert synthetic admin, customer, and blocked-role boundaries
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/admin-authorization-pg-assertions.sql
