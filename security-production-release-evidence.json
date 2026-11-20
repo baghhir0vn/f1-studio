@@ -13,19 +13,19 @@
       "verified": false,
       "verifiedAt": null,
       "evidence": null,
-      "notes": "Supabase production backup existence, date and retention are not verifiable using connected tool"
+      "notes": "Supabase organization F1studio verified on Free plan (2026-11-21); automatic managed daily backups are a paid-plan feature. No independent manually exported production backup or freshness evidence verified. Remains blocked."
     },
     "database-restore": {
       "verified": false,
       "verifiedAt": null,
       "evidence": null,
-      "notes": "Restore to a separate project has not been demonstrated"
+      "notes": "Disposable PostgreSQL synthetic pg_dump/pg_restore drill passed GitHub Actions run 44808955025; this does NOT verify restoration of the real production database. Independent recovery still unverified."
     },
     "storage-object-backup": {
       "verified": false,
       "verifiedAt": null,
       "evidence": null,
-      "notes": "Supabase database backups are not proof of Storage object recovery"
+      "notes": "Production bucket inventory recorded (customer-avatars/designs private; product-images/site-content public). No backup of actual file bytes or separate restore verified."
     },
     "admin-mfa-aal2": {
       "verified": false,
