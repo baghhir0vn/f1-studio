@@ -76,10 +76,28 @@ test('server gateway passes verified IP and hides email from response',async()=>
     const response=res();
     await handler(makeReq(),response);
     assert.equal(response.statusCode,200);
-    assert.deepEqual(response.body,{ok:true,subscribed:true,already_subscribed:false});
+    assert.deepEqual(response.body,{ok:true,subscribed:true});
+    assert.equal(Object.hasOwn(response.body,'already_subscribed'),false);
     assert.deepEqual(request,{p_email:'test@example.org',p_verified_ip:'203.0.113.24'});
     assert.equal(response.headers['cache-control'],'no-store');
   });
+});
+test('both new and duplicate newsletter signups return the same public response',async()=>{
+  configure();
+  let call=0;
+  await restoreFetch(async()=>reply({
+    ok:true,subscribed:true,already_subscribed:++call>1,
+    email:'private@example.org'
+  }),async()=>{
+    for(let n=0;n<2;n++){
+      const response=res();
+      await handler(makeReq(),response);
+      assert.equal(response.statusCode,200);
+      assert.deepEqual(response.body,{ok:true,subscribed:true});
+      assert.equal('already_subscribed' in response.body,false);
+    }
+  });
+  assert.equal(call,2);
 });
 test('rate limit error becomes 429 without exposing SQL details',async()=>{
   configure();

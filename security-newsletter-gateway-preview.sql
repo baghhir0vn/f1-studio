@@ -57,8 +57,10 @@ begin
   if attempt_total > 8 then
     raise exception 'NEWSLETTER_RATE_LIMITED';
   end if;
-  -- Preserve current email validation and idempotent registration.
-  return public.subscribe_newsletter(p_email);
+  -- Keep the existing idempotent INSERT/validation logic, but do not
+  -- propagate the enrollment oracle ('already_subscribed') through the gateway.
+  perform public.subscribe_newsletter(p_email);
+  return jsonb_build_object('ok',true,'subscribed',true);
 end;
 $function$;
 

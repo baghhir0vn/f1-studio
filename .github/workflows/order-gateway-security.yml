@@ -29,6 +29,8 @@ on:
       - "tools/gateway-pg-assertions.sql"
       - "tools/admin-authorization-pg-assertions.sql"
       - "security-reviews-blocked-users-preview.sql"
+      - "security-site-content-path-fix-preview.sql"
+      - "tools/site-content-path-policy-test.sql"
       - "tools/reviews-blocked-pg-assertions.sql"
       - "security-admin-mfa-preview.sql"
       - "tools/admin-mfa-pg-assertions.sql"
@@ -147,6 +149,8 @@ jobs:
         run: psql -X -v ON_ERROR_STOP=1 -f tools/reviews-blocked-pg-assertions.sql
       - name: Assert staged admin MFA needs AAL2 and role authorization
         run: psql -X -v ON_ERROR_STOP=1 -f tools/admin-mfa-pg-assertions.sql
+      - name: Check site-content Storage filename regex (synthetic only)
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/site-content-path-policy-test.sql
       - name: Create synthetic newsletter signup fixture
         run: psql -X -v ON_ERROR_STOP=1 -f tools/newsletter-gateway-pg-fixture.sql
       - name: Apply isolated newsletter gateway migration

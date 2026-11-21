@@ -23,12 +23,15 @@ declare
   blocked boolean:=false;
 begin
   r:=public.subscribe_newsletter_gateway('  Preview@Example.org  ','203.0.113.21');
-  if r->>'already_subscribed' <> 'false' then
-    raise exception 'First signup did not create a subscriber';
+  if r <> '{"ok":true,"subscribed":true}'::jsonb then
+    raise exception 'First signup must only return a generic success';
   end if;
   r:=public.subscribe_newsletter_gateway('preview@example.org','203.0.113.21');
-  if r->>'already_subscribed' <> 'true' then
-    raise exception 'Duplicate signup not idempotent';
+  if r <> '{"ok":true,"subscribed":true}'::jsonb then
+    raise exception 'Duplicate signup disclosed subscriber existence';
+  end if;
+  if (select count(*) from public.newsletter_subscribers where email='preview@example.org') <> 1 then
+    raise exception 'Duplicate signup inserted multiple rows';
   end if;
   -- Eight requests in the 15-minute window are permitted.
   for n in 3..8 loop
@@ -42,7 +45,7 @@ begin
   if not blocked then raise exception 'Ninth request not blocked'; end if;
   -- A different IP may still register. IPs should not share counters.
   r:=public.subscribe_newsletter_gateway('different@example.org','2001:db8::12');
-  if r->>'already_subscribed' <> 'false' then
+  if r <> '{"ok":true,"subscribed":true}'::jsonb then
     raise exception 'Unrelated IP was blocked';
   end if;
   blocked:=false;

@@ -71,11 +71,8 @@ export default async function handler(req,res){
     }
     const payload=await response.json();
     if(payload?.ok!==true)return respond(502,{error:'NEWSLETTER_RESPONSE_INVALID'});
-    return respond(200,{
-      ok:true,
-      subscribed:true,
-      already_subscribed:payload.already_subscribed===true
-    });
+    // Never reveal whether a visitor's email already exists in the subscriber table.
+    return respond(200,{ok:true,subscribed:true});
   }catch {
     return respond(503,{error:'NEWSLETTER_TEMPORARILY_UNAVAILABLE'});
   }
