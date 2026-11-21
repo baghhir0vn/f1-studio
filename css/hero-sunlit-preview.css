@@ -1,0 +1,107 @@
+/* Preview-only sunlit hero. Activated after its dedicated image has loaded. */
+body.f1-home.hero-sunlit-ready #home .hero-giftique{
+  position:relative!important;display:block!important;
+  width:94%!important;max-width:none!important;
+  height:clamp(380px,27.8vw,460px)!important;min-height:380px!important;
+  margin:18px auto 0!important;padding:0!important;
+  overflow:hidden!important;border:0!important;border-radius:15px!important;
+  background:#f8e9d9!important;box-shadow:none!important;
+}
+body.f1-home.hero-sunlit-ready #home .hero-giftique::before{display:none!important}
+body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art{
+  position:absolute!important;inset:0!important;z-index:0!important;
+  display:block!important;width:100%!important;height:100%!important;
+  min-height:0!important;margin:0!important;padding:0!important;
+  overflow:hidden!important;border-radius:0!important;background:#f8e9d9!important;
+}
+body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art::before{display:none!important}
+body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art img{
+  display:block!important;width:100%!important;height:100%!important;
+  max-width:none!important;max-height:none!important;
+  object-fit:cover!important;object-position:center center!important;
+  filter:none!important;transform:none!important;
+}
+body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-copy{
+  position:relative!important;z-index:2!important;
+  display:flex!important;flex-direction:column!important;
+  justify-content:center!important;align-items:flex-start!important;
+  width:48%!important;min-height:100%!important;height:100%!important;
+  padding:30px clamp(28px,4.7vw,72px)!important;
+  background:linear-gradient(90deg,rgba(252,244,235,.49) 0%,rgba(252,244,235,.30) 72%,rgba(252,244,235,0) 100%)!important;
+}
+body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-eyebrow{
+  margin:0 0 17px!important;padding:5px 10px!important;
+  border:0!important;border-radius:8px!important;background:#ffd083!important;
+  color:#171717!important;font-size:10px!important;font-weight:750!important;
+}
+body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-eyebrow span:first-child{background:#171717!important}
+body.f1-home.hero-sunlit-ready #home .hero-giftique h1{
+  max-width:565px!important;margin:0 0 15px!important;
+  font-family:Inter,Arial,sans-serif!important;
+  font-size:clamp(34px,3.15vw,50px)!important;font-weight:850!important;
+  line-height:1.04!important;letter-spacing:-.045em!important;
+  color:#131313!important;
+}
+body.f1-home.hero-sunlit-ready #home .hero-giftique h1 em{color:#131313!important;font-style:normal!important}
+body.f1-home.hero-sunlit-ready #home .hero-giftique p{
+  max-width:470px!important;margin:0 0 21px!important;
+  color:#464448!important;font-size:clamp(11px,.94vw,14px)!important;line-height:1.5!important;
+}
+body.f1-home.hero-sunlit-ready #home .hero-actions{
+  display:flex!important;flex-direction:row!important;gap:12px!important;flex-wrap:wrap!important;
+}
+body.f1-home.hero-sunlit-ready #home .hero-actions .btn{
+  min-height:44px!important;padding:0 19px!important;
+  border:1px solid #c90f18!important;border-radius:8px!important;
+  background:#c90f18!important;color:#fff!important;
+  font-size:12px!important;box-shadow:none!important;
+}
+body.f1-home.hero-sunlit-ready #home .hero-secondary{
+  min-height:44px!important;padding:0 19px!important;
+  border:1px solid #343434!important;border-radius:8px!important;
+  background:rgba(255,250,244,.65)!important;color:#171717!important;
+  font-size:12px!important;box-shadow:none!important;
+}
+body.f1-home.hero-sunlit-ready #home .hero-benefits{display:none!important}
+@media(min-width:761px) and (max-width:1100px){
+  body.f1-home.hero-sunlit-ready #home .hero-giftique{
+    width:94%!important;height:clamp(300px,31vw,370px)!important;min-height:300px!important
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-copy{width:52%!important;padding-inline:26px!important}
+  body.f1-home.hero-sunlit-ready #home .hero-giftique h1{font-size:clamp(27px,3.15vw,36px)!important}
+  body.f1-home.hero-sunlit-ready #home .hero-giftique p{font-size:11px!important}
+  body.f1-home.hero-sunlit-ready #home .hero-actions .btn,
+  body.f1-home.hero-sunlit-ready #home .hero-secondary{min-height:38px!important;padding-inline:12px!important;font-size:10px!important}
+}
+@media(max-width:760px){
+  body.f1-home.hero-sunlit-ready #home .hero-giftique{
+    display:flex!important;flex-direction:column!important;
+    width:calc(100% - 24px)!important;height:auto!important;min-height:0!important;
+    margin:12px auto 0!important;border-radius:15px!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-copy{
+    position:relative!important;order:0!important;width:100%!important;
+    height:auto!important;min-height:0!important;
+    padding:25px 20px 20px!important;
+    background:#faeddf!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique h1{
+    font-size:clamp(28px,7.5vw,38px)!important;
+    max-width:400px!important;margin-bottom:12px!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique p{font-size:12px!important;max-width:400px!important}
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-eyebrow{margin-bottom:13px!important;font-size:9px!important}
+  body.f1-home.hero-sunlit-ready #home .hero-actions{width:100%!important;gap:8px!important}
+  body.f1-home.hero-sunlit-ready #home .hero-actions .btn,
+  body.f1-home.hero-sunlit-ready #home .hero-secondary{
+    flex:1 1 auto!important;min-height:40px!important;padding:0 10px!important;font-size:10px!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art{
+    position:relative!important;inset:auto!important;order:1!important;
+    width:100%!important;height:auto!important;min-height:0!important;
+    aspect-ratio:1536/514!important;overflow:hidden!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art img{
+    width:100%!important;height:100%!important;object-fit:cover!important;object-position:center!important;
+  }
+}
