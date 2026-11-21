@@ -362,6 +362,26 @@ export function initAuth() {
             s.passwordRecoveryMode = true;
             setTimeout(() => { ctx.openPasswordRecovery(); }, 0);
         }
+        // Cross-tab sign-out must invalidate the locally visible admin gate.
+        if(event === "SIGNED_OUT" && CONFIG.adminMfaEnabled === true){
+            setTimeout(() => {
+                s.authUser=null; s.profile=null; s.adminMfaAssured=false; s.orders=[];
+                ctx.resetAdminMfaState?.();
+                ctx.closeAdmin?.();
+                ctx.stopAdminRealtime?.();
+                void ctx.renderProfile?.();
+            }, 0);
+        }
+        // If the token's AAL is refreshed/downgraded, re-check before
+        // offering admin actions. Avoid interrupting an active MFA dialog.
+        if(event === "TOKEN_REFRESHED" && CONFIG.adminMfaEnabled === true){
+            setTimeout(() => {
+                if(s.authUser?.role === "admin"
+                    && !document.getElementById('adminMfaModal')?.classList.contains('open')) {
+                    void ctx.checkAdminMfa?.({prompt:false});
+                }
+            }, 0);
+        }
     });
     async function openLogin() {
         if (s.authUser && typeof ctx.openAccountPage === "function") {
@@ -539,8 +559,14 @@ export function initAuth() {
                         hasSession: Boolean(data?.session)
                     });
                 }
-                await ctx.renderProfile(); await ctx.startAdminRealtime();
+                s.adminMfaAssured = false;
+                await ctx.renderProfile();
                 closeLogin();
+                if (CONFIG.adminMfaEnabled === true && s.authUser?.role === "admin") {
+                    await ctx.promptAdminMfa?.();
+                } else {
+                    await ctx.startAdminRealtime();
+                }
                 showToast("Giriş edildi.");
             } catch(e) {
                 showToast(getAuthFailureMessage(e, "login"));
@@ -554,7 +580,9 @@ export function initAuth() {
     }
     async function logoutProfile() {
         await ctx.api("/api/auth/logout",{method:"POST"}).catch(()=>{});
-        s.authUser=null; s.profile=null; s.orders=[]; s.passwordRecoveryMode=false; s.accountAuthResolved=true; s.accountOrdersFetched=true; s.accountOrdersLoadError=false; s.accountShowAllOrders=false;
+        s.authUser=null; s.profile=null; s.orders=[]; s.passwordRecoveryMode=false;
+        ctx.resetAdminMfaState?.();
+        ctx.closeAdmin?.(); s.accountAuthResolved=true; s.accountOrdersFetched=true; s.accountOrdersLoadError=false; s.accountShowAllOrders=false;
         ctx.stopAdminRealtime(); s.adminUnreadOrders=0; ctx.updateAdminNotifBadge();
         ["resetEmail","newPassword","newPasswordConfirm","profileName","profilePhone","profileEmail","profilePassword"].forEach(id=>{
             const field=document.getElementById(id); if(field) field.value="";
@@ -572,9 +600,13 @@ export function initAuth() {
                 ctx.stopAdminRealtime(); await ctx.renderProfile(); showToast("Bu hesab bloklanıb. Adminlə əlaqə saxlayın."); return;
             }
             s.authUser=data.user; s.profile=data.user; s.accountAuthResolved=true; s.accountOrdersFetched=false; s.accountOrdersLoadError=false;
-            await ctx.renderProfile(); await ctx.startAdminRealtime();
+            s.adminMfaAssured=false;
+            await ctx.renderProfile();
+            if (s.authUser?.role === "admin") await ctx.checkAdminMfa?.({prompt:true});
+            else await ctx.startAdminRealtime();
         } catch (_) {
             s.authUser=null; s.profile=null; s.accountAuthResolved=true; s.accountOrdersFetched=true; s.accountOrdersLoadError=false; s.orders=[];
+            ctx.resetAdminMfaState?.();
             ctx.stopAdminRealtime(); await ctx.renderProfile();
         }
     }

@@ -78,19 +78,38 @@ export const orderService = {
             gift_wrap: !!body.giftWrap,
             user_id: userData.user?.id || null
         };
-        const { data, error } = await sb.rpc('create_order', {
-            p_items: payload.items,
-            p_customer_name: payload.customer_name,
-            p_customer_phone: payload.customer_phone,
-            p_customer_email: payload.customer_email,
-            p_delivery: payload.delivery,
-            p_address: payload.address,
-            p_address_unknown: payload.address_unknown,
-            p_gift_wrap: payload.gift_wrap
+        // All order writes go through the server-verified checkout gateway.
+        // Never fall back to the old anonymous Supabase RPC if the API fails.
+        const captchaToken = String(body.captchaToken || '').trim();
+        if (!captchaToken) throw new Error('CAPTCHA_REQUIRED');
+        const { data: sessionData } = await sb.auth.getSession();
+        const accessToken = userData.user ? sessionData?.session?.access_token : '';
+        if (userData.user && !accessToken) throw new Error('AUTH_REQUIRED');
+        const response = await fetch('/api/orders', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(accessToken ? { Authorization: 'Bearer ' + accessToken } : {})
+            },
+            cache: 'no-store',
+            body: JSON.stringify({
+                items: payload.items,
+                customer: {
+                    name: payload.customer_name,
+                    phone: payload.customer_phone,
+                    email: payload.customer_email
+                },
+                delivery: payload.delivery,
+                address: payload.address,
+                addressUnknown: payload.address_unknown,
+                giftWrap: payload.gift_wrap,
+                captchaToken
+            })
         });
-        if (error) throw error;
-        const order = data?.order || data;
-        return { order: { orderCode: order.order_code, status: order.status, total_cents: Math.round(Number(order.total) * 100) } };
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(String(data.error || 'CHECKOUT_TEMPORARILY_UNAVAILABLE'));
+        if (!data.order?.orderCode) throw new Error('ORDER_RESPONSE_INVALID');
+        return { order: data.order };
     },
     async listAdmin() {
         const data = await fetchAllRows(() => sb.from('orders').select('id,order_code,status,created_at,total,customer_name,customer_phone,customer_email,delivery,address,address_unknown,gift_wrap,user_id,order_items(id,product_id,product_name,qty,price,customization)').order('created_at', { ascending: false }), { pageSize: 1000, maxRows: 25000 });

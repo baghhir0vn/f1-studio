@@ -1,0 +1,182 @@
+name: Order gateway security tests
+
+on:
+  pull_request:
+    paths:
+      - "api/orders.js"
+      - "server/security-observability.js"
+      - "tools/security-observability-test.mjs"
+      - "server/antivirus/clamd-instream.mjs"
+      - "server/antivirus/quarantine-gate.mjs"
+      - "tools/antivirus-worker-test.mjs"
+      - "tools/security-release-readiness.mjs"
+      - "security-backup-structure-baseline.json"
+      - "tools/restore-structure-audit.sql"
+      - "tools/verify-restore-structure.mjs"
+      - "tools/verify-restore-structure-test.mjs"
+      - "tools/synthetic-db-restore-drill.sh"
+      - "tools/security-release-readiness-test.mjs"
+      - "security-production-release-evidence.json"
+      - "api/newsletter.js"
+      - "js/services/newsletter-service.js"
+      - "security-newsletter-gateway-preview.sql"
+      - "tools/newsletter-gateway-pg-fixture.sql"
+      - "tools/newsletter-gateway-pg-assertions.sql"
+      - "tools/newsletter-gateway-contract-test.mjs"
+      - "tools/order-gateway-contract-test.mjs"
+      - "js/cart.js"
+      - "js/services/order-service.js"
+      - "security-order-gateway-preview.sql"
+      - "security-production-prestage-preview.sql"
+      - "security-production-lockdown-preview.sql"
+      - "security-orders-status-only-preview.sql"
+      - "tools/orders-status-only-pg-assertions.sql"
+      - "tools/production-cutover-pg-assertions.sql"
+      - ".github/workflows/order-gateway-security.yml"
+      - "tools/gateway-pg-fixture.sql"
+      - "tools/gateway-pg-assertions.sql"
+      - "tools/admin-authorization-pg-assertions.sql"
+      - "security-reviews-blocked-users-preview.sql"
+      - "security-site-content-path-fix-preview.sql"
+      - "security-customer-designs-quota-preview.sql"
+      - "tools/customer-designs-quota-pg-assertions.sql"
+      - "tools/site-content-path-policy-test.sql"
+      - "tools/reviews-blocked-pg-assertions.sql"
+      - "security-admin-mfa-preview.sql"
+      - "tools/admin-mfa-pg-assertions.sql"
+      - "js/admin-mfa.js"
+      - "js/services/admin-mfa-service.js"
+      - "tools/admin-mfa-ui-test.mjs"
+      - "js/admin.js"
+      - "js/auth.js"
+      - "js/modal.js"
+      - "js/app.js"
+      - "index.html"
+      - "css/admin-mfa.css"
+      - "tools/security-baseline-test.mjs"
+      - "tools/admin-mfa-controller-test.mjs"
+      - "security-waf-rate-limit-candidate.json"
+      - "tools/waf-proposal-test.mjs"
+      - "vercel.json"
+      - "js/config.js"
+  push:
+    branches: ["security/preview-order-spam-gateway-20261120"]
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Validate JavaScript syntax
+        run: |
+          node --check api/orders.js
+          node --check server/security-observability.js
+          node --check tools/security-observability-test.mjs
+          node --check server/antivirus/clamd-instream.mjs
+          node --check server/antivirus/quarantine-gate.mjs
+          node --check tools/antivirus-worker-test.mjs
+          node --check tools/security-release-readiness.mjs
+          node --check tools/verify-restore-structure.mjs
+          node --check tools/verify-restore-structure-test.mjs
+          node --check tools/security-release-readiness-test.mjs
+          node --check api/newsletter.js
+          node --check js/services/newsletter-service.js
+          node --check tools/newsletter-gateway-contract-test.mjs
+          node --check js/cart.js
+          node --check js/catalog.js
+          node --check js/services/product-service.js
+          node --check js/services/order-service.js
+          node --check tools/order-gateway-contract-test.mjs
+          node --check js/admin.js
+          node --check js/admin-mfa.js
+          node --check js/services/admin-mfa-service.js
+          node --check js/auth.js
+          node --check js/modal.js
+          node --check js/app.js
+          node --check tools/admin-mfa-ui-test.mjs
+          node --check tools/security-baseline-test.mjs
+          node --check tools/admin-mfa-controller-test.mjs
+          node --check tools/waf-proposal-test.mjs
+      - name: Run isolated gateway contract tests
+        run: node --test tools/order-gateway-contract-test.mjs
+      - name: Verify fail-closed private antivirus worker without customer files
+        run: node --test tools/antivirus-worker-test.mjs
+      - name: Prevent sensitive data in API audit events
+        run: node --test tools/security-observability-test.mjs
+      - name: Verify production release fails closed without backup and approval evidence
+        run: |
+          node --test tools/security-release-readiness-test.mjs
+          node tools/security-release-readiness.mjs --report
+      - name: Reject missing restored schema, public customer buckets or disabled RLS
+        run: node --test tools/verify-restore-structure-test.mjs
+      - name: Verify server-side newsletter signup and abuse handling
+        run: node --test tools/newsletter-gateway-contract-test.mjs
+      - name: Verify preview isolation and no WhatsApp handoff
+        run: node --test tools/preview-isolation-test.mjs
+      - name: Verify MFA enrollment, AAL2, and admin UI wiring
+        run: node --test tools/admin-mfa-ui-test.mjs
+      - name: Regression-test real MFA controller against stale session races
+        run: node --test tools/admin-mfa-controller-test.mjs
+      - name: Scan public assets for secret leaks and validate security headers
+        run: node --test tools/security-baseline-test.mjs
+      - name: Verify WAF rate-limit proposal cannot touch production
+        run: node --test tools/waf-proposal-test.mjs
+
+  postgres-migration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-password
+          POSTGRES_DB: gateway_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d gateway_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-password
+      PGDATABASE: gateway_test
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Prepare synthetic database
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/gateway-pg-fixture.sql
+      - name: Create synthetic newsletter signup fixture
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/newsletter-gateway-pg-fixture.sql
+      - name: Prove zero-downtime two-phase RPC cutover against fictional records
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/production-cutover-pg-assertions.sql
+      - name: Execute staged migration on disposable PostgreSQL
+        run: psql -X -v ON_ERROR_STOP=1 -f security-order-gateway-preview.sql
+      - name: Assert function permissions and customer identity context
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/gateway-pg-assertions.sql
+      - name: Assert synthetic admin, customer, and blocked-role boundaries
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/admin-authorization-pg-assertions.sql
+      - name: Verify only order status is writable by browser admin
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/orders-status-only-pg-assertions.sql
+      - name: Assert review RLS blocks banned accounts at database layer
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/reviews-blocked-pg-assertions.sql
+      - name: Assert staged admin MFA needs AAL2 and role authorization
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/admin-mfa-pg-assertions.sql
+      - name: Check private customer design upload cap with synthetic accounts
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/customer-designs-quota-pg-assertions.sql
+      - name: Check site-content Storage filename regex (synthetic only)
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/site-content-path-policy-test.sql
+      - name: Apply isolated newsletter gateway migration
+        run: psql -X -v ON_ERROR_STOP=1 -f security-newsletter-gateway-preview.sql
+      - name: Verify anonymous RPC revoked and atomic per-IP newsletter rate limit
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/newsletter-gateway-pg-assertions.sql
+      - name: Rehearse local synthetic backup and restore into a separate database
+        run: bash tools/synthetic-db-restore-drill.sh
