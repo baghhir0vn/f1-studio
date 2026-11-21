@@ -168,7 +168,8 @@ export default async function handler(req,res) {
       // Only expose a narrow allowlist of business validation errors.
       const safe = new Set(['INVALID_ORDER','ADDRESS_REQUIRED','PRODUCT_NOT_FOUND',
         'OUT_OF_STOCK','ORDER_RATE_LIMITED','ACCOUNT_BLOCKED',
-        'INVALID_DESIGN_PATH','DESIGN_FILE_NOT_FOUND']);
+        'INVALID_DESIGN_PATH','DESIGN_FILE_NOT_FOUND','DESIGN_SCAN_REQUIRED',
+        'DESIGN_SCAN_REJECTED','DESIGN_SCAN_UNAVAILABLE']);
       const code = String(err.message||'');
       return fail(code==='ORDER_RATE_LIMITED'?429:400,
         safe.has(code)?code:'ORDER_REJECTED');

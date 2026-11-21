@@ -307,6 +307,11 @@ export function initCart() {
             popup.close();
             const raw = safeUserError(e, "Sifariş göndərilmədi.");
             const messages={WHATSAPP_NOT_CONFIGURED:"WhatsApp nömrəsi serverdə hələ təyin edilməyib.",OUT_OF_STOCK:"Məhsul stokda kifayət qədər yoxdur. Səbəti yeniləyin.",PRODUCT_NOT_FOUND:"Məhsul artıq mövcud deyil. Səbəti yeniləyin.",ADDRESS_REQUIRED:"Çatdırılma ünvanını daxil edin.",INVALID_ORDER:"Sifariş məlumatlarını düzgün daxil edin.",INVALID_ORDER_ITEMS:"Sifariş məlumatları düzgün deyil.",AUTH_REQUIRED:"Hesaba giriş etmək lazımdır.",ORDER_RATE_LIMITED:"Çox sayda sifariş cəhdi oldu. Bir az sonra yenidən cəhd edin.",CAPTCHA_REQUIRED:"Təhlükəsizlik yoxlamasını tamamlayın.",CAPTCHA_FAILED:"Təhlükəsizlik yoxlaması keçmədi. Yenidən təsdiqləyin.",CHECKOUT_NOT_CONFIGURED:"Sifariş sistemi hələ təhlükəsiz serverə qoşulmayıb.",CHECKOUT_TEMPORARILY_UNAVAILABLE:"Sifariş sistemi müvəqqəti əlçatan deyil."};
+            Object.assign(messages, {
+                DESIGN_SCAN_REQUIRED: "Dizayn faylı hələ yoxlanılır. Bir az sonra sifarişi yenidən təsdiqləyin.",
+                DESIGN_SCAN_REJECTED: "Dizayn faylı təhlükəsizlik yoxlamasından keçmədi. Onu səbətdə dəyişdirin.",
+                DESIGN_SCAN_UNAVAILABLE: "Dizayn faylını yoxlamaq mümkün olmadı. Faylı yenidən əlavə edin."
+            });
             showToast(messages[String(e?.code || e?.message || "")] || raw);
             console.error("F1 order error", e);
         } finally {

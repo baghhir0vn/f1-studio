@@ -5,6 +5,11 @@ on:
     paths:
       - server/antivirus/**
       - .github/workflows/clamav-smoke.yml
+      - security-customer-designs-antivirus-preview.sql
+      - tools/customer-designs-antivirus-*
+      - api/orders.js
+      - js/cart.js
+      - js/customization.js
 
 permissions:
   contents: read
@@ -20,3 +25,37 @@ jobs:
       - name: Stop scanner
         if: always()
         run: docker compose -f server/antivirus/compose.yaml down --volumes
+
+  quarantine:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: synthetic-test-password
+          POSTGRES_DB: scanner_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d scanner_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: synthetic-test-password
+      PGDATABASE: scanner_test
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Test worker verdicts and isolated configuration
+        run: |
+          node --test tools/customer-designs-antivirus-worker-test.mjs
+          docker compose -f server/antivirus/compose.yaml -f server/antivirus/preview.compose.yaml config --quiet
+          node --check api/orders.js
+          node --check js/cart.js
+          node --check js/customization.js
+      - name: Verify quarantine, Storage policies and order submission
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/customer-designs-antivirus-pg-test.sql

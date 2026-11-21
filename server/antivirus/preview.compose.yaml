@@ -1,0 +1,40 @@
+# Start with `-f compose.yaml -f preview.compose.yaml up -d worker definitions`.
+services:
+  clamd:
+    restart: unless-stopped
+    volumes:
+      - signatures:/var/lib/clamav:ro
+
+  definitions:
+    image: clamav/clamav:1.4.7@sha256:b7357e2c1c59480628839df301b0d27923561389b36cf341911e1dd9e02cdd05
+    entrypoint: ["freshclam", "--daemon", "--foreground"]
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      clamd:
+        condition: service_healthy
+    volumes:
+      - signatures:/var/lib/clamav
+
+  worker:
+    image: node:24-alpine
+    command: ["node", "/scanner/preview-worker.mjs"]
+    user: node
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    restart: unless-stopped
+    environment:
+      F1_AV_SUPABASE_SERVICE_KEY:
+    depends_on:
+      clamd:
+        condition: service_healthy
+    volumes:
+      - .:/scanner:ro
+      - scanner-socket:/clamd:ro
+
+volumes:
+  signatures:
