@@ -27,7 +27,7 @@ create policy fixture_update on storage.objects for update to authenticated usin
 \i security-customer-designs-antivirus-preview.sql
 
 begin;
-do $
+do $$
 begin
   if not exists (select 1 from storage.buckets where id = 'customer-designs' and not public
                   and file_size_limit = 10485760 and cardinality(allowed_mime_types) = 4) then
