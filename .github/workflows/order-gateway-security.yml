@@ -24,6 +24,9 @@ on:
       - "js/cart.js"
       - "js/services/order-service.js"
       - "security-order-gateway-preview.sql"
+      - "security-production-prestage-preview.sql"
+      - "security-production-lockdown-preview.sql"
+      - "tools/production-cutover-pg-assertions.sql"
       - ".github/workflows/order-gateway-security.yml"
       - "tools/gateway-pg-fixture.sql"
       - "tools/gateway-pg-assertions.sql"
@@ -141,6 +144,10 @@ jobs:
           persist-credentials: false
       - name: Prepare synthetic database
         run: psql -X -v ON_ERROR_STOP=1 -f tools/gateway-pg-fixture.sql
+      - name: Create synthetic newsletter signup fixture
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/newsletter-gateway-pg-fixture.sql
+      - name: Prove zero-downtime two-phase RPC cutover against fictional records
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/production-cutover-pg-assertions.sql
       - name: Execute staged migration on disposable PostgreSQL
         run: psql -X -v ON_ERROR_STOP=1 -f security-order-gateway-preview.sql
       - name: Assert function permissions and customer identity context
@@ -155,8 +162,6 @@ jobs:
         run: psql -X -v ON_ERROR_STOP=1 -f tools/customer-designs-quota-pg-assertions.sql
       - name: Check site-content Storage filename regex (synthetic only)
         run: psql -X -v ON_ERROR_STOP=1 -f tools/site-content-path-policy-test.sql
-      - name: Create synthetic newsletter signup fixture
-        run: psql -X -v ON_ERROR_STOP=1 -f tools/newsletter-gateway-pg-fixture.sql
       - name: Apply isolated newsletter gateway migration
         run: psql -X -v ON_ERROR_STOP=1 -f security-newsletter-gateway-preview.sql
       - name: Verify anonymous RPC revoked and atomic per-IP newsletter rate limit
