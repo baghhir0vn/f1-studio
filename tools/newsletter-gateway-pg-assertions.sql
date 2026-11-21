@@ -30,9 +30,6 @@ begin
   if r <> '{"ok":true,"subscribed":true}'::jsonb then
     raise exception 'Duplicate signup disclosed subscriber existence';
   end if;
-  if (select count(*) from public.newsletter_subscribers where email='preview@example.org') <> 1 then
-    raise exception 'Duplicate signup inserted multiple rows';
-  end if;
   -- Eight requests in the 15-minute window are permitted.
   for n in 3..8 loop
     perform public.subscribe_newsletter_gateway('preview@example.org','203.0.113.21');
@@ -64,5 +61,13 @@ begin
   if not blocked then raise exception 'Invalid email accepted'; end if;
 end $tests$;
 reset role;
+-- Check the deduplicated row as the test database owner. service_role
+-- intentionally has no direct SELECT grant on the subscriber table.
+do $tests$
+begin
+  if (select count(*) from public.newsletter_subscribers where email='preview@example.org') <> 1 then
+    raise exception 'Duplicate signup inserted multiple rows';
+  end if;
+end $tests$;
 rollback;
 select 'PASS: newsletter gateway ACL, dedup, per-IP cap, IPv6 and input checks' as result;
