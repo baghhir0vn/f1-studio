@@ -167,4 +167,10 @@ revoke all on function private.require_scanned_order_designs() from public, anon
 create trigger require_scanned_order_designs before insert or update of order_id, customization
 on public.order_items for each row execute function private.require_scanned_order_designs();
 
+-- A private bucket created empty in the same transaction as the access rules.
+insert into storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+values ('customer-designs', 'customer-designs', false, 10485760,
+        array['image/png', 'image/jpeg', 'image/webp', 'application/pdf'])
+on conflict (id) do nothing;
+
 commit;

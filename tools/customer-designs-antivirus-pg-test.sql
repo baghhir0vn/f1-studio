@@ -8,7 +8,9 @@ create schema storage;
 create function auth.uid() returns uuid language sql stable
 as $$ select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid $$;
 create function public.is_admin() returns boolean language sql stable as $$ select false $$;
-create table storage.buckets (id text primary key, public boolean not null);
+create table storage.buckets (
+  id text primary key, name text, public boolean not null, file_size_limit bigint, allowed_mime_types text[]
+);
 create table storage.objects (
   id uuid primary key, bucket_id text not null, name text not null, version text not null,
   owner_id text not null, created_at timestamptz not null default now(),
@@ -25,6 +27,13 @@ create policy fixture_update on storage.objects for update to authenticated usin
 \i security-customer-designs-antivirus-preview.sql
 
 begin;
+do $
+begin
+  if not exists (select 1 from storage.buckets where id = 'customer-designs' and not public
+                  and file_size_limit = 10485760 and cardinality(allowed_mime_types) = 4) then
+    raise exception 'Private design bucket configuration is incomplete';
+  end if;
+end $;
 insert into storage.objects (id, bucket_id, name, version, owner_id) values
 ('11111111-1111-4111-8111-111111111111', 'customer-designs',
  'orders/00000000-0000-4000-8000-000000000001/22222222-2222-4222-8222-222222222222.png',
