@@ -8,6 +8,19 @@
 -- The authenticated role can read its own profile (RLS profiles own read), so
 -- a blocked row is visible to this EXISTS predicate. No profile -> unchanged
 -- behavior: status, owner and content constraints still apply.
+-- DB-enforced short-window guard: stop a signed-in user from flooding moderation.
+-- Function must be owned by a privileged DB role and is not exposed through API.
+create or replace function private.review_submission_under_quota()
+returns boolean language sql stable security definer set search_path to ''
+as $f$
+  select (select auth.uid()) is not null
+    and (select count(*) from public.reviews r
+      where r.user_id=(select auth.uid())
+        and r.created_at >= now() - interval '24 hours') < 5;
+$f$;
+revoke all on function private.review_submission_under_quota() from public,anon;
+grant execute on function private.review_submission_under_quota() to authenticated;
+
 drop policy if exists "reviews public insert" on public.reviews;
 create policy "reviews public insert"
 on public.reviews
@@ -24,4 +37,5 @@ with check (
     where profile.id = (select auth.uid())
       and coalesce(profile.blocked,false) = true
   )
+  and (select private.review_submission_under_quota())
 );
