@@ -20,6 +20,8 @@ grant insert on storage.objects to authenticated;
 grant usage, select on sequence storage.objects_id_seq to authenticated;
 grant select on public.profiles to authenticated;
 \i security-customer-designs-quota-preview.sql
+-- Staged migration commits its transaction; begin a fresh isolated assertion transaction.
+begin;
 do $checks$
 begin
  if has_function_privilege('anon','private.customer_design_upload_allowed()','EXECUTE')
