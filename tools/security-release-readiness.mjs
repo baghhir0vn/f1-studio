@@ -7,7 +7,8 @@ export const REQUIRED_CONTROLS = Object.freeze([
   'backup-freshness','database-restore','storage-object-backup',
   'admin-mfa-aal2','checkout-end-to-end','newsletter-end-to-end',
   'authorization-negative-tests','alert-delivery',
-  'production-secrets-domain','cutover-rollback'
+  'production-secrets-domain','cutover-rollback',
+  'malware-scan-storage-gate'
 ]);
 
 const isSha = value => typeof value === 'string' && /^[a-f0-9]{40}$/i.test(value);
