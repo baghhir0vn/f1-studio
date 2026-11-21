@@ -30,6 +30,8 @@ on:
       - "tools/admin-authorization-pg-assertions.sql"
       - "security-reviews-blocked-users-preview.sql"
       - "security-site-content-path-fix-preview.sql"
+      - "security-customer-designs-quota-preview.sql"
+      - "tools/customer-designs-quota-pg-assertions.sql"
       - "tools/site-content-path-policy-test.sql"
       - "tools/reviews-blocked-pg-assertions.sql"
       - "security-admin-mfa-preview.sql"
@@ -149,6 +151,8 @@ jobs:
         run: psql -X -v ON_ERROR_STOP=1 -f tools/reviews-blocked-pg-assertions.sql
       - name: Assert staged admin MFA needs AAL2 and role authorization
         run: psql -X -v ON_ERROR_STOP=1 -f tools/admin-mfa-pg-assertions.sql
+      - name: Check private customer design upload cap with synthetic accounts
+        run: psql -X -v ON_ERROR_STOP=1 -f tools/customer-designs-quota-pg-assertions.sql
       - name: Check site-content Storage filename regex (synthetic only)
         run: psql -X -v ON_ERROR_STOP=1 -f tools/site-content-path-policy-test.sql
       - name: Create synthetic newsletter signup fixture
