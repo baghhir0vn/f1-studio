@@ -1,0 +1,22 @@
+name: ClamAV scanner smoke test
+on:
+  push:
+    branches: [security/f1-clamav-worker]
+    paths:
+      - server/antivirus/**
+      - .github/workflows/clamav-smoke.yml
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Verify actual ClamAV verdicts through the private socket
+        run: docker compose -f server/antivirus/compose.yaml up --exit-code-from smoke
+      - name: Stop scanner
+        if: always()
+        run: docker compose -f server/antivirus/compose.yaml down --volumes
