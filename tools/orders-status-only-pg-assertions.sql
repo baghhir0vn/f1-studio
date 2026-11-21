@@ -37,4 +37,7 @@ begin
 end $verify$;
 reset role;
 rollback;
+-- The staged migration's COMMIT retained the fictional fixture table;
+-- delete it so later independent CI authorization fixtures can create theirs.
+drop table public.orders;
 select 'PASS: only admin-authorized status column is writable' as result;
