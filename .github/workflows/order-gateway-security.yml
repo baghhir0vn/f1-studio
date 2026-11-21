@@ -6,6 +6,9 @@ on:
       - "api/orders.js"
       - "server/security-observability.js"
       - "tools/security-observability-test.mjs"
+      - "server/antivirus/clamd-instream.mjs"
+      - "server/antivirus/quarantine-gate.mjs"
+      - "tools/antivirus-worker-test.mjs"
       - "tools/security-release-readiness.mjs"
       - "security-backup-structure-baseline.json"
       - "tools/restore-structure-audit.sql"
@@ -74,6 +77,9 @@ jobs:
           node --check api/orders.js
           node --check server/security-observability.js
           node --check tools/security-observability-test.mjs
+          node --check server/antivirus/clamd-instream.mjs
+          node --check server/antivirus/quarantine-gate.mjs
+          node --check tools/antivirus-worker-test.mjs
           node --check tools/security-release-readiness.mjs
           node --check tools/verify-restore-structure.mjs
           node --check tools/verify-restore-structure-test.mjs
@@ -98,6 +104,8 @@ jobs:
           node --check tools/waf-proposal-test.mjs
       - name: Run isolated gateway contract tests
         run: node --test tools/order-gateway-contract-test.mjs
+      - name: Verify fail-closed private antivirus worker without customer files
+        run: node --test tools/antivirus-worker-test.mjs
       - name: Prevent sensitive data in API audit events
         run: node --test tools/security-observability-test.mjs
       - name: Verify production release fails closed without backup and approval evidence
