@@ -1,6 +1,8 @@
 -- Disposable PostgreSQL verification for the staged review RLS migration.
 -- The test DB is provided by GitHub Actions, not a live Supabase project.
 begin;
+create schema if not exists private;
+grant usage on schema private to authenticated;
 create table public.profiles (
  id uuid primary key,
  role text not null default 'customer',
@@ -12,7 +14,8 @@ create table public.reviews (
  stars integer not null,
  text text not null,
  status text not null default 'pending',
- user_id uuid not null
+ user_id uuid not null,
+ created_at timestamptz not null default now()
 );
 insert into public.profiles(id,role,blocked) values
  ('00000000-0000-4000-8000-000000000003','customer',false),
@@ -39,6 +42,7 @@ set local role authenticated;
 do $assert$
 declare
  denied boolean;
+ n integer;
 begin
  -- Allowed customer remains able to submit a pending review.
  perform set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000003',true);
@@ -77,6 +81,22 @@ begin
  exception when insufficient_privilege then denied:=true;
  end;
  if not denied then raise exception 'REGRESSION: blocked user inserted review'; end if;
+
+ -- After five legitimate reviews in one day, further submissions must fail.
+ perform set_config('request.jwt.claim.sub','00000000-0000-4000-8000-000000000003',true);
+ for n in 5..8 loop
+   insert into public.reviews(id,author,stars,text,status,user_id) values (
+     n,'Test customer',4,'Additional synthetic review','pending',
+     '00000000-0000-4000-8000-000000000003');
+ end loop;
+ denied:=false;
+ begin
+   insert into public.reviews(id,author,stars,text,status,user_id) values (
+     9,'Test customer',4,'Excess synthetic review','pending',
+     '00000000-0000-4000-8000-000000000003');
+ exception when insufficient_privilege then denied:=true;
+ end;
+ if not denied then raise exception 'REGRESSION: daily review quota bypass'; end if;
 end
 $assert$;
 reset role;
@@ -84,10 +104,13 @@ do $assert$
 declare hits integer;
 begin
  select count(*) into hits from public.reviews;
- if hits <> 1 then raise exception 'REGRESSION: only 1 valid review expected, got %',hits; end if;
+ if hits <> 5 then raise exception 'REGRESSION: only 5 valid reviews expected, got %',hits; end if;
+ if has_function_privilege('anon','private.review_submission_under_quota()','EXECUTE') then
+   raise exception 'REGRESSION: anon can call review quota function';
+ end if;
  if has_table_privilege('anon','public.reviews','INSERT') then
    raise exception 'REGRESSION: guests can insert reviews';
  end if;
 end $assert$;
 rollback;
-select 'PASS: normal review allowed; blocked, impersonated, approved review denied' as result;
+select 'PASS: five reviews allowed, sixth rate-limited, blocked/forged/approved denied' as result;
