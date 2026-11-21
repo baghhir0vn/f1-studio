@@ -68,6 +68,12 @@
       "verifiedAt": null,
       "evidence": null,
       "notes": "Production SQL migration rollback and release steps have not been rehearsed"
+    },
+    "malware-scan-storage-gate": {
+      "verified": false,
+      "verifiedAt": null,
+      "evidence": null,
+      "notes": "REAL server-side anti-malware scanning is NOT deployed. Customer designs currently upload directly to their private final bucket; browser MIME/magic-byte checks do not establish file safety. Before release: isolate unscanned objects in private quarantine; deploy a dedicated ClamAV scanner with signature updates and no public submission of customer files; use trusted service-only promotion to the final bucket; deny reads/links/orders for unscanned/failed files, including direct Storage API bypass; fail closed when scanner unavailable; test EICAR, clean files, overlimit and timeouts with synthetic content. No vendor credentials or real customer files should enter GitHub or chat."
     }
   }
 }
