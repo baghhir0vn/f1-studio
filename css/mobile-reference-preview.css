@@ -215,131 +215,41 @@
   body.f1-home.hero-sunlit-ready #home .hero-giftique p { font-size:10px!important; }
 }
 
-/* Mobile image-fit correction 2026-11-22:
-   The source photo is 1536x514 (nearly 3:1), so covering a portrait
-   hero would crop the lamp and gifts. Keep text legible in the upper
-   warm panel and display the ENTIRE original image below it.
-   Both stay within the same rounded hero card. */
-@media (max-width:760px) {
-  body.f1-home.hero-sunlit-ready #home .hero-giftique {
-    display:flex!important;
-    flex-direction:column!important;
-    height:auto!important;
-    min-height:0!important;
-    aspect-ratio:auto!important;
-    background:#f8e9db!important;
-    isolation:isolate!important;
-  }
-
-  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-copy {
-    position:relative!important;
-    inset:auto!important;
-    z-index:2!important;
-    display:flex!important;
-    flex:0 0 auto!important;
-    order:0!important;
-    width:100%!important;
-    height:auto!important;
-    min-height:0!important;
-    align-items:flex-start!important;
-    justify-content:center!important;
-    padding:23px 18px 18px!important;
-    background:linear-gradient(145deg,#fff2e6 0%,#f7e5d4 100%)!important;
-  }
-
-  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-eyebrow {
-    margin-bottom:13px!important;
-  }
-  body.f1-home.hero-sunlit-ready #home .hero-giftique h1 {
-    width:100%!important;
-    max-width:330px!important;
-    margin-bottom:12px!important;
-    line-height:1.07!important;
-  }
-  body.f1-home.hero-sunlit-ready #home .hero-giftique p {
-    max-width:340px!important;
-    margin-bottom:15px!important;
-    font-size:11px!important;
-    line-height:1.48!important;
-  }
-
-  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art {
-    position:relative!important;
-    inset:auto!important;
-    z-index:1!important;
-    display:block!important;
-    flex:0 0 auto!important;
-    order:1!important;
-    width:100%!important;
-    height:auto!important;
-    min-height:0!important;
-    aspect-ratio:auto!important;
-    margin:0!important;
-    padding:0!important;
-    background:#f7e5d4!important;
-    overflow:hidden!important;
-  }
-
-  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art::before {
-    content:none!important;
-    display:none!important;
-    background:none!important;
-  }
-
-  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art img {
-    position:static!important;
-    display:block!important;
-    width:100%!important;
-    height:auto!important;
-    max-width:100%!important;
-    max-height:none!important;
-    min-height:0!important;
-    aspect-ratio:1536 / 514!important;
-    object-fit:contain!important;
-    object-position:center!important;
-    margin:0!important;
-    padding:0!important;
-    transform:none!important;
-    animation:none!important;
-  }
-}
-@media (max-width:370px) {
-  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-copy {
-    padding:19px 15px 16px!important;
-  }
-}
-
-/* Mobile integrated hero: readable copy, soft continuous photo, no sharp split.
-   The source is a wide 1536x514 photo; do not stretch to portrait dimensions. */
+/* Single mobile hero rule set. Verified at 320, 375 and 430 CSS px using the actual hero photo.
+   This replaces the conflicting crop/stack/blur overrides used in previous iterations. */
 @media (max-width:760px) {
   body.f1-home.hero-sunlit-ready #home .hero-giftique {
     position:relative!important;
     isolation:isolate!important;
     display:block!important;
     width:calc(100% - 24px)!important;
-    height:clamp(346px,94vw,380px)!important;
-    min-height:346px!important;
+    height:clamp(355px,98.7vw,390px)!important;
+    min-height:355px!important;
     margin:9px auto 0!important;
     padding:0!important;
     overflow:hidden!important;
+    border:0!important;
     border-radius:14px!important;
-    background:#fff0e2!important;
+    background:#f9e9da!important;
     box-shadow:none!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique::before {
+    content:none!important;
+    display:none!important;
   }
   body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art {
     position:absolute!important;
     inset:0!important;
     z-index:0!important;
-    order:initial!important;
     display:block!important;
     width:100%!important;
     height:100%!important;
     min-height:0!important;
     margin:0!important;
     padding:0!important;
-    aspect-ratio:auto!important;
     overflow:hidden!important;
     background:transparent!important;
+    aspect-ratio:auto!important;
   }
   body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art::before {
     content:none!important;
@@ -351,10 +261,10 @@
     inset:auto 0 0 0!important;
     display:block!important;
     width:100%!important;
-    height:clamp(180px,52vw,202px)!important;
-    min-height:0!important;
+    height:clamp(180px,54.7vw,215px)!important;
     max-width:none!important;
     max-height:none!important;
+    min-height:0!important;
     aspect-ratio:auto!important;
     object-fit:cover!important;
     object-position:right center!important;
@@ -363,27 +273,22 @@
     filter:none!important;
     transform:none!important;
     animation:none!important;
-    -webkit-mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.18) 8%,#000 27%)!important;
-    mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.18) 8%,#000 27%)!important;
+    -webkit-mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.2) 8%,black 35%)!important;
+    mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.2) 8%,black 35%)!important;
   }
   body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art::after {
     content:""!important;
-    display:block!important;
     position:absolute!important;
     inset:0!important;
     z-index:1!important;
+    display:block!important;
     pointer-events:none!important;
-    background:linear-gradient(180deg,
-      rgba(255,240,226,.66) 0%,
-      rgba(255,240,226,.40) 42%,
-      rgba(255,240,226,.08) 58%,
-      rgba(255,240,226,0) 75%)!important;
+    background:linear-gradient(180deg,rgba(251,237,223,.30) 0%,rgba(251,237,223,.16) 40%,transparent 70%)!important;
   }
   body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-copy {
     position:relative!important;
     inset:auto!important;
     z-index:2!important;
-    order:initial!important;
     display:flex!important;
     flex-direction:column!important;
     justify-content:flex-start!important;
@@ -391,34 +296,43 @@
     width:100%!important;
     height:100%!important;
     min-height:0!important;
+    padding:20px 16px 0!important;
     margin:0!important;
-    padding:22px 17px 0!important;
     background:transparent!important;
   }
   body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-eyebrow {
-    margin:0 0 13px!important;
-    padding:5px 9px!important;
-    color:#181818!important;
-    background:#ffd48f!important;
-    font-size:8px!important;
+    display:inline-flex!important;
+    margin:0 0 12px!important;
+    padding:6px 10px!important;
+    min-height:0!important;
+    border:0!important;
+    border-radius:7px!important;
+    background:#ffd38e!important;
+    color:#171717!important;
+    font-size:9px!important;
+    font-weight:800!important;
   }
   body.f1-home.hero-sunlit-ready #home .hero-giftique h1 {
     width:100%!important;
-    max-width:310px!important;
+    max-width:315px!important;
     margin:0 0 12px!important;
     color:#171719!important;
-    font-size:clamp(26px,7.35vw,32px)!important;
+    font-family:Inter,Arial,sans-serif!important;
+    font-size:clamp(25px,7.73vw,31px)!important;
+    font-weight:850!important;
     line-height:1.05!important;
     letter-spacing:-.04em!important;
-    font-weight:850!important;
   }
-  body.f1-home.hero-sunlit-ready #home .hero-giftique h1 em { color:#171719!important; }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique h1 em {
+    color:#171719!important;
+    font-style:normal!important;
+  }
   body.f1-home.hero-sunlit-ready #home .hero-giftique p {
     width:auto!important;
-    max-width:335px!important;
-    margin:0 0 13px!important;
-    color:#34353a!important;
-    font-size:10.5px!important;
+    max-width:330px!important;
+    margin:0 0 12px!important;
+    color:#4b4645!important;
+    font-size:11px!important;
     line-height:1.46!important;
   }
   body.f1-home.hero-sunlit-ready #home .hero-actions {
@@ -434,35 +348,48 @@
   body.f1-home.hero-sunlit-ready #home .hero-actions .btn,
   body.f1-home.hero-sunlit-ready #home .hero-secondary {
     flex:0 1 auto!important;
-    min-width:0!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
     width:auto!important;
-    min-height:40px!important;
-    padding:7px 11px!important;
-    font-size:9px!important;
+    min-width:0!important;
+    height:auto!important;
+    min-height:41px!important;
+    padding:10px 12px!important;
+    border-radius:8px!important;
+    font-size:10px!important;
+    font-weight:750!important;
     line-height:1.25!important;
-    border-radius:7px!important;
     text-align:center!important;
+    white-space:normal!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-actions .btn {
+    background:#c9111d!important;
+    border:1px solid #c9111d!important;
+    color:#fff!important;
   }
   body.f1-home.hero-sunlit-ready #home .hero-secondary {
-    background:rgba(255,250,242,.90)!important;
-    border-color:#555!important;
+    background:rgba(255,250,242,.9)!important;
+    border:1px solid #555!important;
     color:#161616!important;
   }
 }
 @media (max-width:370px) {
-  body.f1-home.hero-sunlit-ready #home .hero-giftique {
-    height:350px!important;
-    min-height:350px!important;
+  body.f1-home.hero-sunlit-ready #home .hero-giftique h1 {
+    font-size:clamp(24px,7.8vw,27px)!important;
   }
   body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-copy {
-    padding:19px 15px 0!important;
+    padding:18px 15px 0!important;
   }
   body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-eyebrow {
-    margin-bottom:11px!important;
+    margin-bottom:10px!important;
   }
-  body.f1-home.hero-sunlit-ready #home .hero-giftique h1 { font-size:26px!important; }
   body.f1-home.hero-sunlit-ready #home .hero-giftique p {
     font-size:10px!important;
-    margin-bottom:11px!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-actions .btn,
+  body.f1-home.hero-sunlit-ready #home .hero-secondary {
+    padding:8px 9px!important;
+    font-size:9px!important;
   }
 }
