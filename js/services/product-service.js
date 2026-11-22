@@ -2,7 +2,7 @@ import { sb } from '../config.js';
 import { safeResourceUrl } from '../security.js';
 const PRODUCT_COLUMNS = 'id,name,price,cat,image,images,emoji,badge,material,size,production_time,stock,stock_quantity,description,tags,customizable,updated_at';
 const PRODUCT_IMAGE_EXTERNAL_ORIGINS = new Set([
-    'https://rfkqxiwbicjsszjbdhzd.supabase.co',
+    'https://dlwjkcqoclvlsyjmrjec.supabase.co',
     'https://images.pexels.com'
 ]);
 function resolveProductImage(value) {

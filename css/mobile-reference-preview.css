@@ -1,0 +1,395 @@
+/* Mobile layout aligned to the user's 2026-11-20 F1 Studio screenshot.
+   Scope: home storefront on Preview. Desktop, security, admin and data stay untouched. */
+@media (max-width: 760px) {
+  /* This reference uses a two-row header, then a separate full-width search. */
+  body.f1-home #announcementBar { display:none!important; }
+  body.f1-home > header { position:relative!important;width:100%!important;z-index:50!important; }
+  body.f1-home > header .nav {
+    position:relative!important;display:block!important;width:100%!important;
+    height:111px!important;min-height:111px!important;
+    padding:0!important;margin:0!important;
+    background:inherit!important;
+  }
+  body.f1-home > header .brand-logo {
+    position:absolute!important;top:12px!important;left:50%!important;
+    transform:translateX(-50%)!important;
+    z-index:3!important;display:flex!important;justify-content:center!important;
+    align-items:center!important;min-width:0!important;width:128px!important;
+    height:43px!important;padding:0!important;text-align:center!important;
+  }
+  body.f1-home > header .brand-logo-image { display:none!important; }
+  body.f1-home > header .brand-name { align-items:center!important;gap:1px!important; }
+  body.f1-home > header .brand-main { font-size:20px!important;line-height:1.06!important;white-space:nowrap!important;letter-spacing:-.045em!important; }
+  body.f1-home > header .brand-tagline { font-size:9px!important;line-height:1.1!important;margin-top:2px!important; }
+  body.f1-home > header .actions { position:static!important;display:block!important;margin:0!important;padding:0!important; }
+  body.f1-home > header .mobile-menu-btn {
+    position:absolute!important;top:18px!important;left:11px!important;
+    display:grid!important;place-items:center!important;width:32px!important;
+    height:32px!important;min-width:32px!important;padding:0!important;
+    border:0!important;background:transparent!important;color:#20242a!important;
+    font-size:22px!important;line-height:1!important;
+  }
+  body.f1-home > header .icon-action[aria-label="Axtar"] { display:none!important; }
+  body.f1-home > header .icon-action[aria-label="Sevimlilər"] {
+    position:absolute!important;top:18px!important;right:110px!important;
+    display:grid!important;place-items:center!important;width:30px!important;height:32px!important;
+    border:0!important;background:transparent!important;
+  }
+  body.f1-home > header .cart-icon {
+    position:absolute!important;top:18px!important;right:74px!important;
+    display:grid!important;place-items:center!important;width:30px!important;height:32px!important;
+    border:0!important;background:transparent!important;
+  }
+  body.f1-home > header .icon-action[aria-label="Giriş / Profil"] {
+    position:absolute!important;top:18px!important;right:38px!important;
+    display:grid!important;place-items:center!important;width:30px!important;height:32px!important;
+    border:0!important;background:transparent!important;
+  }
+  body.f1-home > header .theme-toggle-btn {
+    position:absolute!important;top:18px!important;right:5px!important;
+    display:grid!important;place-items:center!important;width:30px!important;height:32px!important;
+    border:0!important;background:transparent!important;color:#e5b509!important;
+    font-size:22px!important;
+  }
+  body.f1-home > header .icon-action svg,
+  body.f1-home > header .cart-icon svg { width:21px!important;height:21px!important; }
+  body.f1-home > header .admin-btn { display:none!important; }
+  body.f1-home > header .nav #mainPrimaryNav { display:none!important; }
+  body.f1-home > header .nav nav.about-route-main-nav {
+    position:absolute!important;top:67px!important;left:0!important;right:0!important;
+    display:flex!important;align-items:center!important;justify-content:flex-start!important;
+    width:100%!important;min-width:0!important;height:42px!important;
+    padding:0 12px!important;margin:0!important;gap:12px!important;
+    overflow-x:auto!important;overflow-y:hidden!important;
+    white-space:nowrap!important;scrollbar-width:none!important;
+    border:0!important;background:transparent!important;box-shadow:none!important;
+    -webkit-overflow-scrolling:touch;
+  }
+  body.f1-home > header .nav nav.about-route-main-nav::-webkit-scrollbar { display:none!important; }
+  body.f1-home > header .nav nav.about-route-main-nav a {
+    display:inline-flex!important;flex:0 0 auto!important;align-items:center!important;
+    height:32px!important;padding:0!important;margin:0!important;border:0!important;
+    background:transparent!important;color:#222428!important;
+    font-size:10.5px!important;line-height:1.2!important;font-weight:750!important;
+    white-space:nowrap!important;text-decoration:none!important;
+  }
+  body.f1-home > header .mobile-nav {
+    position:absolute!important;z-index:65!important;top:100%!important;
+    left:12px!important;right:12px!important;background:#fff!important;
+  }
+
+  body.f1-home .mobile-search-trigger-wrap {
+    display:block!important;width:calc(100% - 24px)!important;
+    margin:7px auto 0!important;padding:0!important;
+  }
+  body.f1-home .mobile-search-trigger {
+    width:100%!important;height:45px!important;min-height:45px!important;
+    display:flex!important;align-items:center!important;justify-content:space-between!important;
+    border:1px solid #e7e8eb!important;border-radius:10px!important;
+    background:#f7f8f9!important;padding:0 13px!important;
+    font:400 13px/1.2 Inter,Arial,sans-serif!important;color:#85888d!important;
+  }
+  body.f1-home .mobile-search-trigger svg { width:22px!important;height:22px!important;flex:0 0 22px!important; }
+
+  /* Same photo and same over-image text hierarchy as the reference mobile hero.
+     The new bright picture uses a warm left-side veil and dark text for contrast. */
+  body.f1-home.hero-sunlit-ready #home .hero-giftique {
+    position:relative!important;display:block!important;width:calc(100% - 24px)!important;
+    height:clamp(260px,77vw,330px)!important;min-height:260px!important;
+    margin:9px auto 0!important;padding:0!important;overflow:hidden!important;
+    border-radius:13px!important;background:#ead6c2!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art {
+    position:absolute!important;inset:0!important;z-index:0!important;
+    order:initial!important;display:block!important;width:100%!important;height:100%!important;
+    min-height:0!important;aspect-ratio:auto!important;overflow:hidden!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art::before {
+    content:""!important;position:absolute!important;inset:0!important;
+    z-index:1!important;display:block!important;width:100%!important;
+    background:linear-gradient(90deg,
+      rgba(255,249,240,.93) 0%, rgba(255,246,232,.86) 37%,
+      rgba(255,245,232,.60) 60%, rgba(255,245,232,.05) 100%)!important;
+    pointer-events:none!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art img {
+    display:block!important;width:100%!important;height:100%!important;
+    object-fit:cover!important;object-position:68% center!important;
+    filter:none!important;transform:none!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-copy {
+    position:relative!important;z-index:2!important;order:initial!important;
+    display:flex!important;flex-direction:column!important;align-items:flex-start!important;
+    justify-content:center!important;width:100%!important;height:100%!important;min-height:0!important;
+    padding:17px 17px!important;margin:0!important;background:transparent!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-eyebrow {
+    max-width:100%!important;min-height:0!important;margin:0 0 10px!important;
+    padding:5px 9px!important;border-radius:6px!important;
+    background:#ffd48f!important;color:#202024!important;
+    font-size:8px!important;font-weight:750!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique h1 {
+    max-width:300px!important;width:100%!important;
+    margin:0 0 12px!important;color:#171719!important;
+    font-family:Inter,Arial,sans-serif!important;
+    font-size:clamp(25px,7.6vw,33px)!important;line-height:1.06!important;
+    font-weight:850!important;letter-spacing:-.04em!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique h1 em { color:#171719!important;font-style:normal!important; }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique p {
+    max-width:300px!important;margin:0 0 13px!important;
+    color:#34353a!important;font-size:10.5px!important;line-height:1.5!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-actions {
+    display:flex!important;width:auto!important;max-width:100%!important;
+    flex-direction:row!important;align-items:center!important;gap:7px!important;
+    flex-wrap:nowrap!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-actions .btn,
+  body.f1-home.hero-sunlit-ready #home .hero-secondary {
+    flex:0 1 auto!important;min-width:0!important;min-height:40px!important;
+    height:auto!important;padding:5px 11px!important;
+    font-size:9px!important;line-height:1.25!important;
+    white-space:normal!important;text-align:center!important;
+    border-radius:7px!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-secondary {
+    background:rgba(255,248,239,.85)!important;border-color:#3e3b39!important;
+    color:#262426!important;
+  }
+
+  /* Single-column feature list and legible category headings. */
+  body.f1-home #home .service-strip {
+    display:grid!important;grid-template-columns:1fr!important;
+    width:calc(100% - 24px)!important;margin:9px auto 0!important;
+    padding:5px 10px!important;border:1px solid #ececec!important;
+    border-radius:14px!important;background:#fff!important;
+  }
+  body.f1-home #home .service-strip > div {
+    grid-template-columns:39px minmax(0,1fr)!important;align-items:center!important;
+    min-height:62px!important;padding:9px 7px!important;
+    border-bottom:1px solid #eee!important;border-right:0!important;
+  }
+  body.f1-home #home .service-strip > div:last-child { border-bottom:0!important; }
+  body.f1-home #home .service-strip .service-icon { width:32px!important;height:32px!important; }
+  body.f1-home #home .service-strip .service-icon svg { width:24px!important;height:24px!important; }
+  body.f1-home #home .service-strip b { font-size:13px!important;font-weight:750!important;line-height:1.35!important; }
+  body.f1-home #home .service-strip small { font-size:10px!important;line-height:1.4!important; }
+  body.f1-home #home > .section { width:100%!important;padding-inline:12px!important; }
+  body.f1-home #home > .category-showcase { margin-top:29px!important; }
+  body.f1-home #home .shop-heading h2,body.f1-home #home > .section > h2 {
+    font-size:21px!important;line-height:1.25!important;
+  }
+  body.f1-home #home .shop-heading { margin-bottom:12px!important; }
+  body.f1-home #home .view-all { font-size:9px!important; }
+  body.f1-home #home .categories { gap:8px!important;padding-bottom:9px!important; }
+  body.f1-home #home .category-card {
+    flex-basis:108px!important;min-height:120px!important;
+    padding:10px 7px!important;border-radius:11px!important;
+  }
+  body.f1-home #home .category-photo { flex-basis:52px!important;width:52px!important;height:52px!important; }
+  body.f1-home #home .category-card b { font-size:10px!important; }
+  body.f1-home #home .category-card small { font-size:9px!important; }
+
+  body.f1-home .f1-mobile-dock {
+    position:fixed!important;z-index:75!important;bottom:0!important;left:0!important;right:0!important;
+    display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr))!important;
+    min-height:68px!important;padding:8px 3px calc(7px + env(safe-area-inset-bottom,0px))!important;
+    background:#fff!important;border-top:1px solid #eeeeee!important;
+  }
+  body.f1-home .f1-mobile-dock svg { width:23px!important;height:23px!important; }
+  body.f1-home .f1-mobile-dock span { font-size:10px!important;line-height:1.2!important;font-weight:600!important; }
+  body.f1-home #home { padding-bottom:80px!important; }
+}
+@media (max-width: 370px) {
+  body.f1-home > header .brand-logo { left:45%!important;width:104px!important; }
+  body.f1-home > header .brand-main { font-size:17px!important; }
+  body.f1-home > header .brand-tagline { font-size:8px!important; }
+  body.f1-home > header .icon-action[aria-label="Sevimlilər"] { right:101px!important; }
+  body.f1-home > header .cart-icon { right:69px!important; }
+  body.f1-home > header .icon-action[aria-label="Giriş / Profil"] { right:37px!important; }
+  body.f1-home > header .theme-toggle-btn { right:5px!important; }
+  body.f1-home > header .nav nav.about-route-main-nav { gap:11px!important; }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique h1 { font-size:26px!important;max-width:280px!important; }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique p { font-size:10px!important; }
+}
+
+/* Single mobile hero rule set. Verified at 320, 375 and 430 CSS px using the actual hero photo.
+   This replaces the conflicting crop/stack/blur overrides used in previous iterations. */
+@media (max-width:760px) {
+  body.f1-home.hero-sunlit-ready #home .hero-giftique {
+    position:relative!important;
+    isolation:isolate!important;
+    display:block!important;
+    width:calc(100% - 24px)!important;
+    height:clamp(355px,98.7vw,390px)!important;
+    min-height:355px!important;
+    margin:9px auto 0!important;
+    padding:0!important;
+    overflow:hidden!important;
+    border:0!important;
+    border-radius:14px!important;
+    background:#f9e9da!important;
+    box-shadow:none!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique::before {
+    content:none!important;
+    display:none!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art {
+    position:absolute!important;
+    inset:0!important;
+    z-index:0!important;
+    display:block!important;
+    width:100%!important;
+    height:100%!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:hidden!important;
+    background:transparent!important;
+    aspect-ratio:auto!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art::before {
+    content:none!important;
+    display:none!important;
+    background:none!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art img {
+    position:absolute!important;
+    inset:auto 0 0 0!important;
+    display:block!important;
+    width:100%!important;
+    height:clamp(180px,54.7vw,215px)!important;
+    max-width:none!important;
+    max-height:none!important;
+    min-height:0!important;
+    aspect-ratio:auto!important;
+    object-fit:cover!important;
+    object-position:right center!important;
+    margin:0!important;
+    padding:0!important;
+    filter:none!important;
+    transform:none!important;
+    animation:none!important;
+    -webkit-mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.2) 8%,black 35%)!important;
+    mask-image:linear-gradient(to bottom,transparent 0%,rgba(0,0,0,.2) 8%,black 35%)!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art::after {
+    content:""!important;
+    position:absolute!important;
+    inset:0!important;
+    z-index:1!important;
+    display:block!important;
+    pointer-events:none!important;
+    background:linear-gradient(180deg,rgba(251,237,223,.30) 0%,rgba(251,237,223,.16) 40%,transparent 70%)!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-copy {
+    position:relative!important;
+    inset:auto!important;
+    z-index:2!important;
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:flex-start!important;
+    align-items:flex-start!important;
+    width:100%!important;
+    height:100%!important;
+    min-height:0!important;
+    padding:20px 16px 0!important;
+    margin:0!important;
+    background:transparent!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-eyebrow {
+    display:inline-flex!important;
+    margin:0 0 12px!important;
+    padding:6px 10px!important;
+    min-height:0!important;
+    border:0!important;
+    border-radius:7px!important;
+    background:#ffd38e!important;
+    color:#171717!important;
+    font-size:9px!important;
+    font-weight:800!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique h1 {
+    width:100%!important;
+    max-width:315px!important;
+    margin:0 0 12px!important;
+    color:#171719!important;
+    font-family:Inter,Arial,sans-serif!important;
+    font-size:clamp(25px,7.73vw,31px)!important;
+    font-weight:850!important;
+    line-height:1.05!important;
+    letter-spacing:-.04em!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique h1 em {
+    color:#171719!important;
+    font-style:normal!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique p {
+    width:auto!important;
+    max-width:330px!important;
+    margin:0 0 12px!important;
+    color:#4b4645!important;
+    font-size:11px!important;
+    line-height:1.46!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-actions {
+    display:flex!important;
+    flex-direction:row!important;
+    align-items:center!important;
+    flex-wrap:nowrap!important;
+    gap:8px!important;
+    max-width:100%!important;
+    width:auto!important;
+    margin:0!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-actions .btn,
+  body.f1-home.hero-sunlit-ready #home .hero-secondary {
+    flex:0 1 auto!important;
+    display:inline-flex!important;
+    align-items:center!important;
+    justify-content:center!important;
+    width:auto!important;
+    min-width:0!important;
+    height:auto!important;
+    min-height:41px!important;
+    padding:10px 12px!important;
+    border-radius:8px!important;
+    font-size:10px!important;
+    font-weight:750!important;
+    line-height:1.25!important;
+    text-align:center!important;
+    white-space:normal!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-actions .btn {
+    background:#c9111d!important;
+    border:1px solid #c9111d!important;
+    color:#fff!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-secondary {
+    background:rgba(255,250,242,.9)!important;
+    border:1px solid #555!important;
+    color:#161616!important;
+  }
+}
+@media (max-width:370px) {
+  body.f1-home.hero-sunlit-ready #home .hero-giftique h1 {
+    font-size:clamp(24px,7.8vw,27px)!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-copy {
+    padding:18px 15px 0!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-eyebrow {
+    margin-bottom:10px!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique p {
+    font-size:10px!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-actions .btn,
+  body.f1-home.hero-sunlit-ready #home .hero-secondary {
+    padding:8px 9px!important;
+    font-size:9px!important;
+  }
+}

@@ -1,11 +1,17 @@
-const SUPABASE_URL = "https://rfkqxiwbicjsszjbdhzd.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_BwBmKpfKD1sgcdu2JGZIww_zjX_ATsM";
+const SUPABASE_URL = "https://dlwjkcqoclvlsyjmrjec.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Nz8cVam4KPjub1Su8ZiSYA_XhulciZv";
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
     auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
 });
 const CONFIG = {
-    siteUrl: "https://f1studio-nine.vercel.app",
-    turnstileSiteKey: "0x4AAAAAAFbyWLVOPCNWcSJj",
+    // TEST BRANCH ONLY: suppress real WhatsApp handoff for synthetic orders.
+    securityPreview: true,
+    // Opt-in rollout flag: keep false in production until TOTP enrollment
+    // and database AAL2 enforcement are validated together.
+    adminMfaEnabled: true,
+    siteUrl: window.location.origin,
+    // Cloudflare widget restricted to the isolated security Preview hostname.
+    turnstileSiteKey: "0x4AAAAAAGKpifK9AkrYwRjU",
     instagram: "https://instagram.com/f1_studio",
     tiktok: "https://tiktok.com/@f1_studio",
     whatsappNumber: "",

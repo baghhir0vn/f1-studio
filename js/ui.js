@@ -95,7 +95,11 @@ export async function subscribeNewsletter(event) {
     } catch (error) {
         const code = String(error?.code || "");
         const message = String(error?.message || "");
-        if (code === "INVALID_NEWSLETTER_EMAIL") {
+        if (code === "NEWSLETTER_RATE_LIMITED") {
+            const errorMessage = "Çox sayda abunəlik cəhdi oldu. 15 dəqiqə sonra yenidən yoxlayın.";
+            setNewsletterFeedback("error", errorMessage);
+            showToast(`⚠️ ${errorMessage}`);
+        } else if (code === "INVALID_NEWSLETTER_EMAIL") {
             input.setAttribute("aria-invalid", "true");
             setNewsletterFeedback("error", "Zəhmət olmasa düzgün email ünvanı daxil edin.");
             showToast("❌ Zəhmət olmasa düzgün email ünvanı daxil edin.");

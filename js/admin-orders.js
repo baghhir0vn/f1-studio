@@ -93,7 +93,7 @@ async function hydrateAdminCustomerDesignLinks(){
         }
         try{
             const url=await ctx.getAdminCustomerDesignSignedUrl(path);
-            const safeUrl=/^https:\/\/rfkqxiwbicjsszjbdhzd\.supabase\.co\//i.test(url)?url:'';
+            const safeUrl=/^https:\/\/dlwjkcqoclvlsyjmrjec\.supabase\.co\//i.test(url)?url:'';
             if(!safeUrl) throw new Error('DESIGN_SIGNED_URL_FAILED');
             link.href=safeUrl;
             link.textContent=`📎 ${link.dataset.designLabel||'Dizayn faylını aç'}`;

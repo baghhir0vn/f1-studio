@@ -1,0 +1,49 @@
+/* Admin MFA enrollment and verification (isolated security Preview) */
+#adminMfaModal .dialog {
+  width: min(94vw, 500px);
+  max-height: min(94vh, 760px);
+  overflow-y: auto;
+  background: var(--bg, #fff);
+  border-radius: 22px;
+  padding: clamp(18px, 4vw, 32px);
+  box-shadow: 0 18px 65px rgba(0,0,0,.22);
+}
+#adminMfaModal [hidden] { display: none !important; }
+#adminMfaModal .admin-mfa-heading {
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+#adminMfaModal .admin-mfa-heading h2 { margin: 4px 0 8px; font-size: clamp(21px,4vw,26px); }
+#adminMfaModal .admin-mfa-eyebrow { font-size: 12px; letter-spacing:.1em; font-weight:700; }
+#adminMfaModal .admin-mfa-note { font-size: 14px; line-height:1.5; margin: 8px 0 16px; }
+#adminMfaModal .admin-mfa-status {
+  background: rgba(65,113,80,.09); border: 1px solid rgba(65,113,80,.22);
+  padding: 12px; border-radius: 12px; line-height: 1.5; margin: 12px 0;
+}
+#adminMfaModal .admin-mfa-status[data-error="true"] {
+  background: rgba(189,68,52,.1); border-color: rgba(189,68,52,.28);
+}
+#adminMfaModal .admin-mfa-qr { max-width: 235px; width:100%; display:block; margin: 14px auto; }
+#adminMfaModal .admin-mfa-secret {
+  display:block; overflow-wrap:anywhere; user-select:all; border: 1px dashed #9ca3af;
+  padding: 12px; border-radius: 8px; line-height:1.6; margin: 8px 0 14px;
+  font-family:ui-monospace,SFMono-Regular,Consolas,monospace; font-size:14px;
+}
+#adminMfaModal .admin-mfa-field { display:grid; gap:8px; margin:14px 0; font-size:14px; }
+#adminMfaModal .admin-mfa-field input,
+#adminMfaModal .admin-mfa-field select {
+  width:100%; box-sizing:border-box; border:1px solid #9ca3af; border-radius:10px;
+  padding:12px; background:var(--bg,#fff); color:inherit; font:inherit;
+}
+#adminMfaModal .admin-mfa-code { font-family:ui-monospace,Consolas,monospace!important; font-size:22px!important; letter-spacing:.19em; }
+#adminMfaModal .admin-mfa-button {
+  appearance:none; border-radius:11px; padding:11px 16px; cursor:pointer;
+  border:1px solid #52735a; background:#42664d; color:white;
+  font:inherit; font-weight:650; margin:8px 6px 4px 0;
+}
+#adminMfaModal .admin-mfa-button.secondary { background:transparent; color:inherit; }
+#adminMfaModal .admin-mfa-button:disabled { cursor:wait; opacity:.55; }
+#adminMfaModal .admin-mfa-warning { font-size:12px; line-height:1.5; opacity:.83; margin:12px 0; }

@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "purpose": "Metadata-only inventory to validate a separately restored database, NOT a database backup or proof of restored data/Storage bytes",
+  "sourceProject": "rfkqxiwbicjsszjbdhzd",
+  "organizationPlanObserved": "free",
+  "baselineDate": "2026-11-21",
+  "requiredPublicTables": [
+    "newsletter_subscribers",
+    "order_items",
+    "order_rate_limits",
+    "orders",
+    "products",
+    "profiles",
+    "reviews",
+    "site_settings"
+  ],
+  "requiredCriticalFunctions": [
+    "admin_list_orders",
+    "create_order",
+    "is_admin",
+    "subscribe_newsletter"
+  ],
+  "requiredPrivateStorageBuckets": [
+    "customer-avatars",
+    "customer-designs"
+  ],
+  "requiredPublicStorageBuckets": [
+    "product-images",
+    "site-content"
+  ],
+  "productionBackupVerified": false,
+  "independentRestoreVerified": false,
+  "storageObjectsBackedUp": false,
+  "warning": "The table names and bucket entries do NOT prove row data is restored or that actual Storage files are available. Do not alter release gate attestations without separate backup and restore evidence."
+}
