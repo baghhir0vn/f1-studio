@@ -363,3 +363,10 @@ html[data-theme="dark"] body.f1-home #catalogSearchPanel .catalog-search-close,h
   body.f1-home>footer.site-footer .footer-label{font-size:13px!important}
   body.f1-home>footer.site-footer .footer-bottom{font-size:9px!important}
 }
+
+/* Minimal creator credit */
+body.f1-home>footer.site-footer .footer-credit{display:flex!important;align-items:center!important;justify-content:center!important;width:100%!important;margin:14px auto 0!important;text-align:center!important;font-size:11px!important;line-height:1.5!important}
+body.f1-home>footer.site-footer .footer-credit a{display:inline-flex!important;align-items:center!important;gap:3px!important;color:#b8bdc5!important;font-size:inherit!important;font-weight:400!important;text-decoration:none!important}
+body.f1-home>footer.site-footer .footer-credit-name{color:#8A6049!important;font-weight:600!important;transition:color .16s ease!important}
+body.f1-home>footer.site-footer .footer-credit a:hover .footer-credit-name{color:#68442f!important;text-decoration:underline!important;text-underline-offset:2px!important}
+@media(max-width:760px){body.f1-home>footer.site-footer .footer-credit{margin-bottom:56px!important}}
