@@ -2686,6 +2686,8 @@ html[data-theme="dark"] .newsletter-feedback.is-error{border-color:#69423d;backg
 #customModal .custom-note{margin:12px 0!important;padding:9px!important;border:1px solid #303b46!important;background:#151e27!important;color:#aab5c0!important;font:500 7px/1.5 Inter,system-ui,sans-serif!important}
 #customModal .ds-reset-button{width:100%;margin-top:7px}
 #customModal .ds-inspector-footer{position:sticky;bottom:0;z-index:3;display:grid;gap:9px;padding:11px 15px 14px;margin-top:auto;border-top:1px solid #293540;background:linear-gradient(180deg,rgba(16,24,33,.96),#101821)}
+#customModal .ds-submit-feedback{margin:0;color:#ffcdab;font:600 12px/1.4 Inter,system-ui,sans-serif}
+#customModal .ds-submit-feedback:empty{display:none}
 #customModal .ds-inspector-footer>span{color:#8794a0;text-align:center;font:500 7px/1 Inter,system-ui,sans-serif}
 #customModal .ds-inspector-footer .custom-submit{width:100%!important;min-width:0!important;min-height:43px;display:flex;align-items:center;justify-content:center;gap:12px;border:1px solid #e0b768!important;border-radius:7px!important;background:#edc477!important;color:#21180d!important;font:800 9px/1 Inter,system-ui,sans-serif!important;box-shadow:0 5px 18px rgba(205,156,71,.12);cursor:pointer}
 #customModal .ds-inspector-footer .custom-submit:hover{background:#f4d392!important;transform:translateY(-1px)}
