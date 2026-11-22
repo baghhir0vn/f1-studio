@@ -1,0 +1,20 @@
+/* F1 Studio optional classical ambience — self-contained widget */
+.f1-ambient{position:fixed;right:18px;bottom:20px;z-index:850;max-width:calc(100vw - 28px);font-family:inherit;color:#f2e8d8}
+.f1-ambient-toggle{display:flex;align-items:center;gap:9px;border:1px solid rgba(217,186,122,.55);border-radius:999px;background:#1c2024;color:#eddfc4;padding:11px 15px;box-shadow:0 8px 28px #0005;cursor:pointer;font:inherit;font-size:13px;letter-spacing:.02em}
+.f1-ambient-toggle:focus-visible,.f1-ambient button:focus-visible,.f1-ambient select:focus-visible,.f1-ambient input:focus-visible{outline:3px solid #dcbf81;outline-offset:3px}
+.f1-ambient-toggle svg{width:17px;height:17px;stroke:#d9b87a;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.f1-ambient-toggle[data-active="true"]{box-shadow:0 0 20px #bc9a5350,0 8px 28px #0005}
+.f1-ambient-panel{position:absolute;bottom:calc(100% + 10px);right:0;width:min(330px,calc(100vw - 28px));box-sizing:border-box;background:#191d21;color:#efe6d8;border:1px solid #b8985e77;border-radius:17px;padding:18px;box-shadow:0 12px 35px #0007}
+.f1-ambient-panel[hidden]{display:none}
+.f1-ambient-title{font-family:Georgia,serif;font-size:17px;letter-spacing:.05em;color:#e4c991;margin:0 0 5px}
+.f1-ambient-subtitle{font-size:11px;color:#bbb3a5;letter-spacing:.09em;margin:0 0 16px}
+.f1-ambient-field{display:grid;gap:7px;margin:12px 0;color:#ded3c4;font-size:12px}
+.f1-ambient-field select{width:100%;background:#2b3035;border:1px solid #b8985e66;border-radius:8px;color:#fff;padding:10px;font:inherit}
+.f1-ambient-field input{width:100%;accent-color:#d4b678}
+.f1-ambient-actions{display:flex;align-items:center;gap:9px;margin-top:14px}
+.f1-ambient-play{flex:1;background:#cfb276;border:0;border-radius:9px;padding:10px;color:#1b1b1b;font-weight:700;cursor:pointer}
+.f1-ambient-close{border:1px solid #766f61;background:transparent;color:#eee;border-radius:9px;padding:9px 12px;cursor:pointer}
+.f1-ambient-credit{display:block;color:#c8bba4;font-size:10px;line-height:1.6;margin-top:13px}
+.f1-ambient-credit a{color:#e3c88b;text-decoration:underline}
+.f1-ambient-status{font-size:11px;color:#c8bba4;margin:8px 0 0;min-height:16px}
+@media(max-width:640px){.f1-ambient{right:12px;bottom:88px}.f1-ambient-toggle{padding:10px 12px;font-size:12px}.f1-ambient-panel{max-height:min(65vh,430px);overflow-y:auto}}
