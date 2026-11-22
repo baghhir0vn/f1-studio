@@ -538,8 +538,11 @@ body.f1-home>header .nav nav#aboutRouteMainNav{display:flex!important}
 
 /* Fit every requested destination in the mobile link row without clipping. */
 @media(max-width:900px){
-  body.f1-home>header .nav nav#aboutRouteMainNav{gap:clamp(8px,2vw,10px)!important}
+  body.f1-home>header .nav nav#aboutRouteMainNav{gap:clamp(2px,0.8vw,3px)!important}
   body.f1-home>header .nav nav#aboutRouteMainNav a{padding-inline:1px!important}
+}
+@media(max-width:380px){
+  body.f1-home>header .nav nav#aboutRouteMainNav{gap:0!important}
 }
 
 

@@ -1,10 +1,16 @@
 import { escapeHTML, money, isValidPhone, showToast } from './ui.js';
-import { authService, getAuthDiagnosticMetadata, isAuthDiagnosticEnabled } from './services/auth-service.js?v=3';
+import { authService } from './services/auth-service.js';
 import { state as s, ctx } from './state.js';
 import { getProfileForUser } from './services/profile-service.js';
 import { CONFIG } from './config.js';
 import { storageService } from './services/storage-service.js';
 import { isCustomerDesignPathOwnedBy } from './security.js';
+
+const CAPTCHA_TOKEN_LIFETIME_MS = 300_000;
+const CAPTCHA_PENDING_MESSAGE = "Təhlükəsizlik yoxlamasını tamamlayın.";
+const CAPTCHA_EXPIRED_MESSAGE = "Təsdiqin vaxtı bitdi. Yoxlamanı yenidən tamamlayın.";
+const CAPTCHA_REJECTED_MESSAGE = "Təhlükəsizlik təsdiqi qəbul edilmədi. Yoxlamanı yenidən tamamlayıb cəhd edin.";
+
 export function initAuth() {
     const authModes = {
         login: ["login-submit", "register-switch", "forgot", "remember-row", "captcha"],
@@ -16,7 +22,7 @@ export function initAuth() {
     };
     let authPanelMode = "login";
     let authSubmissionInProgress = false;
-    let authCaptchaToken = "";
+    let authCaptcha = null;
     let authCaptchaWidgetId = null;
     let authCaptchaLoadPromise = null;
 
@@ -41,9 +47,14 @@ export function initAuth() {
             script.async = true;
             script.defer = true;
             script.dataset.f1AuthTurnstile = "true";
-            script.onload = () => window.turnstile?.render
-                ? resolve(window.turnstile)
-                : reject(new Error("TURNSTILE_API_UNAVAILABLE"));
+            script.onload = () => {
+                if (window.turnstile?.render) {
+                    resolve(window.turnstile);
+                } else {
+                    script.remove();
+                    reject(new Error("TURNSTILE_API_UNAVAILABLE"));
+                }
+            };
             script.onerror = () => {
                 script.remove();
                 reject(new Error("TURNSTILE_SCRIPT_LOAD_FAILED"));
@@ -70,59 +81,79 @@ export function initAuth() {
         try {
             const turnstile = await loadTurnstileApi();
             if (authCaptchaWidgetId !== null) return;
+            if (!authCaptchaRequired() || !document.getElementById("loginModal")?.classList.contains("open")) return;
+            setAuthCaptchaStatus(CAPTCHA_PENDING_MESSAGE);
             authCaptchaWidgetId = turnstile.render(wrapper, {
                 sitekey: CONFIG.turnstileSiteKey,
                 theme: "auto",
+                "response-field": false,
                 callback: token => {
-                    authCaptchaToken = typeof token === "string" ? token : "";
+                    authCaptcha = typeof token === "string" && token.trim()
+                        ? { token, expiresAt: Date.now() + CAPTCHA_TOKEN_LIFETIME_MS }
+                        : null;
                     setAuthCaptchaStatus(
-                        authCaptchaToken ? "Təhlükəsizlik yoxlaması tamamlandı. Davam edə bilərsiniz." : "Yoxlamanı tamamlayın.",
-                        authCaptchaToken ? "success" : "pending"
+                        authCaptcha ? "Təhlükəsizlik yoxlaması tamamlandı. Davam edə bilərsiniz." : CAPTCHA_PENDING_MESSAGE,
+                        authCaptcha ? "success" : "pending"
                     );
                 },
                 "expired-callback": () => {
-                    authCaptchaToken = "";
-                    setAuthCaptchaStatus("Təsdiqin vaxtı bitdi. Yenidən təsdiqləyin.", "pending");
+                    authCaptcha = null;
+                    setAuthCaptchaStatus(CAPTCHA_EXPIRED_MESSAGE, "error");
                 },
-                "error-callback": () => {
-                    authCaptchaToken = "";
-                    setAuthCaptchaStatus("Yoxlama yüklənmədi. İnternet bağlantısını yoxlayıb yenidən cəhd edin.", "error");
+                "error-callback": code => {
+                    authCaptcha = null;
+                    const message = String(code) === "110200"
+                        ? "Bu ünvanda təhlükəsizlik yoxlaması əlçatan deyil."
+                        : "Təhlükəsizlik yoxlaması alınmadı. İnternet bağlantısını yoxlayın və yenidən cəhd edin.";
+                    setAuthCaptchaStatus(message, "error");
                 },
                 "timeout-callback": () => {
-                    authCaptchaToken = "";
-                    setAuthCaptchaStatus("Yoxlamanın vaxtı bitdi. Yenidən təsdiqləyin.", "pending");
+                    authCaptcha = null;
+                    setAuthCaptchaStatus(CAPTCHA_EXPIRED_MESSAGE, "error");
                 }
             });
             if (authCaptchaWidgetId === undefined || authCaptchaWidgetId === null) {
                 throw new Error("TURNSTILE_WIDGET_RENDER_FAILED");
             }
-            setAuthCaptchaStatus("Zəhmət olmasa, təhlükəsizlik yoxlamasını tamamlayın.", "pending");
         } catch (_) {
+            authCaptcha = null;
             authCaptchaWidgetId = null;
             setAuthCaptchaStatus("Təhlükəsizlik yoxlaması yüklənmədi. Səhifəni yeniləyib yenidən cəhd edin.", "error");
         }
     }
 
-    function getAuthCaptchaToken() {
-        if (!CONFIG.turnstileSiteKey) {
-            setAuthCaptchaStatus("Təhlükəsizlik yoxlaması hazır deyil. Bir az sonra yenidən cəhd edin.", "error");
-            showToast("Təhlükəsizlik yoxlaması hazır deyil. Bir az sonra yenidən cəhd edin.");
+    function takeAuthCaptchaToken() {
+        if (authCaptcha && Date.now() >= authCaptcha.expiresAt) {
+            resetAuthCaptcha(CAPTCHA_EXPIRED_MESSAGE, "error");
+            showToast(CAPTCHA_EXPIRED_MESSAGE);
             return "";
         }
-        if (!authCaptchaToken) {
-            setAuthCaptchaStatus("Davam etmək üçün təhlükəsizlik yoxlamasını tamamlayın.", "pending");
-            showToast("Zəhmət olmasa, təhlükəsizlik yoxlamasını tamamlayın.");
+
+        if (!authCaptcha) {
+            const status = document.getElementById("authCaptchaStatus");
+            const message = status?.dataset.state === "error" || status?.dataset.state === "loading"
+                ? status.textContent
+                : CAPTCHA_PENDING_MESSAGE;
+            showToast(message);
+            if (authCaptchaWidgetId === null && status?.dataset.state !== "loading") void ensureAuthCaptcha();
             return "";
         }
-        return authCaptchaToken;
+
+        const { token } = authCaptcha;
+        authCaptcha = null;
+        return token;
     }
 
-    function resetAuthCaptcha() {
-        authCaptchaToken = "";
+    function resetAuthCaptcha(message = CAPTCHA_PENDING_MESSAGE, state = "pending") {
+        authCaptcha = null;
+        setAuthCaptchaStatus(message, state);
         if (authCaptchaWidgetId !== null && window.turnstile?.reset) {
-            try { window.turnstile.reset(authCaptchaWidgetId); } catch (_) {}
+            try {
+                window.turnstile.reset(authCaptchaWidgetId);
+            } catch (_) {
+                setAuthCaptchaStatus("Təhlükəsizlik yoxlaması yenilənmədi. Səhifəni yeniləyib yenidən cəhd edin.", "error");
+            }
         }
-        setAuthCaptchaStatus("Təhlükəsizlik yoxlamasını tamamlayın.", "pending");
     }
 
     function setAuthPanelMode(mode = "login") {
@@ -206,23 +237,18 @@ export function initAuth() {
         setAuthPanelMode("login");
         requestAnimationFrame(() => document.getElementById("profileEmail")?.focus());
     }
+    function isCaptchaFailure(error) {
+        return /captcha/i.test(String(error?.code || "") + " " + String(error?.message || ""));
+    }
+
     function getAuthFailureMessage(error, flow) {
         const message = String(error?.message || "").toLowerCase();
         const code = String(error?.code || "").toLowerCase();
         const signature = code + " " + message;
 
-        // Log non-sensitive error metadata only; never log form values or credentials.
-        console.error("F1 " + flow + " request failed", {
-            code: error?.code || null,
-            status: Number(error?.status) || null,
-            name: error?.name || null
-        });
-
+        if (isCaptchaFailure(error)) return CAPTCHA_REJECTED_MESSAGE;
         if (/email.?not.?confirmed|email_not_confirmed/.test(signature)) {
             return "E-poçt ünvanınız təsdiqlənməyib. Qeydiyyat e-poçtundakı keçidi açın, sonra yenidən daxil olun.";
-        if (/captcha_failed|captcha/.test(signature)) {
-            return "Təhlükəsizlik təsdiqi qəbul edilmədi və ya vaxtı bitdi. Yenidən təsdiqləyib cəhd edin.";
-        }
         }
         if (flow === "register" && /already registered|user already exists|email_exists/.test(signature)) {
             return "Bu e-poçt ilə hesab artıq mövcud ola bilər. Daxil olun və ya şifrəni sıfırlayın.";
@@ -241,49 +267,12 @@ export function initAuth() {
             : "Giriş alınmadı. E-poçt və şifrəni yoxlayıb yenidən cəhd edin.";
     }
 
-    function formatAuthDiagnosticValue(value) {
-        return value === undefined ? "undefined" : value === null ? "null" : String(value).slice(0, 500);
-    }
-
-    function showLoginAuthDiagnostic(error) {
-        if (!isAuthDiagnosticEnabled()) return;
-        const details = getAuthDiagnosticMetadata(error);
-        console.error("[AUTH DIAGNOSTIC] Login error metadata", details);
-
-        const toast = document.getElementById("toast");
-        if (!toast) return;
-        let block = toast.querySelector(".auth-diagnostic");
-        if (!block) {
-            toast.appendChild(document.createElement("br"));
-            block = document.createElement("pre");
-            block.className = "auth-diagnostic";
-            Object.assign(block.style, {
-                whiteSpace: "pre-wrap",
-                textAlign: "left",
-                fontSize: "12px",
-                lineHeight: "1.45",
-                maxWidth: "min(80vw, 520px)",
-                maxHeight: "180px",
-                overflow: "auto",
-                margin: "8px 0 0",
-                padding: "8px 10px",
-                borderRadius: "8px",
-                background: "rgba(0, 0, 0, 0.08)"
-            });
-            toast.appendChild(block);
+    function refreshAuthCaptchaAfterFailure(error) {
+        if (isCaptchaFailure(error)) {
+            resetAuthCaptcha(CAPTCHA_REJECTED_MESSAGE, "error");
+        } else {
+            resetAuthCaptcha();
         }
-        block.textContent = [
-            "AUTH DIAGNOSTIC",
-            `Name: ${formatAuthDiagnosticValue(details.name)}`,
-            `Code: ${formatAuthDiagnosticValue(details.code)}`,
-            `Status: ${formatAuthDiagnosticValue(details.status)}`,
-            `Message: ${formatAuthDiagnosticValue(details.message)}`
-        ].join("\n");
-        clearTimeout(window.__toastTimer);
-        window.__toastTimer = setTimeout(() => {
-            toast.classList.remove("show");
-            block.remove();
-        }, 30000);
     }
 
     function getRememberedAuthEmail() {
@@ -419,7 +408,7 @@ export function initAuth() {
         if (authSubmissionInProgress) return;
         const email=document.getElementById("resetEmail")?.value.trim();
         if(!/^\S+@\S+\.\S+$/.test(email)) return showToast("Düzgün e-poçt ünvanı daxil edin.");
-        const captchaToken = getAuthCaptchaToken();
+        const captchaToken = takeAuthCaptchaToken();
         if (!captchaToken) return;
         authSubmissionInProgress = true;
         setAuthSubmissionBusy(true);
@@ -427,15 +416,15 @@ export function initAuth() {
             await ctx.api("/api/auth/reset-password",{method:"POST",body:JSON.stringify({email,captchaToken})});
             ctx.hideForgotPassword();
             showToast("📧 Əgər bu email hesabınıza bağlıdırsa, şifrə yeniləmə keçidi göndərildi.");
+            resetAuthCaptcha();
         }catch(e){
-            console.error("Password reset request error", { code: e?.code || null, status: Number(e?.status) || null });
-            showToast(/captcha_failed|captcha/i.test(`${e?.code || ""} ${e?.message || ""}`)
-                ? getAuthFailureMessage(e, "reset")
+            refreshAuthCaptchaAfterFailure(e);
+            showToast(isCaptchaFailure(e)
+                ? CAPTCHA_REJECTED_MESSAGE
                 : "Şifrə yeniləmə emaili göndərilə bilmədi. Bir az sonra yenidən cəhd edin.");
         } finally {
             authSubmissionInProgress = false;
             setAuthSubmissionBusy(false);
-            resetAuthCaptcha();
         }
     }
     function openPasswordRecovery(){
@@ -460,8 +449,7 @@ export function initAuth() {
             await ctx.renderProfile();
             await ctx.startAdminRealtime();
             showToast("✅ Şifrəniz uğurla yeniləndi.");
-        }catch(e){
-            console.error("Password update error",e);
+        }catch{
             showToast("Şifrə yenilənmədi. Keçidin vaxtı bitmiş və ya etibarsız ola bilər.");
         }
     }
@@ -469,12 +457,8 @@ export function initAuth() {
         if (authSubmissionInProgress) return;
         const name=document.getElementById("profileName").value.trim(), phone=document.getElementById("profilePhone").value.trim(), email=document.getElementById("profileEmail").value.trim(), password=document.getElementById("profilePassword").value;
         if(name.length<2 || !isValidPhone(phone) || !/^\S+@\S+\.\S+$/.test(email) || password.length<8) return showToast("Ad, telefon, düzgün email və ən azı 8 simvolluq şifrə daxil edin.");
-        const captchaToken = getAuthCaptchaToken();
-        if (!captchaToken) {
-            authSubmissionInProgress = false;
-            setAuthSubmissionBusy(false);
-            return;
-        }
+        const captchaToken = takeAuthCaptchaToken();
+        if (!captchaToken) return;
         authSubmissionInProgress = true;
         setAuthSubmissionBusy(true);
         try {
@@ -490,11 +474,12 @@ export function initAuth() {
                     document.getElementById("profilePassword").value = "";
                     await ctx.renderProfile();
                     setAuthPanelMode("confirmation");
+                    resetAuthCaptcha();
                     showToast("E-poçtunuza gələn təsdiq keçidini açın, sonra daxil olun.");
                 }
             } catch(e) {
+                refreshAuthCaptchaAfterFailure(e);
                 showToast(getAuthFailureMessage(e, "register"));
-            resetAuthCaptcha();
             }
         } finally {
             authSubmissionInProgress = false;
@@ -506,46 +491,29 @@ export function initAuth() {
         if (authSubmissionInProgress) return;
         const email=document.getElementById("profileEmail").value.trim(), password=document.getElementById("profilePassword").value;
         if(!/^\S+@\S+\.\S+$/.test(email) || password.length<8) return showToast("Email və şifrəni düzgün daxil edin.");
-        const captchaToken = getAuthCaptchaToken();
-        if (!captchaToken) {
-            authSubmissionInProgress = false;
-            setAuthSubmissionBusy(false);
-            return;
-        }
+        const captchaToken = takeAuthCaptchaToken();
+        if (!captchaToken) return;
         authSubmissionInProgress = true;
         setAuthSubmissionBusy(true);
         try {
             try {
                 const data=await ctx.api("/api/auth/login",{method:"POST",body:JSON.stringify({email,password,captchaToken})});
-                if (isAuthDiagnosticEnabled()) {
-                    console.info("[AUTH DIAGNOSTIC] Login result processed", {
-                        resultKeys: Object.keys(data || {}),
-                        hasUser: Boolean(data?.user),
-                        hasSession: Boolean(data?.session)
-                    });
-                }
                 if(data?.user?.blocked){
                     await ctx.api("/api/auth/logout",{method:"POST"}).catch(()=>{});
                     s.authUser=null; s.profile=null; s.accountAuthResolved=true; s.accountOrdersFetched=true; s.accountOrdersLoadError=false; s.orders=[];
                     await ctx.renderProfile();
                     setAuthPanelMode("login");
+                    resetAuthCaptcha();
                     return showToast("Bu hesab bloklanıb. Adminlə əlaqə saxlayın.");
                 }
                 rememberAuthEmail();
                 s.authUser=data.user; s.profile=s.authUser; s.accountAuthResolved=true; s.accountOrdersFetched=false; s.accountOrdersLoadError=false;
-                if (isAuthDiagnosticEnabled()) {
-                    console.info("[AUTH DIAGNOSTIC] Session and account state updated", {
-                        hasUser: Boolean(s.authUser),
-                        hasSession: Boolean(data?.session)
-                    });
-                }
                 await ctx.renderProfile(); await ctx.startAdminRealtime();
                 closeLogin();
                 showToast("Giriş edildi.");
             } catch(e) {
+                refreshAuthCaptchaAfterFailure(e);
                 showToast(getAuthFailureMessage(e, "login"));
-                showLoginAuthDiagnostic(e);
-            resetAuthCaptcha();
             }
         } finally {
             authSubmissionInProgress = false;
