@@ -43,6 +43,7 @@ const assetFiles = [
   "assets/reference/cat-1.jpg", "assets/reference/cat-2.jpg", "assets/reference/cat-3.jpg",
   "assets/reference/cat-4.jpg", "assets/reference/cat-5.jpg", "assets/reference/cat-6.jpg",
   "assets/reference/hero-scene.jpg", "assets/reference/promo-offer-gift.jpg",
+  "assets/reference/home-hero-20261024.jpg",
   "public/images/hero-warm-gift-composition.png"
 ];
 const licenseFile = "js/vendor/QRCODE-GENERATOR-LICENSE.txt";
@@ -94,7 +95,8 @@ if (notAllowlisted.length || denied.length || outputFiles.length !== allowed.siz
 }
 
 for (const required of [
-  "index.html", "css/hero-presentation.css", "public/images/hero-warm-gift-composition.png"
+  "index.html", "css/hero-presentation.css", "public/images/hero-warm-gift-composition.png",
+  "assets/reference/home-hero-20261024.jpg"
 ]) {
   if (!included.has(required)) throw new Error("Required public file missing: " + required);
 }
@@ -102,8 +104,8 @@ const html = await readFile(path.join(dist, "index.html"), "utf8");
 if (!html.includes("Created by Ba\u011f\u0131rov") || !html.includes("https://www.instagram.com/baghir0v.n/")) {
   throw new Error("Footer credit or Instagram link is missing.");
 }
-if (!html.includes("public/images/hero-warm-gift-composition.png")) {
-  throw new Error("Preview hero image reference is missing.");
+if (!html.includes("public/images/hero-warm-gift-composition.png") || !html.includes("assets/reference/home-hero-20261024.jpg")) {
+  throw new Error("Responsive Preview hero image references are missing.");
 }
 
 function resolveReference(fromFile, reference) {
@@ -125,6 +127,17 @@ for (const match of html.matchAll(/(?:src|href)=["']([^"']+)["']/g)) {
   const target = path.resolve(dist, resolved);
   assertInside(dist, target);
   await lstat(target).catch(() => { throw new Error("Broken HTML asset reference: " + resolved); });
+}
+
+for (const match of html.matchAll(/srcset=["']([^"']+)["']/g)) {
+  for (const candidate of match[1].split(",")) {
+    const reference = candidate.trim().split(/\s+/)[0];
+    const resolved = resolveReference("index.html", reference);
+    if (!resolved) continue;
+    const target = path.resolve(dist, resolved);
+    assertInside(dist, target);
+    await lstat(target).catch(() => { throw new Error("Broken HTML srcset reference: " + resolved); });
+  }
 }
 
 for (const file of outputFiles.filter(file => /\.(?:css|js)$/i.test(file))) {
