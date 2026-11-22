@@ -22,9 +22,14 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
       - name: Verify actual ClamAV verdicts through the private socket
         run: docker compose -f server/antivirus/compose.yaml up --exit-code-from smoke
+      - name: Verify the signature updater starts with its own health check
+        run: docker compose -f server/antivirus/compose.yaml -f server/antivirus/preview.compose.yaml up -d --wait --wait-timeout 120 definitions
+      - name: Print scanner startup logs on failure
+        if: failure()
+        run: docker compose -f server/antivirus/compose.yaml -f server/antivirus/preview.compose.yaml logs --tail 50 clamd definitions
       - name: Stop scanner
         if: always()
-        run: docker compose -f server/antivirus/compose.yaml down --volumes
+        run: docker compose -f server/antivirus/compose.yaml -f server/antivirus/preview.compose.yaml down --volumes
 
   quarantine:
     runs-on: ubuntu-latest
