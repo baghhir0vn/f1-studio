@@ -214,3 +214,97 @@
   body.f1-home.hero-sunlit-ready #home .hero-giftique h1 { font-size:26px!important;max-width:280px!important; }
   body.f1-home.hero-sunlit-ready #home .hero-giftique p { font-size:10px!important; }
 }
+
+/* Mobile image-fit correction 2026-11-22:
+   The source photo is 1536x514 (nearly 3:1), so covering a portrait
+   hero would crop the lamp and gifts. Keep text legible in the upper
+   warm panel and display the ENTIRE original image below it.
+   Both stay within the same rounded hero card. */
+@media (max-width:760px) {
+  body.f1-home.hero-sunlit-ready #home .hero-giftique {
+    display:flex!important;
+    flex-direction:column!important;
+    height:auto!important;
+    min-height:0!important;
+    aspect-ratio:auto!important;
+    background:#f8e9db!important;
+    isolation:isolate!important;
+  }
+
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-copy {
+    position:relative!important;
+    inset:auto!important;
+    z-index:2!important;
+    display:flex!important;
+    flex:0 0 auto!important;
+    order:0!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    align-items:flex-start!important;
+    justify-content:center!important;
+    padding:23px 18px 18px!important;
+    background:linear-gradient(145deg,#fff2e6 0%,#f7e5d4 100%)!important;
+  }
+
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-eyebrow {
+    margin-bottom:13px!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique h1 {
+    width:100%!important;
+    max-width:330px!important;
+    margin-bottom:12px!important;
+    line-height:1.07!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique p {
+    max-width:340px!important;
+    margin-bottom:15px!important;
+    font-size:11px!important;
+    line-height:1.48!important;
+  }
+
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art {
+    position:relative!important;
+    inset:auto!important;
+    z-index:1!important;
+    display:block!important;
+    flex:0 0 auto!important;
+    order:1!important;
+    width:100%!important;
+    height:auto!important;
+    min-height:0!important;
+    aspect-ratio:auto!important;
+    margin:0!important;
+    padding:0!important;
+    background:#f7e5d4!important;
+    overflow:hidden!important;
+  }
+
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art::before {
+    content:none!important;
+    display:none!important;
+    background:none!important;
+  }
+
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art img {
+    position:static!important;
+    display:block!important;
+    width:100%!important;
+    height:auto!important;
+    max-width:100%!important;
+    max-height:none!important;
+    min-height:0!important;
+    aspect-ratio:1536 / 514!important;
+    object-fit:contain!important;
+    object-position:center!important;
+    margin:0!important;
+    padding:0!important;
+    transform:none!important;
+    animation:none!important;
+  }
+}
+@media (max-width:370px) {
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-copy {
+    padding:19px 15px 16px!important;
+  }
+}
