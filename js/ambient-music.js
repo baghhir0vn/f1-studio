@@ -92,6 +92,7 @@
   };
   const start = async () => {
     if (switching) return;
+    if (current) { current.pause(); current.removeAttribute('src'); current.load(); current = null; }
     cancelFade();
     const audio = makeAudio(selected);
     current = audio;
@@ -112,9 +113,10 @@
     if (!current) { playing = false; updateControls(); return; }
     const audio = current;
     cancelFade();
+    audio.pause();
     current = null; playing = false; switching = false; updateControls();
     status.textContent = 'Musiqi dayandırılıb.';
-    fade(audio, audio.volume, 0, 420, () => { audio.pause(); audio.removeAttribute('src'); audio.load(); });
+    audio.removeAttribute('src'); audio.load();
   };
   toggle.addEventListener('click', () => {
     panel.hidden = !panel.hidden;
@@ -128,17 +130,33 @@
     const old = current;
     cancelFade();
     switching = true;
-    old.pause(); old.removeAttribute('src'); old.load();
-    current = null; playing = false; switching = false;
-    updateControls();
-    await start();
+    const next = makeAudio(selected);
+    // Both tracks start only after the initial user gesture. Crossfade while switching.
+    try {
+      await next.play();
+      const begin = performance.now();
+      const from = old.volume;
+      const step = now => {
+        const p = Math.min(1, (now - begin) / 850);
+        old.volume = Math.max(0, from * (1 - p));
+        next.volume = Math.min(1, volume * p);
+        if (p < 1) animation = requestAnimationFrame(step);
+        else {
+          animation = 0; old.pause(); old.removeAttribute('src'); old.load();
+          current = next; switching = false; playing = true; updateControls();
+          status.textContent = 'Musiqi səslənir.';
+        }
+      };
+      current = next;
+      animation = requestAnimationFrame(step);
+    } catch (_) {
+      next.pause(); current = old; switching = false; old.volume = volume;
+      status.textContent = 'Yeni musiqi yüklənmədi. Əvvəlki əsər davam edir.';
+    }
   });
   slider.addEventListener('input', () => {
     volume = Number(slider.value) / 100; save();
     if (current && playing) { cancelFade(); current.volume = volume; }
-  });
-  document.addEventListener('visibilitychange', () => {
-    // User-selected music continues while navigating page sections, including tab switches.
   });
   updateCredit(); updateControls();
 })();
