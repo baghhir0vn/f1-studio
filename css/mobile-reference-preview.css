@@ -308,3 +308,164 @@
     padding:19px 15px 16px!important;
   }
 }
+
+/* Mobile integrated photographic hero (replaces stacked copy/image composition). */
+@media (max-width:760px) {
+  body.f1-home.hero-sunlit-ready #home .hero-giftique {
+    position:relative!important;
+    isolation:isolate!important;
+    display:block!important;
+    width:calc(100% - 24px)!important;
+    height:clamp(332px,90vw,370px)!important;
+    min-height:332px!important;
+    margin:9px auto 0!important;
+    padding:0!important;
+    overflow:hidden!important;
+    border-radius:14px!important;
+    background:#f4e4d5!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art {
+    position:absolute!important;
+    inset:0!important;
+    z-index:0!important;
+    display:block!important;
+    width:100%!important;
+    height:100%!important;
+    min-height:0!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:hidden!important;
+    border-radius:0!important;
+    aspect-ratio:auto!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art::before {
+    content:""!important;
+    display:block!important;
+    position:absolute!important;
+    inset:-12px!important;
+    z-index:0!important;
+    width:auto!important;
+    height:auto!important;
+    background-image:url("../assets/reference/f1-studio-sunlit-hero.avif")!important;
+    background-size:cover!important;
+    background-position:73% center!important;
+    opacity:.32!important;
+    filter:blur(7px)!important;
+    transform:scale(1.03)!important;
+    pointer-events:none!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art img {
+    display:block!important;
+    position:absolute!important;
+    inset:auto 0 0 auto!important;
+    z-index:0!important;
+    width:100%!important;
+    height:clamp(175px,50vw,205px)!important;
+    max-width:none!important;
+    max-height:none!important;
+    min-height:0!important;
+    aspect-ratio:auto!important;
+    object-fit:cover!important;
+    object-position:right center!important;
+    filter:none!important;
+    transform:none!important;
+    animation:none!important;
+    margin:0!important;
+    padding:0!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-art::after {
+    content:""!important;
+    display:block!important;
+    position:absolute!important;
+    inset:0!important;
+    z-index:1!important;
+    pointer-events:none!important;
+    background:linear-gradient(180deg,
+      rgba(255,243,231,.96) 0%,
+      rgba(255,239,225,.86) 26%,
+      rgba(255,235,220,.72) 46%,
+      rgba(255,235,220,.18) 66%,
+      rgba(255,235,220,0) 84%)!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-copy {
+    position:relative!important;
+    z-index:2!important;
+    inset:auto!important;
+    order:initial!important;
+    display:flex!important;
+    flex-direction:column!important;
+    justify-content:flex-start!important;
+    align-items:flex-start!important;
+    width:100%!important;
+    height:100%!important;
+    min-height:0!important;
+    padding:23px 17px 0!important;
+    margin:0!important;
+    background:transparent!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-eyebrow {
+    margin:0 0 15px!important;
+    padding:5px 9px!important;
+    font-size:8px!important;
+    background:#ffd48f!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique h1 {
+    width:100%!important;
+    max-width:310px!important;
+    margin:0 0 11px!important;
+    color:#171719!important;
+    font-size:clamp(26px,7.5vw,33px)!important;
+    line-height:1.04!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique h1 em {color:#171719!important;}
+  body.f1-home.hero-sunlit-ready #home .hero-giftique p {
+    width:auto!important;
+    max-width:330px!important;
+    margin:0 0 15px!important;
+    color:#303036!important;
+    font-size:10.5px!important;
+    line-height:1.5!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-actions {
+    display:flex!important;
+    flex-direction:row!important;
+    align-items:center!important;
+    flex-wrap:nowrap!important;
+    gap:8px!important;
+    max-width:100%!important;
+    width:auto!important;
+    margin:0!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-actions .btn,
+  body.f1-home.hero-sunlit-ready #home .hero-secondary {
+    flex:0 1 auto!important;
+    width:auto!important;
+    min-width:0!important;
+    min-height:40px!important;
+    padding:7px 11px!important;
+    font-size:9px!important;
+    line-height:1.25!important;
+    border-radius:7px!important;
+    text-align:center!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-secondary {
+    background:rgba(255,250,242,.86)!important;
+    border-color:#555!important;
+    color:#161616!important;
+  }
+}
+@media(max-width:370px) {
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-copy {
+    padding:21px 15px 0!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique .hero-eyebrow {
+    margin-bottom:11px!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique h1 {
+    font-size:26px!important;
+  }
+  body.f1-home.hero-sunlit-ready #home .hero-giftique p {
+    font-size:10px!important;
+    margin-bottom:12px!important;
+  }
+}
