@@ -64,5 +64,7 @@
         }
       ]
     }
-  ]
+  ],
+  "buildCommand": "node scripts/build-preview.mjs",
+  "outputDirectory": "dist"
 }
