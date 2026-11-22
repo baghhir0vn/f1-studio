@@ -114,10 +114,15 @@ async function main() {
   process.once('SIGTERM', () => stop.abort());
   process.once('SIGINT', () => stop.abort());
 
+  let connected = false;
   while (!stop.signal.aborted) {
     let outcome;
     try {
       outcome = await scanner.scanNext();
+      if (!connected) {
+        console.info('Preview scan queue connected.');
+        connected = true;
+      }
       if (outcome !== 'idle') console.info('Design scan: ' + outcome);
     } catch {
       console.error('Design scan request failed. Pending files remain quarantined.');
