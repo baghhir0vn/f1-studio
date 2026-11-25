@@ -17,22 +17,35 @@ export function initHomepageContent(){
   if(status)status.textContent='Məlumatlar yüklənir…';
   const baseLoad=ctx.loadSiteSettings;
   if(typeof baseLoad==='function' && !ctx.homepageContentLoadWrapped){
-    ctx.loadSiteSettings=async(...args)=>{
-      const result=await baseLoad(...args);
-      await loadHomepageContent();
-      return result;
+    let pendingLoad = null;
+    ctx.loadSiteSettings=(...args)=>{
+      if (pendingLoad) return pendingLoad;
+      const request = (async()=>{
+        // Fetch independently but apply homepage content after base settings,
+        // preserving the existing precedence of text and error handling.
+        const contentRequest = siteSettingsService.getHomepageContent().then(
+          content=>({content}), error=>({error})
+        );
+        const result=await baseLoad(...args);
+        await loadHomepageContent(contentRequest);
+        return result;
+      })();
+      pendingLoad=request.finally(()=>{ pendingLoad=null; });
+      return pendingLoad;
     };
     ctx.homepageContentLoadWrapped=true;
   }
 }
 
-async function loadHomepageContent(){
+async function loadHomepageContent(contentRequest){
   const status=document.getElementById('homepageContentStatus');
   const saveButton=document.querySelector('.admin-home-save-row [data-action="saveHomepageContent"]');
   if(saveButton)saveButton.disabled=true;
   if(status)status.textContent='Məlumatlar yüklənir…';
   try{
-    const content=await siteSettingsService.getHomepageContent();
+    const loaded=await contentRequest;
+    if ("error" in loaded) throw loaded.error;
+    const content=loaded.content;
     applyHomepageContent(content);
     if(status)status.textContent='✅ Ana səhifə mətnləri serverdən yükləndi.';
     if(saveButton)saveButton.disabled=false;
