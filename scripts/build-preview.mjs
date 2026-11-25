@@ -1,5 +1,6 @@
-import { copyFile, mkdir, readdir, readFile, lstat } from "node:fs/promises";
+import { copyFile, mkdir, readdir, readFile, writeFile, lstat } from "node:fs/promises";
 import path from "node:path";
+import { build, transform } from "esbuild";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -75,6 +76,55 @@ async function addFile(relative) {
 
 for (const file of allowed) await addFile(file);
 if (included.size !== allowed.size) throw new Error("Static manifest copy is incomplete.");
+
+// Preview-only optimization: keep the exact static allowlist and run all
+// security, reference and secret checks on the final generated output.
+const appOutput = path.join(dist, "js/app.js");
+const bundled = await build({
+  absWorkingDir: root,
+  entryPoints: ["js/app.js"],
+  outfile: appOutput,
+  bundle: true,
+  write: false,
+  format: "esm",
+  platform: "browser",
+  target: "es2020",
+  minifyWhitespace: true,
+  minifySyntax: true,
+  minifyIdentifiers: false,
+  keepNames: true,
+  legalComments: "inline",
+  sourcemap: false,
+  metafile: true
+});
+if (bundled.outputFiles.length !== 1 || path.resolve(bundled.outputFiles[0].path) !== appOutput) {
+  throw new Error("Unexpected JavaScript bundle output.");
+}
+const inputBytes = Object.values(bundled.metafile.inputs).reduce((sum, input) => sum + input.bytes, 0);
+const inputCount = Object.keys(bundled.metafile.inputs).length;
+await writeFile(appOutput, bundled.outputFiles[0].contents);
+console.log("Performance JS: " + inputCount + " module inputs, " + inputBytes + " bytes -> " + bundled.outputFiles[0].contents.length + " bytes (one app entry bundle)");
+
+let cssBefore = 0;
+let cssAfter = 0;
+for (const file of cssFiles) {
+  const target = path.join(dist, file);
+  const source = await readFile(target, "utf8");
+  const result = await transform(source, {
+    loader: "css",
+    sourcefile: file,
+    minifyWhitespace: true,
+    minifySyntax: false,
+    minifyIdentifiers: false,
+    legalComments: "inline",
+    sourcemap: false
+  });
+  cssBefore += Buffer.byteLength(source);
+  cssAfter += Buffer.byteLength(result.code);
+  await writeFile(target, result.code, "utf8");
+}
+console.log("Performance CSS: " + cssFiles.length + " stylesheets, " + cssBefore + " bytes -> " + cssAfter + " bytes (order and media attributes unchanged)");
+
 
 const outputFiles = [];
 async function collect(directory, prefix = "") {
