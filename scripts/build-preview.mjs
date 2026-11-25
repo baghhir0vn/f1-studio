@@ -1,6 +1,7 @@
 import { copyFile, mkdir, readdir, readFile, writeFile, lstat } from "node:fs/promises";
 import path from "node:path";
 import { build, transform } from "esbuild";
+import sharp from "sharp";
 import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -48,7 +49,13 @@ const assetFiles = [
   "public/images/hero-warm-gift-composition.png"
 ];
 const licenseFile = "js/vendor/QRCODE-GENERATOR-LICENSE.txt";
-const allowed = new Set([...rootFiles, ...cssFiles, ...jsFiles, ...assetFiles, licenseFile]);
+const optimizedImages = [
+  { source: "public/images/hero-warm-gift-composition.png", target: "public/images/hero-warm-gift-composition.webp", quality: 88 },
+  { source: "assets/reference/home-hero-20261024.jpg", target: "assets/reference/home-hero-20261024.webp", quality: 86 },
+  { source: "assets/reference/about-showcase-original.jpg", target: "assets/reference/about-showcase-original.webp", quality: 86 }
+];
+const generated = new Set(optimizedImages.map(image => image.target));
+const allowed = new Set([...rootFiles, ...cssFiles, ...jsFiles, ...assetFiles, ...generated, licenseFile]);
 const included = new Set();
 
 function assertInside(base, target) {
@@ -74,7 +81,38 @@ async function addFile(relative) {
   included.add(normalized);
 }
 
-for (const file of allowed) await addFile(file);
+for (const file of allowed) {
+  if (!generated.has(file)) await addFile(file);
+}
+for (const image of optimizedImages) {
+  if (!included.has(image.source) || !allowed.has(image.target) || forbiddenPath.test(image.target)) {
+    throw new Error("Invalid optimized image manifest.");
+  }
+  const source = path.resolve(dist, image.source);
+  const target = path.resolve(dist, image.target);
+  assertInside(dist, source);
+  assertInside(dist, target);
+  const original = await lstat(source);
+  const metadata = await sharp(source).metadata();
+  const encoded = await sharp(source).autoOrient().webp({ quality: image.quality, effort: 5 }).toBuffer();
+  if (encoded.length >= original.size) throw new Error("Optimized image not smaller: " + image.source);
+  await writeFile(target, encoded, { flag: "wx" });
+  included.add(image.target);
+  console.log("Performance image: " + image.source + " (" + metadata.width + "x" + metadata.height + "), " + original.size + " bytes -> " + encoded.length + " bytes");
+}
+// Add WebP sources ahead of existing originals, preserving the responsive
+// selection, original markup, fallback images and all CSS.
+const htmlPath = path.join(dist, "index.html");
+let optimizedHtml = await readFile(htmlPath, "utf8");
+const imageReplacements = [
+  ['<source media="(min-width: 901px)" srcset="public/images/hero-warm-gift-composition.png">', '<source media="(min-width: 901px)" type="image/webp" srcset="public/images/hero-warm-gift-composition.webp"><source media="(min-width: 901px)" srcset="public/images/hero-warm-gift-composition.png"><source type="image/webp" srcset="assets/reference/home-hero-20261024.webp">'],
+  ['<picture class="about-showcase">', '<picture class="about-showcase"><source type="image/webp" srcset="assets/reference/about-showcase-original.webp">']
+];
+for (const [before, after] of imageReplacements) {
+  if (optimizedHtml.split(before).length !== 2) throw new Error("Unexpected image markup: " + before);
+  optimizedHtml = optimizedHtml.replace(before, after);
+}
+await writeFile(htmlPath, optimizedHtml, "utf8");
 if (included.size !== allowed.size) throw new Error("Static manifest copy is incomplete.");
 
 // Preview-only optimization: keep the exact static allowlist and run all
