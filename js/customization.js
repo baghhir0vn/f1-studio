@@ -55,6 +55,7 @@ export function initCustomization() {
         document.getElementById("customFont").value="Klassik";
         document.getElementById("customImage").value="";
         document.getElementById("customImageName").textContent="Fayl seçilməyib";
+        document.getElementById("customSubmitFeedback").textContent="";
         document.getElementById("customPreview").innerHTML='<span>Fərdi dizaynınızı burada seçin</span>';
         if(s.customObjectUrl){URL.revokeObjectURL(s.customObjectUrl); s.customObjectUrl=null;}
         // Opening a different product or closing the dialog must not carry
@@ -306,11 +307,14 @@ export function initCustomization() {
         const p=ctx.getProduct(s.customProductId); if(!p) return;
         const submit=document.getElementById("customSubmitBtn");
         if(submit?.disabled) return;
+        const feedback=document.getElementById("customSubmitFeedback");
+        feedback.textContent="";
+        const showSubmitError=message=>{ feedback.textContent=message; };
         const customization=ctx.getCustomizationFormData();
         const unfilledTemplateText=customization.layout?.layers?.some(layer=>layer?.type==="text"&&layer.visible!==false&&layer.requiresInput===true);
-        if(unfilledTemplateText) return showToast("Şablondakı nümunə mətnləri öz məlumatınızla əvəz edin və ya həmin qatları silin.");
+        if(unfilledTemplateText) return showSubmitError("Şablondakı nümunə mətnləri öz məlumatınızla əvəz edin və ya həmin qatları silin.");
         const invalidQr=customization.layout?.layers?.some(layer=>layer?.type==="qr"&&layer.visible!==false&&!ctx.isDesignQrRenderable?.(layer.content));
-        if(invalidQr) return showToast("QR kod üçün etibarlı, qısa link və ya mətn daxil edin.");
+        if(invalidQr) return showSubmitError("QR kod üçün etibarlı, qısa link və ya mətn daxil edin.");
         const hasVisibleLayer=customization.layout?.layers?.some(layer=>layer?.visible!==false&&(
             (layer.type==="text"&&String(layer.text||"").trim())||
             (layer.type==="image"&&(customization.imageName||customization.imagePath))||
@@ -318,13 +322,13 @@ export function initCustomization() {
             (layer.type==="qr"&&String(layer.content||"").trim())
         ));
         if(!customization.text && !customization.imageName && !customization.note && !hasVisibleLayer){
-            return showToast("Fərdi sifariş üçün ən azı yazı, şəkil və ya əlavə qeyd daxil edin.");
+            return showSubmitError("Fərdi sifariş üçün ən azı yazı, şəkil və ya əlavə qeyd daxil edin.");
         }
         if([1,2].includes(Number(p.id)) && !customization.text){
-            return showToast("Lipa nömrə üçün üzərinə yazılacaq mətn və ya nömrəni daxil edin.");
+            return showSubmitError("Lipa nömrə üçün üzərinə yazılacaq mətn və ya nömrəni daxil edin.");
         }
         if(customization.size==="Xüsusi ölçü" && !customization.sizeValue){
-            return showToast("Xüsusi ölçü seçmisiniz — ölçünü də yazın.");
+            return showSubmitError("Xüsusi ölçü seçmisiniz — ölçünü də yazın.");
         }
         const pendingImages=ctx.getDesignUploadFiles?.()||new Map();
         const attachment=ctx.getDesignAttachmentFile?.()||null;
@@ -332,8 +336,8 @@ export function initCustomization() {
         if(p.stockQuantity!=null){
             const currentQty=s.cart.filter(i=>i.id===p.id && i.lineId!==s.customEditingLineId).reduce((sum,i)=>sum+(Number(i.qty)||0),0);
             const reservedForEdit=s.customEditingLineId?Number(s.cart.find(i=>i.lineId===s.customEditingLineId)?.qty||0):0;
-            if(Number(p.stockQuantity)<=0) return showToast("Bu məhsul hazırda stokda yoxdur.");
-            if(currentQty+Math.max(1,reservedForEdit)>Number(p.stockQuantity)) return showToast("Bu məhsul üçün stok limiti dolub.");
+            if(Number(p.stockQuantity)<=0) return showSubmitError("Bu məhsul hazırda stokda yoxdur.");
+            if(currentQty+Math.max(1,reservedForEdit)>Number(p.stockQuantity)) return showSubmitError("Bu məhsul üçün stok limiti dolub.");
         }
         const oldText=submit?.textContent;
         const fileStatus=document.getElementById("customImageName");
@@ -405,13 +409,13 @@ export function initCustomization() {
                 DESIGN_FILE_TOO_LARGE:"Dizayn faylı maksimum 10 MB ola bilər.",
                 DESIGN_FILE_DIMENSIONS:"Şəklin ölçüsü emal limiti üçün həddən artıq böyükdür.",
                 DESIGN_FILE_MALFORMED:"Fayl zədələnib və ya düzgün şəkil/PDF formatı deyil.",
-                AUTH_REQUIRED:"Dizayn faylı yükləmək üçün əvvəlcə hesabınıza daxil olun.",
+                AUTH_REQUIRED:"Dizayn faylı yükləmək üçün hesabınıza daxil olun. Qaralamanı saxlayıb Giriş / Profil bölməsini aça bilərsiniz.",
                 DESIGN_UPLOAD_FAILED:"Fayllardan biri şəxsi yaddaşa yüklənmədi. Dizaynınız saxlanılıb; yenidən cəhd edə bilərsiniz.",
                 SECURE_RANDOM_UNAVAILABLE:"Bu brauzerdə təhlükəsiz fayl yükləməsi mümkün deyil. HTTPS səhifəsində yenidən cəhd edin."
             };
             const friendly=map[raw] || (raw.startsWith("DESIGN_UPLOAD_FAILED:") ? `Dizayn yüklənmədi: ${raw.replace("DESIGN_UPLOAD_FAILED: ","")}` : "Fərdi sifariş yadda saxlanmadı.");
             if(fileStatus&&selectedFiles.length) fileStatus.textContent=`Yükləmə alınmadı; ${selectedFiles.length} fayl yalnız bu cihazdadır. Mövcud dizaynınız qorunub.`;
-            showToast(friendly);
+            showSubmitError(friendly);
             console.error("F1 customization error",e);
         }finally{
             if(submit){submit.disabled=false;submit.textContent=oldText||"🛒 Fərdiləşdir və səbətə əlavə et";}

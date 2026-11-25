@@ -9,10 +9,10 @@
 <meta property="og:title" content="F1 Studio — Premium Hədiyyələr">
 <meta property="og:description" content="F1 Studio — fərdi hədiyyələr, lazer kəsim, çap və avto aksessuarlar.">
 <meta property="og:type" content="website">
-<meta name="robots" content="index,follow">
+<meta name="robots" content="noindex,nofollow">
 <meta name="theme-color" content="#536c4d">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; connect-src 'self' https://rfkqxiwbicjsszjbdhzd.supabase.co wss://rfkqxiwbicjsszjbdhzd.supabase.co; img-src 'self' data: blob: https://rfkqxiwbicjsszjbdhzd.supabase.co https://images.pexels.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src https://www.google.com https://www.google.com/maps/ https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdn.jsdelivr.net https://challenges.cloudflare.com; connect-src 'self' https://dlwjkcqoclvlsyjmrjec.supabase.co wss://dlwjkcqoclvlsyjmrjec.supabase.co; img-src 'self' data: blob: https://dlwjkcqoclvlsyjmrjec.supabase.co https://images.pexels.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; frame-src https://www.google.com https://www.google.com/maps/ https://challenges.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests">
 <meta name="author" content="F1 Studio">
 <meta property="og:url" content="/">
 <meta property="og:site_name" content="F1 Studio">
@@ -54,12 +54,11 @@
   "itemListElement":[]
 }</script>
     <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://dlwjkcqoclvlsyjmrjec.supabase.co" crossorigin>
     <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
     <link rel="icon" type="image/png" href="f1-logo.png?v=128">
     <link rel="apple-touch-icon" href="f1-logo.png?v=128">
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-    <link rel="preconnect" href="https://rfkqxiwbicjsszjbdhzd.supabase.co" crossorigin>
-    <link rel="stylesheet" href="css/styles.css?v=149">
+    <link rel="stylesheet" href="css/styles.css?v=150">
     <link rel="stylesheet" href="css/admin-scroll.css?v=1">
     <link rel="stylesheet" href="css/order-delivery-info.css?v=1">
     <link rel="stylesheet" href="css/f1-reference-refresh.css?v=1">
@@ -70,7 +69,8 @@
 <link rel="stylesheet" href="css/chat-assistant.css?v=7">
 <link rel="stylesheet" href="css/admin-dashboard-refresh.css?v=2">
     <link rel="stylesheet" href="css/account-page.css?v=1">
-<link rel="stylesheet" href="css/auth-redesign.css?v=4">
+<link rel="stylesheet" href="css/auth-redesign.css?v=5">
+<link rel="stylesheet" href="css/admin-mfa.css?v=1">
     <link rel="stylesheet" href="css/product-whatsapp.css?v=2">
     <link rel="stylesheet" href="css/hero-presentation.css?v=2" media="(min-width: 901px)">
 </head>
@@ -637,6 +637,10 @@
             <label class="checkout-field"><span>Ünvan / xüsusi qeyd</span><textarea id="address" placeholder="Çatdırılma ünvanı və ya xüsusi qeyd" aria-label="Çatdırılma ünvanı və ya xüsusi qeyd"></textarea></label>
         </div>
 
+        <div class="checkout-captcha" aria-label="Sifariş təhlükəsizlik yoxlaması" style="padding:12px 0">
+            <div id="checkoutCaptchaWidget"></div>
+            <p id="checkoutCaptchaStatus" role="status" aria-live="polite" style="font-size:12px;margin:6px 0 0">Sifarişi davam etdirmək üçün təhlükəsizlik yoxlamasını tamamlayın.</p>
+        </div>
         <div class="checkout-trust">
             <span>🔒 Təhlükəsiz sifariş axını</span>
             <span>💬 WhatsApp dəstəyi</span>
@@ -713,7 +717,7 @@
                 <button type="button" class="ds-top-button" data-action="undoDesign" aria-label="Geri al" title="Geri al (Ctrl+Z)">↶</button>
                 <button type="button" class="ds-top-button" data-action="redoDesign" aria-label="Yenidən et" title="Yenidən et (Ctrl+Y)">↷</button>
                 <button type="button" class="ds-top-button ds-secondary-action" data-action="exportDesignPreview">Önizləmə PNG</button>
-                <button type="button" class="ds-top-button ds-secondary-action" data-action="saveDesignLayout">Yadda saxla</button>
+                <button type="button" class="ds-top-button ds-secondary-action" data-action="saveDesignLayout">Qaralamanı saxla</button>
                 <button type="button" class="close ds-close" data-action="closeCustomModal" aria-label="Fərdi sifarişi bağla">×</button>
             </div>
         </header>
@@ -881,7 +885,7 @@
                     <button type="button" class="ds-reset-button" data-action="resetDesignFromUser">Bütün dizaynı sıfırla</button>
                     <button type="button" class="ds-reset-button" data-action="discardDesignDraft">Bu məhsulun qaralamasını sil</button>
                 </div>
-                <div class="ds-inspector-footer"><span>Qısayol: Ctrl+Z · Del · ox düymələri</span><button class="add custom-submit" id="customSubmitBtn" type="button" data-action="confirmCustomization">Fərdiləşdir və səbətə əlavə et <b>→</b></button></div>
+                <div class="ds-inspector-footer"><span>Qısayol: Ctrl+Z · Del · ox düymələri</span><p id="customSubmitFeedback" class="ds-submit-feedback" role="alert"></p><button class="add custom-submit" id="customSubmitBtn" type="button" data-action="confirmCustomization">Fərdiləşdir və səbətə əlavə et <b>→</b></button></div>
             </aside>
         </div>
     </div>
@@ -1040,12 +1044,13 @@
                 <button class="auth-password-toggle" type="button" data-action="toggleAuthPassword" data-action-args='["profilePassword", {"$":"this"}]' aria-label="Şifrəni göstər" aria-pressed="false">
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 12s3.2-6 9.5-6 9.5 6 9.5 6-3.2 6-9.5 6-9.5-6-9.5-6Z"/><circle cx="12" cy="12" r="2.6"/></svg>
                 </button>
+              </div>
+            </div>
             <div class="auth-captcha" data-auth-element="captcha" hidden>
               <div id="authCaptchaWidget"></div>
               <p id="authCaptchaStatus" role="status" aria-live="polite">Təhlükəsizlik yoxlaması yüklənir…</p>
             </div>
-              </div>
-            </div>
+            <p id="authFormError" role="alert"></p>
             <div class="auth-options-row" data-auth-element="remember-row">
               <label class="auth-remember" for="rememberAuthEmail">
                 <input id="rememberAuthEmail" type="checkbox" data-change-action="rememberAuthEmail" data-change-args='[{"$":"this"}]'>
@@ -1102,6 +1107,56 @@
   </div>
 </div>
 
+<!-- MFA FOR SECURITY PREVIEW ADMINS: QR secret stays in memory only -->
+<div class="modal-center admin-mfa-modal" id="adminMfaModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="adminMfaTitle" aria-describedby="adminMfaStatus">
+  <div class="dialog">
+    <div class="admin-mfa-heading">
+      <div>
+        <span class="admin-mfa-eyebrow">F1 STUDIO • ADMIN TƏHLÜKƏSİZLİYİ</span>
+        <h2 id="adminMfaTitle">İki mərhələli təsdiq</h2>
+        <p class="admin-mfa-note">Admin panelinə giriş üçün telefonunuzdakı authenticator tətbiqi tələb olunur.</p>
+      </div>
+      <button class="close" type="button" id="adminMfaClose" data-action="closeAdminMfa" aria-label="MFA pəncərəsini bağla">×</button>
+    </div>
+    <p id="adminMfaStatus" class="admin-mfa-status" role="status" aria-live="polite">MFA yoxlanılır...</p>
+
+    <section id="adminMfaSetup" hidden aria-label="Təsdiqləyici cihaz qeydiyyatı">
+      <p class="admin-mfa-note">Google Authenticator, Microsoft Authenticator və ya başqa TOTP tətbiqində yeni hesab əlavə edin.</p>
+      <button type="button" id="adminMfaStart" class="admin-mfa-button" data-action="startAdminMfaEnrollment">🔐 QR kod yarat</button>
+      <div id="adminMfaSetupDetails" hidden>
+        <img id="adminMfaQr" class="admin-mfa-qr" alt="Authenticator tətbiqində skan etmək üçün şəxsi MFA QR kodu" hidden>
+        <p class="admin-mfa-note">QR-ni skan edə bilmirsinizsə, bu gizli açarı tətbiqə əl ilə yazın:</p>
+        <code id="adminMfaSecret" class="admin-mfa-secret"></code>
+        <p class="admin-mfa-warning">Bu açarı heç kimlə paylaşmayın və ekran görüntüsü göndərməyin. Pəncərə bağlananda səhifədən silinir.</p>
+      </div>
+    </section>
+
+    <section id="adminMfaChallenge" hidden aria-label="İkinci mərhələli təsdiq">
+      <label class="admin-mfa-field" for="adminMfaFactor">Təsdiqləyici cihaz
+        <select id="adminMfaFactor" aria-label="Təsdiqləyici cihaz"></select>
+      </label>
+    </section>
+
+    <div id="adminMfaCodeRow" hidden>
+      <label class="admin-mfa-field" for="adminMfaCode">Authenticator tətbiqindəki 6 rəqəmli kod
+        <input id="adminMfaCode" class="admin-mfa-code" type="text" inputmode="numeric" maxlength="6" minlength="6" pattern="[0-9]{6}" autocomplete="one-time-code" data-enter-action="submitAdminMfaCode" placeholder="000000" aria-label="Altı rəqəmli MFA kodu">
+      </label>
+      <button type="button" id="adminMfaSubmit" class="admin-mfa-button" data-action="submitAdminMfaCode">Kodu təsdiqlə</button>
+    </div>
+
+    <section id="adminMfaSecured" hidden aria-label="MFA aktivdir">
+      <p class="admin-mfa-note">✅ Admin sessiyası ikinci mərhələli təsdiqdən keçib.</p>
+      <button type="button" id="adminMfaAddBackup" class="admin-mfa-button secondary" data-action="addAdminMfaBackup">+ Ehtiyat cihaz əlavə et</button>
+      <button type="button" class="admin-mfa-button" data-action="closeAdminMfa">Davam et</button>
+      <p class="admin-mfa-warning">Ehtiyat TOTP cihazını əsas cihazdan ayrı saxlayın. Hər iki cihaz itərsə, avtomatik MFA bypass yoxdur; hesab sahibi Supabase vasitəsilə şəxsiyyətini ayrıca təsdiqləməlidir.</p>
+    </section>
+
+    <section id="adminMfaRetry" hidden>
+      <button type="button" id="adminMfaRetryButton" class="admin-mfa-button" data-action="promptAdminMfa">Yenidən yoxla</button>
+    </section>
+  </div>
+</div>
+
 <!-- ADMIN PANEL -->
 <div class="modal-center admin-modal" id="adminModal" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="adminModalTitle">
   <div class="dialog">
@@ -1133,6 +1188,7 @@
             <div><h2 id="adminModalTitle">İdarə Paneli</h2><div class="admin-welcome" id="adminWelcomeText">Xoş gəlmisiniz, Admin</div></div>
           </div>
           <div class="admin-top-actions">
+            <button type="button" data-action="openAdminMfaManager" class="admin-mfa-management" title="İkinci mərhələli girişi idarə et">🔐 MFA</button>
             <div class="admin-date-chip" aria-label="Bugünkü tarix"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/></svg><time id="adminCurrentDate">—</time></div>
             <button class="admin-top-notification" id="adminTopNotification" type="button" data-action="switchAdminView" data-action-args='[&quot;orders&quot;]' aria-label="Sifariş bildirişləri"><svg viewBox="0 0 24 24"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span id="adminTopNotifBadge" class="hidden">0</span></button>
             <button class="close" type="button" data-action="closeAdmin" aria-label="Admin panelini bağla">×</button>
@@ -1555,7 +1611,7 @@
 <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0"></script>
 <script defer src="js/vendor/qrcode-generator-2.0.4.js"></script>
 <noscript><div style="padding:16px;background:#fff1f2;color:#7f1d1d;text-align:center;font-family:system-ui">Bu saytın sifariş və məhsul funksiyaları üçün JavaScript aktiv olmalıdır.</div></noscript>
-    <script type="module" src="js/app.js?v=147"></script>
+    <script type="module" src="js/app.js?v=149"></script>
     <script type="module" src="js/reference-mobile-dock.js?v=1"></script>
 </body>
 </html>

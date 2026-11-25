@@ -1,5 +1,6 @@
 import { copyFile, mkdir, readdir, readFile, writeFile, lstat } from "node:fs/promises";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 import { build, transform } from "esbuild";
 import sharp from "sharp";
 import { fileURLToPath } from "node:url";
@@ -13,6 +14,11 @@ try {
 } catch (error) {
   if (error?.code !== "ENOENT") throw error;
 }
+// Only mocked or local synthetic tests; do not pass deployed secrets to tests.
+const testFiles = ["tools/order-gateway-contract-test.mjs","tools/newsletter-gateway-contract-test.mjs","tools/admin-mfa-controller-test.mjs","tools/antivirus-worker-test.mjs","tools/preview-isolation-test.mjs","tools/security-observability-test.mjs"];
+execFileSync(process.execPath, ["--test", ...testFiles], {
+  cwd: root, stdio: "inherit", env: { PATH: process.env.PATH || "", HOME: process.env.HOME || "/tmp", TMPDIR: "/tmp", NODE_ENV: "test" }
+});
 await mkdir(dist);
 
 const forbiddenPath = /(?:^|\/)(?:\.env(?:\.[^/]+)?|\.git|.*\.sql|.*\.md|.*backup.*|.*secret.*|package(?:-lock)?\.json|vercel\.json|.*\.pem|.*\.key)$/i;
@@ -22,14 +28,14 @@ const rootFiles = [
   "f1-logo.png", "hero-scene.jpg", "og-cover.png", "robot-icon.svg"
 ];
 const cssFiles = [
-  "css/about-page.css", "css/account-page.css", "css/admin-dashboard-refresh.css", "css/admin-scroll.css",
+  "css/about-page.css", "css/account-page.css", "css/admin-dashboard-refresh.css", "css/admin-scroll.css", "css/admin-mfa.css",
   "css/auth-redesign.css", "css/category-page.css", "css/chat-assistant.css", "css/f1-reference-alignment.css",
   "css/f1-reference-capture.css", "css/f1-reference-refresh.css", "css/hero-presentation.css",
   "css/order-delivery-info.css", "css/product-whatsapp.css", "css/styles.css"
 ];
 const jsFiles = [
   "js/about-page.js", "js/account-page.js", "js/admin-customers.js", "js/admin-dashboard.js",
-  "js/admin-orders.js", "js/admin-products.js", "js/admin-reviews.js", "js/admin-shared.js", "js/admin.js",
+  "js/admin-orders.js", "js/admin-products.js", "js/admin-reviews.js", "js/admin-shared.js", "js/admin.js", "js/admin-mfa.js", "js/services/admin-mfa-service.js",
   "js/api.js", "js/app.js", "js/auth.js", "js/cart.js", "js/catalog.js", "js/category-page.js", "js/chat.js",
   "js/config.js", "js/customization.js", "js/design-studio.js", "js/design-templates.js", "js/events.js",
   "js/homepage-content.js", "js/legal.js", "js/modal.js", "js/motion.js", "js/product-whatsapp.js",
@@ -202,7 +208,7 @@ if ([...buildHtml.matchAll(appTag)].length !== 1) throw new Error("Unexpected ap
 buildHtml = buildHtml.replace(appTag, "$1" + entryRelative + "$2");
 const links = [...buildHtml.matchAll(/<link\s+rel="stylesheet"\s+href="(css\/[^"]+)"[^>]*>/g)];
 const regular = links.filter(link => !/\bmedia=/.test(link[0]));
-if (links.length !== 14 || regular.length !== 13 ||
+if (links.length !== 15 || regular.length !== 14 ||
     regular.some(link => !cssFiles.includes(link[1].split("?")[0]))) {
   throw new Error("Unexpected stylesheet list.");
 }
@@ -222,7 +228,7 @@ for (const [i, link] of regular.entries()) {
   buildHtml = buildHtml.replace(link[0], i === 0 ? '<link rel="stylesheet" href="' + combinedCss + '">' : "");
 }
 await writeFile(htmlPath, buildHtml, "utf8");
-console.log("Performance CSS: " + cssBefore + " -> " + cssAfter + " bytes; initial stylesheet links: 14 -> 2 (desktop media preserved)");
+console.log("Performance CSS: " + cssBefore + " -> " + cssAfter + " bytes; initial stylesheet links: 15 -> 2 (desktop media preserved)");
 if (included.size !== allowed.size) throw new Error("Final generated manifest mismatch.");
 
 const outputFiles = [];

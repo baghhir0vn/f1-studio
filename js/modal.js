@@ -21,7 +21,7 @@ function syncDialogAccessibility(){
     });
 }
 function closeFromOutsideClick(id){
-    const map={designPicker:'closeDesignPicker',modal:'closeCart',productModal:'closeProductModal',customModal:'closeCustomModal',loginModal:'closeLogin',adminModal:'closeAdmin'};
+    const map={designPicker:'closeDesignPicker',modal:'closeCart',productModal:'closeProductModal',customModal:'closeCustomModal',loginModal:'closeLogin',adminModal:'closeAdmin',adminMfaModal:'closeAdminMfa'};
     if(id==='privacyModal') return ctx.closeLegal?.('privacy');
     if(id==='termsModal') return ctx.closeLegal?.('terms');
     if(id==='returnsModal') return ctx.closeLegal?.('returns');
@@ -73,7 +73,7 @@ function handleEscape(){
     const openDialogs = [...document.querySelectorAll(dialogSelector)].filter(isVisible);
     const top = openDialogs[openDialogs.length-1];
     if(!top) return;
-    const map={designPicker:'closeDesignPicker',modal:'closeCart',productModal:'closeProductModal',customModal:'closeCustomModal',loginModal:'closeLogin',adminModal:'closeAdmin'};
+    const map={designPicker:'closeDesignPicker',modal:'closeCart',productModal:'closeProductModal',customModal:'closeCustomModal',loginModal:'closeLogin',adminModal:'closeAdmin',adminMfaModal:'closeAdminMfa'};
     if(top.id==='privacyModal') return ctx.closeLegal?.('privacy');
     if(top.id==='termsModal') return ctx.closeLegal?.('terms');
     if(top.id==='returnsModal') return ctx.closeLegal?.('returns');

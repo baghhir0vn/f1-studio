@@ -1,4 +1,5 @@
 import { showToast } from './ui.js';
+import { CONFIG } from './config.js';
 import { realtimeService } from './services/realtime-service.js';
 import { state as s, ctx } from './state.js';
 import { ADMIN_API } from './admin-shared.js';
@@ -26,7 +27,7 @@ export function initAdmin() {
         }
         return adminFeaturesPromise;
     }
-        function isAdminUser(){ return !!s.authUser && (s.authUser.role === "admin" || s.authUser.isAdmin === true); }
+        function isAdminUser(){ return !!s.authUser && s.authUser.role === "admin" && s.authUser.blocked !== true && (CONFIG.adminMfaEnabled !== true || s.adminMfaAssured === true); }
         function setAdminRealtimeStatus(state, text){
             const el=document.getElementById("adminRealtimeStatus"); if(!el)return;
             const dot=el.querySelector(".admin-realtime-dot");
@@ -145,7 +146,11 @@ export function initAdmin() {
             requestAnimationFrame(()=>window.scrollTo(0,snapshot.scrollY));
         }
         async function openAdmin(){
-            if(!ctx.isAdminUser()) return showToast("Admin panelinə giriş icazəniz yoxdur.");
+            if(!ctx.isAdminUser()) {
+                if(CONFIG.adminMfaEnabled === true && s.authUser?.role === "admin" && s.authUser?.blocked !== true) void ctx.promptAdminMfa?.();
+                else showToast("Admin panelinə giriş icazəniz yoxdur.");
+                return;
+            }
             try { await ensureAdminFeatures(); }
             catch (error) {
                 console.error("Admin features could not load:", error);
