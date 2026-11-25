@@ -2,17 +2,30 @@ import { showToast } from './ui.js';
 import { realtimeService } from './services/realtime-service.js';
 import { state as s, ctx } from './state.js';
 import { ADMIN_API } from './admin-shared.js';
-import { initDashboard as initAdminDashboard } from './admin-dashboard.js';
-import { initProducts as initAdminProducts } from './admin-products.js';
-import { initOrders as initAdminOrders } from './admin-orders.js';
-import { initCustomers as initAdminCustomers } from './admin-customers.js';
-import { initReviews as initAdminReviews } from './admin-reviews.js';
 export function initAdmin() {
-    initAdminDashboard();
-    initAdminProducts();
-    initAdminOrders();
-    initAdminCustomers();
-    initAdminReviews();
+    let adminFeaturesPromise = null;
+    function ensureAdminFeatures() {
+        if (!ctx.isAdminUser()) return Promise.reject(new Error("ADMIN_REQUIRED"));
+        if (!adminFeaturesPromise) {
+            adminFeaturesPromise = Promise.all([
+                import('./admin-dashboard.js'),
+                import('./admin-products.js'),
+                import('./admin-orders.js'),
+                import('./admin-customers.js'),
+                import('./admin-reviews.js')
+            ]).then(([dashboard, products, orders, customers, reviews]) => {
+                dashboard.initDashboard();
+                products.initProducts();
+                orders.initOrders();
+                customers.initCustomers();
+                reviews.initReviews();
+            }).catch(error => {
+                adminFeaturesPromise = null;
+                throw error;
+            });
+        }
+        return adminFeaturesPromise;
+    }
         function isAdminUser(){ return !!s.authUser && (s.authUser.role === "admin" || s.authUser.isAdmin === true); }
         function setAdminRealtimeStatus(state, text){
             const el=document.getElementById("adminRealtimeStatus"); if(!el)return;
@@ -49,6 +62,13 @@ export function initAdmin() {
         async function startAdminRealtime(){
             if(!ctx.isAdminUser()) { ctx.stopAdminRealtime(); return; }
             if(s.adminRealtimeChannel) return;
+            try { await ensureAdminFeatures(); }
+            catch (error) {
+                console.error("Admin features could not load:", error);
+                ctx.setAdminRealtimeStatus("err","Admin modulları yüklənmədi.");
+                return;
+            }
+            if(!ctx.isAdminUser() || s.adminRealtimeChannel) return;
             ctx.setAdminRealtimeStatus("","Canlı sifariş bildirişləri qoşulur...");
             s.adminRealtimeChannel=realtimeService.createAdminOrdersChannel({
                 onInsert: async payload=>{
@@ -124,8 +144,14 @@ export function initAdmin() {
             adminScrollSnapshot=null;
             requestAnimationFrame(()=>window.scrollTo(0,snapshot.scrollY));
         }
-        function openAdmin(){
+        async function openAdmin(){
             if(!ctx.isAdminUser()) return showToast("Admin panelinə giriş icazəniz yoxdur.");
+            try { await ensureAdminFeatures(); }
+            catch (error) {
+                console.error("Admin features could not load:", error);
+                return showToast("Admin paneli yüklənmədi. Yenidən cəhd edin.");
+            }
+            if(!ctx.isAdminUser()) return;
             const adminMain=document.querySelector("#adminModal .admin-main");
             if(adminMain && !adminMain.hasAttribute("tabindex")) adminMain.setAttribute("tabindex","0");
             lockAdminBackgroundScroll();
@@ -196,7 +222,7 @@ export function initAdmin() {
             }
         }
     Object.assign(ctx, {
-        isAdminUser, setAdminRealtimeStatus, updateAdminNotifBadge, playAdminNotificationSound,
+        ensureAdminFeatures, isAdminUser, setAdminRealtimeStatus, updateAdminNotifBadge, playAdminNotificationSound,
         stopAdminRealtime, startAdminRealtime, enableAdminDesktopNotifications, updateAdminButton,
         openAdmin, closeAdmin, switchAdminView, toggleAdminSidebar, adminApi
     });
