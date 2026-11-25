@@ -117,12 +117,14 @@ if (included.size !== allowed.size) throw new Error("Static manifest copy is inc
 
 // Preview-only optimization: keep the exact static allowlist and run all
 // security, reference and secret checks on the final generated output.
-const appOutput = path.join(dist, "js/app.js");
 const bundled = await build({
   absWorkingDir: root,
   entryPoints: ["js/app.js"],
-  outfile: appOutput,
+  outdir: path.join(dist, "js"),
+  entryNames: "perf-entry-[name]-[hash]",
+  chunkNames: "perf-chunk-[name]-[hash]",
   bundle: true,
+  splitting: true,
   write: false,
   format: "esm",
   platform: "browser",
@@ -135,13 +137,45 @@ const bundled = await build({
   sourcemap: false,
   metafile: true
 });
-if (bundled.outputFiles.length !== 1 || path.resolve(bundled.outputFiles[0].path) !== appOutput) {
-  throw new Error("Unexpected JavaScript bundle output.");
+const metadataOutputs = bundled.metafile.outputs;
+const appEntries = Object.keys(metadataOutputs).filter(file => metadataOutputs[file].entryPoint === "js/app.js");
+if (appEntries.length !== 1) throw new Error("Unexpected app entry count.");
+const appEntry = appEntries[0];
+const adminInputs = /(?:^|\/)admin-(?:dashboard|products|orders|customers|reviews)\.js(?:\?|$)/;
+for (const file of Object.keys(bundled.metafile.inputs)) {
+  if (!jsFiles.includes(file.split("?")[0])) throw new Error("Non-allowlisted bundle input: " + file);
 }
-const inputBytes = Object.values(bundled.metafile.inputs).reduce((sum, input) => sum + input.bytes, 0);
-const inputCount = Object.keys(bundled.metafile.inputs).length;
-await writeFile(appOutput, bundled.outputFiles[0].contents);
-console.log("Performance JS: " + inputCount + " module inputs, " + inputBytes + " bytes -> " + bundled.outputFiles[0].contents.length + " bytes (one app entry bundle)");
+const eager = new Set();
+function collectEager(file) {
+  if (eager.has(file)) return;
+  if (!metadataOutputs[file]) throw new Error("Unknown bundle dependency: " + file);
+  eager.add(file);
+  for (const dependency of metadataOutputs[file].imports) {
+    if (dependency.external || !metadataOutputs[dependency.path]) throw new Error("Unexpected external or missing bundle dependency.");
+    if (dependency.kind !== "dynamic-import") collectEager(dependency.path);
+  }
+}
+collectEager(appEntry);
+const initialInputs = new Set([...eager].flatMap(file => Object.keys(metadataOutputs[file].inputs)));
+if ([...initialInputs].some(file => adminInputs.test(file))) throw new Error("Admin module unexpectedly in initial bundle.");
+if (bundled.outputFiles.length !== Object.keys(metadataOutputs).length || bundled.outputFiles.length > 24) throw new Error("Unexpected bundle output count.");
+for (const file of bundled.outputFiles) {
+  assertInside(dist, file.path);
+  const relative = path.relative(dist, file.path).replace(/\\/g, "/");
+  const metaPath = path.relative(root, file.path).replace(/\\/g, "/");
+  if (!/^js\/perf-(?:entry|chunk)-[a-zA-Z0-9_-]+\.js$/.test(relative) ||
+      forbiddenPath.test(relative) || allowed.has(relative) || !metadataOutputs[metaPath]) {
+    throw new Error("Unexpected generated JavaScript: " + relative);
+  }
+  await writeFile(file.path, file.contents, { flag: "wx" });
+  allowed.add(relative);
+  included.add(relative);
+}
+const entryRelative = path.relative(dist, path.resolve(root, appEntry)).replace(/\\/g, "/");
+const initialBytes = [...eager].reduce((sum, file) => sum + metadataOutputs[file].bytes, 0);
+const totalBytes = Object.values(metadataOutputs).reduce((sum, file) => sum + file.bytes, 0);
+console.log("Performance JS initial: " + eager.size + " files, " + initialBytes + " bytes; lazy: " + (bundled.outputFiles.length - eager.size) + " files, " + (totalBytes - initialBytes) + " bytes");
+console.log("Performance admin isolation: PASS (five admin feature modules excluded from initial graph)");
 
 let cssBefore = 0;
 let cssAfter = 0;
@@ -161,8 +195,35 @@ for (const file of cssFiles) {
   cssAfter += Buffer.byteLength(result.code);
   await writeFile(target, result.code, "utf8");
 }
-console.log("Performance CSS: " + cssFiles.length + " stylesheets, " + cssBefore + " bytes -> " + cssAfter + " bytes (order and media attributes unchanged)");
-
+// Preserve HTML link order and keep the desktop-only hero stylesheet separate.
+let buildHtml = await readFile(htmlPath, "utf8");
+const appTag = /(<script\s+type="module"\s+src=")js\/app\.js\?v=\d+("><\/script>)/g;
+if ([...buildHtml.matchAll(appTag)].length !== 1) throw new Error("Unexpected app script tag.");
+buildHtml = buildHtml.replace(appTag, "$1" + entryRelative + "$2");
+const links = [...buildHtml.matchAll(/<link\s+rel="stylesheet"\s+href="(css\/[^"]+)"[^>]*>/g)];
+const regular = links.filter(link => !/\bmedia=/.test(link[0]));
+if (links.length !== 14 || regular.length !== 13 ||
+    regular.some(link => !cssFiles.includes(link[1].split("?")[0]))) {
+  throw new Error("Unexpected stylesheet list.");
+}
+const cssParts = [];
+for (const link of regular) {
+  const content = await readFile(path.join(dist, link[1].split("?")[0]), "utf8");
+  if (/@(?:import|charset|namespace)\b/i.test(content)) throw new Error("CSS directive requires separate processing.");
+  cssParts.push(content);
+}
+const combinedCss = "css/performance-storefront.css";
+const cssText = cssParts.join("\n");
+await writeFile(path.join(dist, combinedCss), cssText, { flag: "wx" });
+allowed.add(combinedCss);
+included.add(combinedCss);
+for (const [i, link] of regular.entries()) {
+  if (buildHtml.split(link[0]).length !== 2) throw new Error("Duplicate stylesheet tag.");
+  buildHtml = buildHtml.replace(link[0], i === 0 ? '<link rel="stylesheet" href="' + combinedCss + '">' : "");
+}
+await writeFile(htmlPath, buildHtml, "utf8");
+console.log("Performance CSS: " + cssBefore + " -> " + cssAfter + " bytes; initial stylesheet links: 14 -> 2 (desktop media preserved)");
+if (included.size !== allowed.size) throw new Error("Final generated manifest mismatch.");
 
 const outputFiles = [];
 async function collect(directory, prefix = "") {
