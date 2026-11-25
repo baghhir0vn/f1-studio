@@ -35,7 +35,12 @@ initLegal();
 initReviews();
 ctx.api = createApi({
     isAdminUser: () => !!ctx.isAdminUser?.(),
-    loadAdminDashboard: () => ctx.loadAdminDashboard()
+    loadAdminDashboard: async () => {
+        if (!ctx.isAdminUser?.()) throw new Error("ADMIN_REQUIRED");
+        await ctx.ensureAdminFeatures();
+        if (!ctx.isAdminUser?.()) throw new Error("ADMIN_REQUIRED");
+        return ctx.loadAdminDashboard();
+    }
 });
 initEvents();
 initAboutPage();
