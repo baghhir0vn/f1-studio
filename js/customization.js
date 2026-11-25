@@ -382,7 +382,7 @@ export function initCustomization() {
             customization.imagePath=primary?.path||"";
             customization.imageType=primary?.type||"";
             customization.imageSize=primary?.size||0;
-            if(fileStatus&&retainedUploads.length) fileStatus.textContent=`Şəxsi Storage-da ${retainedUploads.length} fayl saxlanıldı.`;
+            if(fileStatus&&retainedUploads.length) fileStatus.textContent=`${retainedUploads.length} fayl saxlanıldı. Sifarişdən əvvəl təhlükəsizlik yoxlaması aparılır.`;
             if(s.customEditingLineId){
                 const item=s.cart.find(i=>i.lineId===s.customEditingLineId);
                 if(item){

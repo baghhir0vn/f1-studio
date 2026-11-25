@@ -15,7 +15,7 @@ try {
   if (error?.code !== "ENOENT") throw error;
 }
 // Only mocked or local synthetic tests; do not pass deployed secrets to tests.
-const testFiles = ["tools/order-gateway-contract-test.mjs","tools/newsletter-gateway-contract-test.mjs","tools/admin-mfa-controller-test.mjs","tools/antivirus-worker-test.mjs","tools/preview-isolation-test.mjs","tools/security-observability-test.mjs"];
+const testFiles = ["tools/order-gateway-contract-test.mjs","tools/newsletter-gateway-contract-test.mjs","tools/admin-mfa-controller-test.mjs","tools/antivirus-worker-test.mjs","tools/customer-designs-antivirus-worker-test.mjs","tools/preview-isolation-test.mjs","tools/security-observability-test.mjs"];
 execFileSync(process.execPath, ["--test", ...testFiles], {
   cwd: root, stdio: "inherit", env: { PATH: process.env.PATH || "", HOME: process.env.HOME || "/tmp", TMPDIR: "/tmp", NODE_ENV: "test" }
 });

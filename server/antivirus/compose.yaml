@@ -1,0 +1,38 @@
+services:
+  clamd:
+    image: clamav/clamav:1.4.7@sha256:b7357e2c1c59480628839df301b0d27923561389b36cf341911e1dd9e02cdd05
+    entrypoint: ["clamd", "--foreground", "--config-file=/etc/clamav/f1-clamd.conf"]
+    network_mode: none
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 64
+    mem_limit: 3g
+    volumes:
+      - ./clamd.conf:/etc/clamav/f1-clamd.conf:ro
+      - scanner-socket:/tmp
+    healthcheck:
+      test: ["CMD", "clamdscan", "--config-file=/etc/clamav/f1-clamd.conf", "--ping=1"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+      start_period: 30s
+
+  smoke:
+    image: node:24-alpine
+    command: ["node", "--test", "/scanner/clamd-smoke.mjs"]
+    user: node
+    network_mode: none
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    depends_on:
+      clamd:
+        condition: service_healthy
+    volumes:
+      - .:/scanner:ro
+      - scanner-socket:/clamd:ro
+
+volumes:
+  scanner-socket:
