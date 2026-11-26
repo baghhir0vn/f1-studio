@@ -62,7 +62,7 @@
     <link rel="stylesheet" href="css/order-delivery-info.css?v=1">
     <link rel="stylesheet" href="css/f1-reference-refresh.css?v=1">
     <link rel="stylesheet" href="css/f1-reference-alignment.css?v=1">
-    <link rel="stylesheet" href="css/f1-reference-capture.css?v=21">
+    <link rel="stylesheet" href="css/f1-reference-capture.css?v=20">
     <link rel="stylesheet" href="css/category-page.css?v=7">
     <link rel="stylesheet" href="css/about-page.css?v=23">
 <link rel="stylesheet" href="css/chat-assistant.css?v=7">
@@ -70,15 +70,15 @@
     <link rel="stylesheet" href="css/account-page.css?v=1">
 <link rel="stylesheet" href="css/auth-redesign.css?v=4">
     <link rel="stylesheet" href="css/product-whatsapp.css?v=2">
+    <link rel="stylesheet" href="css/hero-presentation.css?v=2" media="(min-width: 901px)">
+    <link rel="stylesheet" href="css/mobile-hero-reference.css?v=1" media="(max-width: 900px)">
 </head>
 <body class="f1-home">
-<div class="announcement-bar" id="announcementBar" aria-label="F1 Studio xidmət üstünlükləri">
-  <span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3 8 3 3 7-7"/></svg>Fərdi dizayn</span>
-  <span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 12 12 3M5 3h7v7M3 6v7h7"/></svg>Lazer kəsim</span>
-  <span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m3 8 3 3 7-7"/></svg>Premium keyfiyyət</span>
-  <span><svg viewBox="0 0 18 16" aria-hidden="true"><path d="M1 4h10v8H1zM11 7h3l3 3v2h-6z"/><circle cx="5" cy="13" r="1.5"/><circle cx="14" cy="13" r="1.5"/></svg>Tez çatdırılma</span>
+<div class="announcement-bar" id="announcementBar" aria-hidden="true">
+  10 ildən artıqdır xidmətinizdəyik.
 </div>
-<header>
+<span class="announcement-screen-reader-only">10 ildən artıqdır xidmətinizdəyik.</span>
+<header class="desktop-site-header">
     <div class="nav">
         <a href="#home" class="logo brand-logo" aria-label="F1 Hədiyyələr — F1 Studio"><img class="brand-logo-image" src="f1-logo.png?v=128" alt="F1 Hədiyyələr" width="64" height="64" decoding="async"><span class="brand-name"><span class="brand-main"><span class="brand-f1">F1</span> <b>STUDIO</b></span><span class="brand-tagline">Fərdi hədiyyələr</span></span></a>
         <nav id="mainPrimaryNav">
@@ -104,23 +104,41 @@
             <button class="cart cart-icon" type="button" data-action="openCart" aria-label="Səbət" title="Səbət"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l1.6 10.2a2 2 0 0 0 2 1.8h7.9a2 2 0 0 0 1.9-1.5L20 8H6"></path><circle cx="9" cy="19" r="1"></circle><circle cx="17" cy="19" r="1"></circle></svg><span id="count">0</span></button>
             <button class="icon-action" type="button" data-action="openLogin" aria-label="Giriş / Profil" title="Giriş / Profil"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.2"></circle><path d="M5.5 20c.8-3.5 3-5.3 6.5-5.3s5.7 1.8 6.5 5.3"></path></svg></button>
             <button class="theme-toggle-btn" id="themeToggleBtn" data-action="toggleTheme" title="Temanı dəyiş" aria-label="Temanı dəyiş">☼</button>
-            <button class="mobile-menu-btn" id="mobileMenuBtn" data-action="toggleMobileMenu" aria-label="Menyunu aç" aria-expanded="false">☰</button>
+
             <button class="admin-btn" id="adminBtn" data-action="openAdmin">⚙️ Admin<span id="adminNotifBadge" class="admin-notif-badge hidden">0</span></button>
         </div>
     </div>
-    <div class="mobile-nav" id="mobileNav">
-        <a href="#home" data-action="closeMobileMenu" id="mobileNavHome">Ana səhifə</a>
-        <a href="#categories" data-action="closeMobileMenu" id="mobileNavCategories">Kateqoriyalar</a>
-        <a href="#products" data-action="closeMobileMenu" id="mobileNavProducts">Məhsullar</a>
-        <a href="#faq" data-action="closeMobileMenu" id="mobileNavFaq">Suallar</a>
-        <a href="#about-contact" data-action="closeMobileMenu" id="mobileNavContact">Əlaqə</a>
-        <button type="button" data-actions='[[&quot;closeMobileMenu&quot;, []], [&quot;focusProductSearch&quot;, []]]' id="mobileNavSearch">⌕ Axtar</button>
-        <button type="button" data-actions='[[&quot;closeMobileMenu&quot;, []], [&quot;showFavorites&quot;, []]]' id="mobileNavFavorites">♡ Sevimlilər</button>
-        <button type="button" data-actions='[[&quot;closeMobileMenu&quot;, []], [&quot;openLogin&quot;, []]]' id="mobileNavProfile">♙ Profil</button>
-        <button type="button" id="mobileAdminBtn" data-actions='[[&quot;closeMobileMenu&quot;, []], [&quot;openAdmin&quot;, []]]' style="display:none">⚙️ Admin</button>
+    </header>
+<header class="mobile-site-header" aria-label="Mobil başlıq" style="display:none">
+  <div class="mobile-header-row">
+    <a href="#home" class="mobile-brand-logo" aria-label="F1 Hədiyyələr — F1 Studio">
+      <img src="f1-logo.png?v=128" alt="" width="34" height="34" decoding="async">
+      <span><strong>F1 STUDIO</strong><em>Fərdi hədiyyələr</em></span>
+    </a>
+    <div class="mobile-header-actions" aria-label="Sürətli əməliyyatlar">
+      <button type="button" data-action="focusProductSearch" aria-label="Axtar" title="Axtar"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 5 5"></path></svg></button>
+      <button type="button" data-action="showFavorites" aria-label="Sevimlilər" title="Sevimlilər"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.8 8.7c0 5-8.8 10-8.8 10s-8.8-5-8.8-10A4.7 4.7 0 0 1 12 6.2a4.7 4.7 0 0 1 8.8 2.5Z"></path></svg></button>
+      <button type="button" data-action="openCart" aria-label="Səbət" title="Səbət"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l1.6 10.2a2 2 0 0 0 2 1.8h7.9a2 2 0 0 0 1.9-1.5L20 8H6"></path><circle cx="9" cy="19" r="1"></circle><circle cx="17" cy="19" r="1"></circle></svg></button>
+      <button type="button" class="mobile-menu-btn" id="mobileMenuBtn" data-action="toggleMobileMenu" aria-label="Menyunu aç" aria-expanded="false" title="Menyu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"></path></svg></button>
     </div>
-</header>
-<div class="mobile-search-trigger-wrap">
+  </div>
+  <nav class="mobile-nav" id="mobileNav" aria-label="Mobil menyu">
+    <a href="#home" data-action="closeMobileMenu" id="mobileNavHome">Ana səhifə</a>
+    <a href="#products" data-action="closeMobileMenu" id="mobileNavShop">Mağaza</a>
+    <a href="#products" data-action="closeMobileMenu" id="mobileNavCatalog">Kataloq</a>
+    <a href="#categories" data-action="closeMobileMenu" id="mobileNavCategories">Kateqoriyalar</a>
+    <a href="#categories" data-action="closeMobileMenu" id="mobileNavGifts">Hədiyyələr</a>
+    <a href="#products" data-action="closeMobileMenu" data-design-picker id="mobileNavPersonalize">Fərdiləşdir</a>
+    <a href="#newsletterTitle" data-action="closeMobileMenu" id="mobileNavUpdates">Yeniliklər</a>
+    <a href="#promoOfferTitle" data-action="closeMobileMenu" id="mobileNavDiscounts">Endirimlər</a>
+    <a href="#about" data-action="closeMobileMenu" id="mobileNavAbout">Haqqımızda</a>
+    <a href="#reviews" data-action="closeMobileMenu" id="mobileNavReviews">Rəylər</a>
+    <a href="#products" data-action="closeMobileMenu" id="mobileNavProducts">Məhsullar</a>
+    <a href="#faq" data-action="closeMobileMenu" id="mobileNavFaq">Suallar</a>
+    <a href="#about-contact" data-action="closeMobileMenu" id="mobileNavContact">Əlaqə</a>
+  <button type="button" data-actions='[["closeMobileMenu", []], ["openLogin", []]]' id="mobileNavProfile">♙ Profil</button>
+  </nav>
+</header><div class="mobile-search-trigger-wrap">
   <button type="button" class="mobile-search-trigger" data-action="focusProductSearch" aria-label="Məhsul axtarışı">
     <span>Məhsul axtarın...</span>
     <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"></circle><path d="m16 16 5 5"></path></svg>
@@ -218,7 +236,7 @@
             <span>✓ <b id="heroBenefit1">Fərdi dizayn</b></span><span>✓ <b id="heroBenefit2">Keyfiyyətli hazırlanma</b></span><span>✓ <b id="heroBenefit3">WhatsApp sifarişi</b></span>
         </div>
     </div>
-    <div class="hero-art gift-scene" aria-label="F1 Studio hədiyyə kompozisiyası"><img src="public/images/hero-warm-gift-composition.png" alt="İşıqlı taxta fərdi hədiyyə kompozisiyası" fetchpriority="high" decoding="async"></div>
+    <div class="hero-art gift-scene" aria-label="F1 Studio hədiyyə kompozisiyası"><picture style="display: contents;"><source media="(min-width: 901px)" srcset="public/images/hero-warm-gift-desktop.jpg"><img src="public/images/hero-warm-gift-mobile.webp" alt="Fərdi yazılı taxta medalyonla bəzədilmiş premium hədiyyə qutusu" fetchpriority="high" decoding="async"></picture></div>
 </section>
 
 <section class="service-strip reveal" aria-label="F1 Studio üstünlükləri">
